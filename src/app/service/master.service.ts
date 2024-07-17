@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { colorentity } from '../Entity/colorentity';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
-import { Country, Customer } from '../Model/Customer';
+import { Country, Customer } from '../model/Customer';
 
 @Injectable({
   providedIn: 'root'

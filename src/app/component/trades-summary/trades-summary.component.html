@@ -1,0 +1,49 @@
+<mat-card class="dashboard-card">
+    <mat-card-header>
+        <mat-card-title>{{dataTicker}}</mat-card-title>
+        <mat-card-subtitle>STARBUCKS CORP COM</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-list>
+            <mat-list-item>
+                <mat-label>SHORT PUT NET PREMIUM: </mat-label>
+                <span [ngStyle]="{'color': getColor(putNetPremium)}">{{putNetPremium | currency: 'USD' | customCurrency}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>SHORT CALL NET PREMIUM: </mat-label>
+                <span [ngStyle]="{'color': getColor(callNetPremium)}">{{callNetPremium | currency: 'USD' | customCurrency}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>TOTAL NET PREMIUM: </mat-label>
+                <span [ngStyle]="{'color': getColor(totalNetPremium)}">{{totalNetPremium | currency: 'USD' | customCurrency}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>RISK: </mat-label>
+                <span>{{risk | currency: 'USD'}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>BREAK EVEN: </mat-label>
+                <span>{{breakEven| currency: 'USD'}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>DAYS: </mat-label>
+                <span>{{days}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>ANNUALIZED RETURN: </mat-label>
+                <span>{{annualizedReturn | percent}}</span> 
+            </mat-list-item>
+          </mat-list>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button><mat-icon>thumb_up</mat-icon> Like</button>
+        <button mat-button><mat-icon>share</mat-icon> Share</button>
+    </mat-card-actions>
+    <mat-card-footer></mat-card-footer>
+</mat-card>

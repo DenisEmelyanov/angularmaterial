@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
-import { Country } from 'src/app/Model/Customer';
+import { Country } from 'src/app/model/Customer';
 import { MasterService } from 'src/app/service/master.service';
 
 @Component({

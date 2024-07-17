@@ -1,0 +1,11 @@
+mat-grid-tile {
+    justify-content: flex-start !important;
+}
+
+mat-list-item {
+    text-align: left;
+}
+
+mat-card-title {
+    text-align: left; margin-left: 0%;
+}

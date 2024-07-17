@@ -18,6 +18,14 @@ import { FormdesignComponent } from './component/formdesign/formdesign.component
 import { PopupComponent } from './component/popup/popup.component';
 import { AssociateComponent } from './component/associate/associate.component';
 import { UserdetailComponent } from './component/userdetail/userdetail.component';
+import { TransactionsGridComponent } from './component/transactions-grid/transactions-grid.component';
+import { TransactionFormComponent } from './component/transaction-form/transaction-form.component';
+import { CustomSidePipe } from 'src/app/pipes/side-pipe'
+import { CustomTypePipe } from 'src/app/pipes/type-pipe';
+import { TabContentComponent } from './component/tab-content/tab-content.component'
+import { MatGridListModule } from '@angular/material/grid-list';
+import { CustomCurrencyPipe } from './pipes/customCurrency-pipe';
+import { TradesSummaryComponent } from './component/trades-summary/trades-summary.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +40,14 @@ import { UserdetailComponent } from './component/userdetail/userdetail.component
     FormdesignComponent,
     PopupComponent,
     AssociateComponent,
-    UserdetailComponent
+    UserdetailComponent,
+    TransactionsGridComponent,
+    TransactionFormComponent,
+    CustomSidePipe,
+    CustomTypePipe,
+    CustomCurrencyPipe,
+    TabContentComponent,
+    TradesSummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +56,8 @@ import { UserdetailComponent } from './component/userdetail/userdetail.component
     MaterialModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

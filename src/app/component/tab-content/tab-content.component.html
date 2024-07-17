@@ -1,0 +1,20 @@
+<div class="grid-container">
+    <h1 class="mat-h1">Dashboard</h1>
+    <mat-grid-list cols="6" rowHeight="1200px">
+        <div class="tile">
+            <mat-grid-tile>
+                <div class="mat-grid-tile-content">
+                    <app-trades-summary [dataTicker]="dataTicker"></app-trades-summary>
+                </div>
+            </mat-grid-tile>
+        </div>
+        <div class="tile">
+            <mat-grid-tile colspan="3">
+                <div class="mat-grid-tile-content">
+                    <app-transactions-grid [dataTicker]="dataTicker" (tableDataUpdated)="refreshData()"></app-transactions-grid>
+                </div>
+            </mat-grid-tile>
+        </div>
+    </mat-grid-list>
+</div>
+
