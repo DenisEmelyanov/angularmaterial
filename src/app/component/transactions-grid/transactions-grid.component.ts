@@ -73,4 +73,11 @@ export class TransactionsGridComponent {
       this.refreshTable();
     })
   }
+
+  public getColor(value: number): string {
+    if (value === 0)
+      return "black";
+    else
+      return value > 0 ? "green" : "red";
+  }
 }
