@@ -21,7 +21,7 @@ export class TradesSummaryComponent {
   days!: number;
   annualizedReturn!: number;
 
-  constructor(private dataService: DataService, private service: TransactionService, private ref: ChangeDetectorRef) {
+  constructor(private dataService: DataService, private ref: ChangeDetectorRef) {
     
   }
 
@@ -45,8 +45,8 @@ export class TradesSummaryComponent {
     this.risk = openContracts.reduce((sum, current) => sum + current.strike * current.quantity * 100, 0);
     this.breakEven = (this.risk - this.totalNetPremium) / openContracts.reduce((sum, current) => sum + current.quantity * 100, 0);
 
-    var openDate = this.earliestOpenDate(transactions)?.openDate;
-    var expirationDate = this.latestExpirationDate(openContracts)?.expiration;
+    var openDate = this.earliestOpenDate(transactions)?.openDate!;
+    var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
     //console.warn(openDate);
     //console.warn(expirationDate);
     this.days = this.daysBetween(openDate, expirationDate);
@@ -57,17 +57,19 @@ export class TradesSummaryComponent {
 
   earliestOpenDate(transactions: Transaction[]) {
     return transactions.reduce((earliest, current) => {
-      return earliest ? (earliest.openDate.getTime() < current.openDate.getTime() ? earliest : current) : current;
+      return earliest ? (new Date(earliest.openDate).getTime() < new Date(current.openDate).getTime() ? earliest : current) : current;
     }, null as Transaction | null);
   }
 
   latestExpirationDate(transactions: Transaction[]) {
     return transactions.reduce((earliest, current) => {
-      return earliest ? (earliest.expiration.getTime() > current.expiration.getTime() ? earliest : current) : current;
+      return earliest ? (new Date(earliest.expiration).getTime() > new Date(current.expiration).getTime() ? earliest : current) : current;
     }, null as Transaction | null);
   }
 
-  daysBetween(date1?: Date, date2?: Date): number {
+  daysBetween(dateStr1: string, dateStr2: string): number {
+    var date1: Date = new Date(dateStr1)
+    var date2: Date = new Date(dateStr2)
     if (date1 === undefined || date2 === undefined)
       return 0;
 

@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { TransactionService } from 'src/app/service/transactions.service';
+import { DataService } from 'src/app/service/data.service';
+import { Transaction } from 'src/app/model/transaction';
 
 @Component({
   selector: 'app-transaction-form',
@@ -17,12 +19,10 @@ export class TransactionFormComponent implements OnInit{
   editData: any;
   transactionForm : any;
 
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder,
-    private service: TransactionService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder) {
 
       this.transactionForm = this.formBuilder.group({
-        //id: this.formBuilder.control(this.data.id),
+        id: this.formBuilder.control(this.data.transaction.id),
         ticker: this.formBuilder.control(this.data.ticker),
         side: this.formBuilder.control(''),
         quantity: this.formBuilder.control(1),
@@ -33,20 +33,20 @@ export class TransactionFormComponent implements OnInit{
         openDate: this.formBuilder.control(new Date()),
         closeDate: this.formBuilder.control('')
       });
-
   }
 
   ngOnInit(): void {
     this.inputData = this.data;
     console.warn(this.inputData.id);
     if (this.inputData.title === "Edit"){
-      this.setFormData(this.inputData.id)
+      this.setFormData(this.inputData.transaction)
     }
   }
 
-  setFormData(id: any) {
-      this.editData = this.service.getTransactionById(id);
+  setFormData(transaction: Transaction) {
+      this.editData = transaction;
       console.warn('set form data is called');
+      console.warn(transaction.id);
       this.transactionForm.patchValue({
         //ticker: this.editData.ticker, 
         side: this.editData.side, 
@@ -61,7 +61,6 @@ export class TransactionFormComponent implements OnInit{
   }
 
   saveTransaction() {
-    this.service.updateTransaction(this.transactionForm.value)
     this.closeForm();
   }
 

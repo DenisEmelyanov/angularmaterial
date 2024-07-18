@@ -19,16 +19,13 @@ import { DataService } from 'src/app/service/data.service';
 export class TransactionsGridComponent {
   @Input()
   dataTicker!: string;
-  @Output()
-  tableDataUpdated = new EventEmitter();
 
-  // transactionsList!: Transaction[];
   dataSource: any;
   displayedColumns: string[] = ["transaction", "openDate", "closeDate", "premium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private service: TransactionService, private dataService: DataService, private dialog: MatDialog) {
+  constructor(private dataService: DataService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -37,32 +34,42 @@ export class TransactionsGridComponent {
   }
 
   refreshTable() {
-    this.tableDataUpdated.emit(this.dataTicker);
-    this.dataService.updateTransactions();
-    this.dataSource = new MatTableDataSource<Transaction>(this.service.getTransactions(this.dataTicker));
+    //this.tableDataUpdated.emit(this.dataTicker);
+    this.dataService.notifyAboutTransactionsUpdate();
+    this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
 
-  deleteTransaction(id: any) {
-    this.service.deleteTransaction(id);
+  deleteTransaction(transaction: Transaction) {
+    this.dataService.deleteTransaction(transaction);
 
     this.refreshTable();
   }
   
-  editTransaction(id: any) {
-    this.openTransactionForm(id, 'Edit', TransactionFormComponent);
+  editTransaction(transaction: Transaction) {
+    this.openTransactionForm(transaction, 'Edit', TransactionFormComponent);
   }
 
   addTransaction() {
-    this.openTransactionForm(this.service.getNewTransactionId(), 'Add', TransactionFormComponent);
+    this.openTransactionForm(
+      {
+        id: -1,
+        side: '',
+        type: '',
+        strike: 0,
+        expiration: '',
+        quantity: 0,
+        premium: 0,
+        openDate: ''
+      }, 'Add', TransactionFormComponent);
   }
 
-  openTransactionForm(id: any, title: any, component: any) {
+  openTransactionForm(transaction: Transaction, title: any, component: any) {
 
     var _transactionForm = this.dialog.open(component, {
       width: '40%',
       data: {
         title: title,
-        id: id,
+        transaction: transaction,
         ticker: this.dataTicker
       }
     });
@@ -70,6 +77,9 @@ export class TransactionsGridComponent {
     _transactionForm.afterClosed().subscribe(item => {
       console.log('form submitted')
       console.log(item)
+      if (item !== null) {
+        this.dataService.updateTransaction(item);
+      }
       this.refreshTable();
     })
   }
