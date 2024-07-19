@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Transaction } from 'src/app/model/transaction';
 import { DataService } from 'src/app/service/data.service';
-import { TransactionService } from 'src/app/service/transactions.service';
 
 @Component({
   selector: 'app-trades-summary',

@@ -6,7 +6,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatCard } from '@angular/material/card';
 import { Transaction } from 'src/app/model/transaction';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
-import { TransactionService } from 'src/app/service/transactions.service';
 import { DataService } from 'src/app/service/data.service';
 
 
@@ -30,7 +29,11 @@ export class TransactionsGridComponent {
 
   ngOnInit() {
     console.warn(this.dataTicker)
-    this.refreshTable();
+    this.dataService.getTransactions('ASO').subscribe((res: any) => {
+      console.warn(res);
+      this.dataSource = res;
+    });
+    //this.refreshTable();
   }
 
   refreshTable() {
@@ -53,6 +56,7 @@ export class TransactionsGridComponent {
     this.openTransactionForm(
       {
         id: -1,
+        ticker: this.dataTicker,
         side: '',
         type: '',
         strike: 0,

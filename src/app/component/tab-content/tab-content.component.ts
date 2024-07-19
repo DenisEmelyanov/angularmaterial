@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Transaction } from 'src/app/model/transaction';
 import { DataService } from 'src/app/service/data.service';
-import { TransactionService } from 'src/app/service/transactions.service';
 
 @Component({
   selector: 'app-tab-content',
@@ -16,9 +15,7 @@ export class TabContentComponent {
   dataTicker: string = 'SBUX';
   transactionsList!: Transaction[];
 
-  constructor(
-    private service: TransactionService,
-    private dataService: DataService) {
+  constructor(private dataService: DataService) {
   }
 
   ngOnInit() {

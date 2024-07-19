@@ -1,18 +1,22 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 import { Transaction } from "../model/transaction";
-import { TransactionService } from "./transactions.service";
 import { TickerData } from "../model/ticker-data";
-import data from 'src/app/data/data.json';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import jsonData from 'src/app/data/data.json';
+import { Observable } from "rxjs/internal/Observable";
 
 @Injectable({
     providedIn: 'root'
   })
 export class DataService {
-    private ticker: string = "SBUX";
-    tickersData: TickerData[] = data;
+    private serviceUrl = 'http://localhost:3000/transaction/';
 
-    constructor(private service: TransactionService) { 
+    private ticker: string = "SBUX";
+    tickersData: TickerData[] = jsonData;
+
+    constructor(private http: HttpClient) { 
         //this.printJson();
     }
     
@@ -24,6 +28,12 @@ export class DataService {
         var transactions = this.getTickerData(this.ticker).transactions;
         console.warn(transactions.length);
         this.tickerTransactions.next(transactions);
+    }
+
+    public getTransactions(ticker: string): Observable<Transaction[]> {
+        return this.http
+      .get(this.serviceUrl)
+      .pipe<Transaction[]>(map((data: any) => data.data));
     }
 
     public getTickerData(ticker: string) {
@@ -45,6 +55,7 @@ export class DataService {
         }
 
         Object.assign(this.tickersData, tickerUpdatedData);
+        this.saveJson();
     }
 
     deleteTransaction(transaction : Transaction) {
@@ -52,6 +63,7 @@ export class DataService {
         var tickerUpdatedData = this.getTickerData(this.ticker);
         tickerUpdatedData.transactions = tickerUpdatedData.transactions.filter(t => t.id !== transaction.id);
         Object.assign(this.tickersData, tickerUpdatedData);
+        this.saveJson();
       }
 
     getNewTransactionId() {
@@ -67,7 +79,7 @@ export class DataService {
     //loadTransactions() {
     //    this.subject.next(this.service.getTransactions(this.ticker));
     //}
-    public printJson() {
+    public saveJson() {
         const jsonString = JSON.stringify(this.tickersData);
         console.log(jsonString);
     }

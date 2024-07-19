@@ -3,8 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
-import { TransactionService } from 'src/app/service/transactions.service';
-import { DataService } from 'src/app/service/data.service';
 import { Transaction } from 'src/app/model/transaction';
 
 @Component({
