@@ -29,22 +29,23 @@ export class TransactionsGridComponent {
 
   ngOnInit() {
     console.warn(this.dataTicker)
-    this.dataService.getTransactions('ASO').subscribe((res: any) => {
-      console.warn(res);
-      this.dataSource = res;
-    });
-    //this.refreshTable();
+    this.refreshTable();
   }
 
   refreshTable() {
     //this.tableDataUpdated.emit(this.dataTicker);
-    this.dataService.notifyAboutTransactionsUpdate();
-    this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
+    this.dataService.notifyAboutTransactionsUpdate(this.dataTicker);
+    this.dataService.getTransactions(this.dataTicker).subscribe((res: any) => {
+      console.warn(res);
+      this.dataSource = res;
+    });
+    //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
 
   deleteTransaction(transaction: Transaction) {
-    this.dataService.deleteTransaction(transaction);
-
+    this.dataService.deleteTransaction(transaction).subscribe((res: any) => {
+      console.warn(res);
+    });
     this.refreshTable();
   }
   
@@ -82,7 +83,16 @@ export class TransactionsGridComponent {
       console.log('form submitted')
       console.log(item)
       if (item !== null) {
-        this.dataService.updateTransaction(item);
+        if (item.id !== -1) {
+          this.dataService.updateTransaction(item).subscribe((res: any) => {
+            console.warn(res);
+          });         
+        }
+        else {
+          this.dataService.addTransaction(item).subscribe((res: any) => {
+            console.warn(res);
+          });
+        }
       }
       this.refreshTable();
     })

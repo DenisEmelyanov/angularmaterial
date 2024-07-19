@@ -1,5 +1,5 @@
 export interface Transaction {
-    id: number;
+    id?: number;
     ticker: string;
     type: string;
     strike : number;
@@ -8,5 +8,5 @@ export interface Transaction {
     quantity: number;
     premium : number;
     openDate : string;
-    closeDate? : string;
+    closeDate? : string | null;
 }

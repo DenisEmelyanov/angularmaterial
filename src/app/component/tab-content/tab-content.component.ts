@@ -12,7 +12,7 @@ export class TabContentComponent {
   @Output()
   dataUpdated = new EventEmitter<Transaction[]>();
 
-  dataTicker: string = 'SBUX';
+  dataTicker: string = 'ASO';
   transactionsList!: Transaction[];
 
   constructor(private dataService: DataService) {

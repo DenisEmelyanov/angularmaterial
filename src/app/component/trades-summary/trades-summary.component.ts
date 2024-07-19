@@ -25,10 +25,16 @@ export class TradesSummaryComponent {
   }
 
   ngOnInit() {
-    this.dataService.currentTransactions.subscribe(data => {
-      this.calcSummary(data);
+    console.warn(this.dataTicker)
+    this.dataService.getTransactions(this.dataTicker).subscribe((res: any) => {
+      this.calcSummary(res);
       this.ref.detectChanges();
-    })
+
+    });
+    //this.dataService.currentTransactions.subscribe(data => {
+    //  this.calcSummary(data);
+    //  this.ref.detectChanges();
+    //})
   }
 
   calcSummary(transactions: Transaction[]) {
