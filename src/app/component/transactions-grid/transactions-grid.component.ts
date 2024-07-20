@@ -79,17 +79,17 @@ export class TransactionsGridComponent {
       }
     });
 
-    _transactionForm.afterClosed().subscribe(item => {
+    _transactionForm.afterClosed().subscribe(transaction => {
       console.log('form submitted')
-      console.log(item)
-      if (item !== null) {
-        if (item.id !== -1) {
-          this.dataService.updateTransaction(item).subscribe((res: any) => {
+      console.log(transaction)
+      if (transaction !== null) {
+        if (transaction.id !== -1) {
+          this.dataService.updateTransaction(transaction).subscribe((res: any) => {
             console.warn(res);
           });         
         }
         else {
-          this.dataService.addTransaction(item).subscribe((res: any) => {
+          this.dataService.addTransaction(transaction).subscribe((res: any) => {
             console.warn(res);
           });
         }

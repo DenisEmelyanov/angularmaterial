@@ -14,7 +14,7 @@ export class DataService {
     private serviceUrl = 'http://localhost:3000/transaction/';
 
     //private ticker: string = "SBUX";
-    tickersData: TickerData[] = jsonData;
+    //tickersData: TickerData[] = jsonData;
 
     constructor(private http: HttpClient) {
         //this.printJson();
@@ -36,10 +36,10 @@ export class DataService {
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
 
-    public getTickerData(ticker: string) {
-        var tickerData = this.tickersData.filter(i => i.ticker === ticker);
-        return tickerData[0];
-    }
+    // public getTickerData(ticker: string) {
+    //     var tickerData = this.tickersData.filter(i => i.ticker === ticker);
+    //     return tickerData[0];
+    // }
 
     public updateTransaction(transaction: Transaction): Observable<Transaction> {
 
@@ -47,9 +47,9 @@ export class DataService {
         const id = transaction.id;
         delete transaction.id;
 
-        if (transaction.closeDate === '') {
-             transaction.closeDate = null;
-        }
+        //  if (transaction.closeDate === null) {
+        //       transaction.closeDate = '';
+        // }
 
         console.warn('update transaction: ' + id);
         console.warn(JSON.stringify(transaction));
@@ -65,9 +65,9 @@ export class DataService {
         const id = transaction.id;
         delete transaction.id;
 
-        if (transaction.closeDate === '') {
-            transaction.closeDate = null;
-       }
+        if (transaction.closeDate === null) {
+        delete transaction.closeDate;
+    }
         console.warn('add transaction: ' + id);
         console.warn(JSON.stringify(transaction));
         // create transaction

@@ -26,10 +26,10 @@ export class TransactionFormComponent implements OnInit{
         quantity: this.formBuilder.control(1),
         type: this.formBuilder.control(''),
         strike: this.formBuilder.control(''),
-        expiration: this.formBuilder.control(''),
+        expiration: this.formBuilder.control(null),
         premium: this.formBuilder.control(''),
-        openDate: this.formBuilder.control(new Date()),
-        closeDate: this.formBuilder.control('')
+        openDate: this.formBuilder.control(null),
+        closeDate: this.formBuilder.control(null)
       });
   }
 
