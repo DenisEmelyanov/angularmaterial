@@ -7,6 +7,7 @@ import { MatCard } from '@angular/material/card';
 import { Transaction } from 'src/app/model/transaction';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 import { DataService } from 'src/app/service/data.service';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class TransactionsGridComponent {
   dataTicker!: string;
 
   dataSource: any;
+
   displayedColumns: string[] = ["transaction", "openDate", "closeDate", "premium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
@@ -33,11 +35,11 @@ export class TransactionsGridComponent {
   }
 
   refreshTable() {
-    //this.tableDataUpdated.emit(this.dataTicker);
-    this.dataService.notifyAboutTransactionsUpdate(this.dataTicker);
     this.dataService.getTransactions(this.dataTicker).subscribe((res: any) => {
       console.warn(res);
       this.dataSource = res;
+      
+      this.dataService.notifyAboutTransactionsUpdate(res);
     });
     //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
@@ -69,7 +71,6 @@ export class TransactionsGridComponent {
   }
 
   openTransactionForm(transaction: Transaction, title: any, component: any) {
-
     var _transactionForm = this.dialog.open(component, {
       width: '40%',
       data: {

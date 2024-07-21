@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
 import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 import { Transaction } from "../model/transaction";
 import { TickerData } from "../model/ticker-data";
@@ -11,35 +11,25 @@ import { Observable } from "rxjs/internal/Observable";
     providedIn: 'root'
 })
 export class DataService {
-    private serviceUrl = 'http://localhost:3000/transaction/';
 
-    //private ticker: string = "SBUX";
-    //tickersData: TickerData[] = jsonData;
+    private transactionsServiceUrl = 'http://localhost:3000/transaction/';
+
+    private transactionsUpdated = new BehaviorSubject<Transaction[]>([]);
+    public currentTransactions = this.transactionsUpdated.asObservable();
 
     constructor(private http: HttpClient) {
-        //this.printJson();
     }
 
-    //public tickerTransactions = new BehaviorSubject<Transaction[]>(this.getTickerData(this.ticker).transactions);
-    //currentTransactions = this.tickerTransactions.asObservable();
-
-    public notifyAboutTransactionsUpdate(ticker: string) {
+    public notifyAboutTransactionsUpdate(transactions: Transaction[]) {
         console.warn('notify about transactions update data service is called')
-        //var transactions = this.getTickerData(ticker).transactions;
-        //console.warn(transactions.length);
-        //this.tickerTransactions.next(transactions);
+        this.transactionsUpdated.next(transactions);
     }
 
     public getTransactions(ticker: string): Observable<Transaction[]> {
         return this.http
-            .get(this.serviceUrl + '?ticker=' + ticker)
+            .get(this.transactionsServiceUrl + '?ticker=' + ticker)
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
-
-    // public getTickerData(ticker: string) {
-    //     var tickerData = this.tickersData.filter(i => i.ticker === ticker);
-    //     return tickerData[0];
-    // }
 
     public updateTransaction(transaction: Transaction): Observable<Transaction> {
 
@@ -55,8 +45,7 @@ export class DataService {
         console.warn(JSON.stringify(transaction));
 
         // update transaction
-        //return this.http.patch<Transaction>(this.serviceUrl + id, JSON.stringify(transaction)).pipe<Transaction>(map((response: any) => response.data));
-        return this.http.patch<Transaction>(this.serviceUrl + id, transaction);
+        return this.http.patch<Transaction>(this.transactionsServiceUrl + id, transaction);
 
     }
 
@@ -66,16 +55,16 @@ export class DataService {
         delete transaction.id;
 
         if (transaction.closeDate === null) {
-        delete transaction.closeDate;
-    }
+            delete transaction.closeDate;
+        }
         console.warn('add transaction: ' + id);
         console.warn(JSON.stringify(transaction));
         // create transaction
-        return this.http.post<Transaction>(this.serviceUrl, transaction).pipe<Transaction>(map((response: any) => response.data));
+        return this.http.post<Transaction>(this.transactionsServiceUrl, transaction).pipe<Transaction>(map((response: any) => response.data));
     }
 
     deleteTransaction(transaction: Transaction): Observable<Transaction>  {
         console.warn('delete transaction: ' + transaction);
-        return this.http.delete<Transaction>(this.serviceUrl + transaction.id).pipe<Transaction>(map((response: any) => response.data));
+        return this.http.delete<Transaction>(this.transactionsServiceUrl + transaction.id).pipe<Transaction>(map((response: any) => response.data));
     }
 }

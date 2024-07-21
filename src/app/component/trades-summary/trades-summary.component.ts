@@ -11,7 +11,7 @@ import { DataService } from 'src/app/service/data.service';
 export class TradesSummaryComponent {
   @Input()
   dataTicker!: string;
-    
+
   putNetPremium!: number;
   callNetPremium!: number;
   totalNetPremium!: number;
@@ -21,20 +21,14 @@ export class TradesSummaryComponent {
   annualizedReturn!: number;
 
   constructor(private dataService: DataService, private ref: ChangeDetectorRef) {
-    
   }
 
   ngOnInit() {
-    console.warn(this.dataTicker)
-    this.dataService.getTransactions(this.dataTicker).subscribe((res: any) => {
-      this.calcSummary(res);
+    // get transactions using BehaviorSubject, not API call
+    this.dataService.currentTransactions.subscribe((data: Transaction[]) => {
+      this.calcSummary(data);
       this.ref.detectChanges();
-
     });
-    //this.dataService.currentTransactions.subscribe(data => {
-    //  this.calcSummary(data);
-    //  this.ref.detectChanges();
-    //})
   }
 
   calcSummary(transactions: Transaction[]) {
@@ -84,11 +78,11 @@ export class TradesSummaryComponent {
     if (date1 > date2) {
       [date1, date2] = [date2, date1]; // Swap dates if needed
     }
-  
+
     const diffInMs = date2.getTime() - date1.getTime(); // Milliseconds difference
     return Math.floor(diffInMs / (1000 * 60 * 60 * 24)); // Convert to days and round down
   }
-  
+
   public getColor(value: number): string {
     if (value === 0)
       return "black";
