@@ -37,12 +37,13 @@ export class TradesSummaryComponent {
 
     this.putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
     this.callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
-    this.totalNetPremium = this.putNetPremium + this.callNetPremium;
+    var totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
+    this.totalNetPremium = this.putNetPremium + this.callNetPremium + totalDividend;
 
-    var openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null);
+    var openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
 
-    this.risk = openContracts.reduce((sum, current) => sum + current.strike * current.quantity * 100, 0);
-    this.breakEven = (this.risk - this.totalNetPremium) / openContracts.reduce((sum, current) => sum + current.quantity * 100, 0);
+    this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0);
+    this.breakEven = (this.risk - this.totalNetPremium) / openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0);
 
     var openDate = this.earliestOpenDate(transactions)?.openDate!;
     var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
@@ -62,7 +63,7 @@ export class TradesSummaryComponent {
 
   latestExpirationDate(transactions: Transaction[]) {
     return transactions.reduce((earliest, current) => {
-      return earliest ? (new Date(earliest.expiration).getTime() > new Date(current.expiration).getTime() ? earliest : current) : current;
+      return earliest ? (new Date(earliest.expiration!).getTime() > new Date(current.expiration!).getTime() ? earliest : current) : current;
     }, null as Transaction | null);
   }
 

@@ -16,6 +16,7 @@ export class TransactionFormComponent implements OnInit{
   inputData: any;
   editData: any;
   transactionForm : any;
+  selectedType: any;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder) {
 

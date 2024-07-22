@@ -1,40 +1,45 @@
 <h2 mat-dialog-title>{{inputData.title}} Transaction</h2>
     <mat-dialog-content>
         <form [formGroup]="transactionForm" (ngSubmit)="saveTransaction()">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" *ngIf="selectedType !== 'interest'">
                 <mat-label>Ticker</mat-label>
                 <input matInput formControlName="ticker">
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
                 <mat-label>Side</mat-label>
                 <mat-select formControlName="side">
-                  <mat-option value="buy-to-open">Buy to Open</mat-option>
-                  <mat-option value="sell-to-open">Sell to Open</mat-option>
-                  <mat-option value="buy-to-close">Buy to Close</mat-option>
-                  <mat-option value="sell-to-close">Sell to Close</mat-option>
+                  <mat-option value="buy-to-open" *ngIf="selectedType === 'put' || selectedType === 'call'">Buy to Open</mat-option>
+                  <mat-option value="sell-to-open" *ngIf="selectedType === 'put' || selectedType === 'call'">Sell to Open</mat-option>
+                  <mat-option value="buy-to-close" *ngIf="selectedType === 'put' || selectedType === 'call'">Buy to Close</mat-option>
+                  <mat-option value="sell-to-close" *ngIf="selectedType === 'put' || selectedType === 'call'">Sell to Close</mat-option>
+                  <mat-option value="buy" *ngIf="selectedType === 'stock'">Buy</mat-option>
+                  <mat-option value="sell" *ngIf="selectedType === 'stock'">Sell</mat-option>
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field floatLabel="always" appearance="outline">
+            <mat-form-field floatLabel="always" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
                 <mat-label>Quantity</mat-label>
                 <input matInput type="number" placeholder="1" formControlName="quantity"/>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-                <mat-label>Call / Put</mat-label>
-                <mat-select formControlName="type">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type" [(value)]="selectedType">
                   <mat-option value="call">Call</mat-option>
                   <mat-option value="put">Put</mat-option>
+                  <mat-option value="stock">Stock</mat-option>
+                  <mat-option value="dividend">Dividend</mat-option>
+                  <mat-option value="interest">Interest</mat-option>
                 </mat-select>
             </mat-form-field>
             
-            <mat-form-field floatLabel="always" appearance="outline">
+            <mat-form-field floatLabel="always" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call'">
                 <mat-label>Strike</mat-label>
                 <input matInput type="number" placeholder="0" formControlName="strike"/>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call'">
                 <mat-label>Expiration</mat-label>
                 <input matInput [matDatepicker]="expirationDatePicker" formControlName="expiration">
                 <mat-hint>MM/DD/YYYY</mat-hint>

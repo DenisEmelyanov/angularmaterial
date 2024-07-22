@@ -40,6 +40,12 @@ export class DataService {
         //  if (transaction.closeDate === null) {
         //       transaction.closeDate = '';
         // }
+        if (transaction.type === 'dividend') {
+            delete transaction.side;
+            delete transaction.strike;
+            delete transaction.quantity;
+            delete transaction.expiration;
+        }
 
         console.warn('update transaction: ' + id);
         console.warn(JSON.stringify(transaction));
@@ -57,6 +63,14 @@ export class DataService {
         if (transaction.closeDate === null) {
             delete transaction.closeDate;
         }
+
+        if (transaction.type === 'dividend') {
+            delete transaction.side;
+            delete transaction.strike;
+            delete transaction.quantity;
+            delete transaction.expiration;
+        }
+
         console.warn('add transaction: ' + id);
         console.warn(JSON.stringify(transaction));
         // create transaction
