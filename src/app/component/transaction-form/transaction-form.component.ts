@@ -63,11 +63,11 @@ export class TransactionFormComponent implements OnInit {
   }
 
   saveTransaction() {
-    this.closeForm();
+    this.ref.close(this.transactionForm.value);
   }
 
   closeForm() {
-    this.ref.close(this.transactionForm.value);
+    this.ref.close(null);
   }
 
   //Sell Open 1 SBUX Jul 19 '24 $75 Put Limit Day
