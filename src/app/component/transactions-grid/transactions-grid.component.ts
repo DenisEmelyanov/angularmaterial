@@ -81,9 +81,10 @@ export class TransactionsGridComponent {
     });
 
     _transactionForm.afterClosed().subscribe(transaction => {
-      console.log('form submitted')
-      console.log(transaction)
+
       if (transaction !== null) {
+        console.log('form submitted')
+        console.log(transaction)
         if (transaction.id !== -1) {
           this.dataService.updateTransaction(transaction).subscribe((res: any) => {
             console.warn(res);
@@ -94,8 +95,12 @@ export class TransactionsGridComponent {
             console.warn(res);
           });
         }
+        this.refreshTable();
       }
-      this.refreshTable();
+      else {
+        console.log('form cancelled')
+      }
+
     })
   }
 
