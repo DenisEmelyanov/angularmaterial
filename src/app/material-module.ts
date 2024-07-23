@@ -20,6 +20,7 @@ import {MatRadioModule} from "@angular/material/radio"
 import {MatCheckboxModule} from "@angular/material/checkbox"
 import {MatDialogModule} from "@angular/material/dialog"
 import {MatChipsModule} from "@angular/material/chips"
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
 exports:[
@@ -43,7 +44,8 @@ exports:[
     MatRadioModule,
     MatCheckboxModule,
     MatDialogModule,
-    MatChipsModule
+    MatChipsModule,
+    MatTabsModule
 ]
 })
 export class MaterialModule{}

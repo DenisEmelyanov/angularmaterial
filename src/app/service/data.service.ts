@@ -14,15 +14,19 @@ export class DataService {
 
     private transactionsServiceUrl = 'http://localhost:3000/transaction/';
 
-    private transactionsUpdated = new BehaviorSubject<Transaction[]>([]);
+    private transactionsUpdated = new BehaviorSubject<any>([]);
     public currentTransactions = this.transactionsUpdated.asObservable();
 
     constructor(private http: HttpClient) {
     }
 
-    public notifyAboutTransactionsUpdate(transactions: Transaction[]) {
+    public notifyAboutTransactionsUpdate(ticker: string, transactions: Transaction[]) {
         console.warn('notify about transactions update data service is called')
-        this.transactionsUpdated.next(transactions);
+        const data: object = {
+            ticker: ticker,
+            transactions: transactions
+          };
+        this.transactionsUpdated.next(data);
     }
 
     public getTransactions(ticker: string): Observable<Transaction[]> {

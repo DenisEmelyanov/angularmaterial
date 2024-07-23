@@ -9,20 +9,13 @@ import { DataService } from 'src/app/service/data.service';
 })
 
 export class TabContentComponent {
-  @Output()
-  dataUpdated = new EventEmitter<Transaction[]>();
 
-  dataTicker: string = 'ASO';
   transactionsList!: Transaction[];
+  items = ['ASO', 'SBUX'];
 
   constructor(private dataService: DataService) {
   }
 
   ngOnInit() {
-  }
-
-  refreshData() {
-    console.warn('table data is updated')
-    this.dataUpdated.emit(this.transactionsList);
   }
 }

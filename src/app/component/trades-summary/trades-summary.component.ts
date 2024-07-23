@@ -27,14 +27,16 @@ export class TradesSummaryComponent {
 
   ngOnInit() {
     // get transactions using BehaviorSubject, not API call
-    this.dataService.currentTransactions.subscribe((data: Transaction[]) => {
-      this.calcSummary(data);
-      this.ref.detectChanges();
+    this.dataService.currentTransactions.subscribe((data: any) => {
+      if (data.ticker === this.dataTicker) {
+        this.calcSummary(data.transactions);
+        this.ref.detectChanges();
+      }
     });
   }
 
   calcSummary(transactions: Transaction[]) {
-    console.warn('calc summary is called');
+    console.warn('calc summary is called: ' + this.dataTicker);
     console.warn(transactions.length);
 
     this.putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);

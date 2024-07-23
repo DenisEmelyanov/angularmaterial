@@ -39,7 +39,7 @@ export class TransactionsGridComponent {
       console.warn(res);
       this.dataSource = res;
 
-      this.dataService.notifyAboutTransactionsUpdate(res);
+      this.dataService.notifyAboutTransactionsUpdate(this.dataTicker, res);
     });
     //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
