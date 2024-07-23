@@ -19,6 +19,7 @@ import {MatNativeDateModule} from "@angular/material/core"
 import {MatRadioModule} from "@angular/material/radio"
 import {MatCheckboxModule} from "@angular/material/checkbox"
 import {MatDialogModule} from "@angular/material/dialog"
+import {MatChipsModule} from "@angular/material/chips"
 
 @NgModule({
 exports:[
@@ -41,7 +42,8 @@ exports:[
     MatNativeDateModule,
     MatRadioModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatChipsModule
 ]
 })
 export class MaterialModule{}

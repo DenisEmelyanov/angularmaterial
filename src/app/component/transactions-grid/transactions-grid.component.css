@@ -1,3 +1,9 @@
 mat-card-title {
     text-align: left; margin-left: 0%;
 }
+
+mat-chip.assigned-chip {
+    font-size: xx-small;
+    background-color: lightgoldenrodyellow;  /* Change this to your desired color */
+    color: rgb(201, 19, 19);  /* Adjust text color for contrast */
+  }

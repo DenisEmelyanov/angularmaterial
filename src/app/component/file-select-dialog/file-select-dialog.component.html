@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Select File</h1>
+<mat-dialog-content>
+    <p>Please select a file to open:</p>
+    <input type="file" (change)="onFileSelected($event)">
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button type="submit" (click)="onSubmit()">Upload</button>
+    <a (click)="onNoClick()" mat-raised-button color="warn">Close</a>
+</mat-dialog-actions>
