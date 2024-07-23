@@ -29,7 +29,8 @@ export class TransactionFormComponent implements OnInit {
       expiration: this.formBuilder.control(null),
       premium: this.formBuilder.control(''),
       openDate: this.formBuilder.control(null),
-      closeDate: this.formBuilder.control(null)
+      closeDate: this.formBuilder.control(null),
+      assigned: this.formBuilder.control(false)
     });
   }
 
@@ -58,7 +59,8 @@ export class TransactionFormComponent implements OnInit {
       expiration: this.editData.expiration,
       premium: this.editData.premium,
       openDate: this.editData.openDate,
-      closeDate: this.editData.closeDate
+      closeDate: this.editData.closeDate,
+      assigned: this.editData.assigned
     })
   }
 

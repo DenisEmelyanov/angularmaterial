@@ -53,7 +53,7 @@ export class TradesSummaryComponent {
 
     var openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
 
-    this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + this.pricePerShare * 100;
+    this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + this.pricePerShare * this.sharesQty;
     this.breakEven = (this.risk - this.totalNetPremium) / (openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + this.sharesQty);
 
     var openDate = this.earliestOpenDate(transactions)?.openDate!;

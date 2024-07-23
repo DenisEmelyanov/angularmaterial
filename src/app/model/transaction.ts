@@ -9,6 +9,7 @@ export interface Transaction {
     premium: number;
     openDate: string;
     closeDate?: string | null;
+    assigned: boolean;
 }
 
 enum TransactionType {

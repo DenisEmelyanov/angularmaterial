@@ -66,7 +66,8 @@ export class TransactionsGridComponent {
         expiration: '',
         quantity: 0,
         premium: 0,
-        openDate: ''
+        openDate: '',
+        assigned: false
       }, 'Add', TransactionFormComponent);
   }
 
