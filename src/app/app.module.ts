@@ -27,6 +27,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { CustomCurrencyPipe } from './pipes/customCurrency-pipe';
 import { TradesSummaryComponent } from './component/trades-summary/trades-summary.component';
 import { FileSelectDialogComponent } from './component/file-select-dialog/file-select-dialog.component';
+import { SummaryGridComponent } from './component/summary-grid/summary-grid.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { FileSelectDialogComponent } from './component/file-select-dialog/file-s
     TabContentComponent,
     TradesSummaryComponent,
     FileSelectDialogComponent,
+    SummaryGridComponent,
   ],
   imports: [
     BrowserModule,

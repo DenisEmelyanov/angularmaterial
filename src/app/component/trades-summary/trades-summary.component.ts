@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { TickerData } from 'src/app/model/ticker-data';
 import { Transaction } from 'src/app/model/transaction';
 import { DataService } from 'src/app/service/data.service';
 
@@ -8,9 +9,9 @@ import { DataService } from 'src/app/service/data.service';
   styleUrls: ['./trades-summary.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TradesSummaryComponent {
+export class TradesSummaryComponent implements OnInit{
   @Input()
-  dataTicker!: string;
+  dataTicker!: TickerData;
 
   putNetPremium!: number;
   callNetPremium!: number;
@@ -26,9 +27,10 @@ export class TradesSummaryComponent {
   }
 
   ngOnInit() {
+
     // get transactions using BehaviorSubject, not API call
     this.dataService.currentTransactions.subscribe((data: any) => {
-      if (data.ticker === this.dataTicker) {
+      if (data.ticker === this.dataTicker.ticker) {
         this.calcSummary(data.transactions);
         this.ref.detectChanges();
       }
@@ -48,17 +50,24 @@ export class TradesSummaryComponent {
     const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
     this.sharesQty = boughtSharesQty - soldSharesQty;
     const sharesTrasactionsSum = transactions.filter(t => t.type === 'stock').reduce((sum, current) => sum + current.premium, 0);
-    this.pricePerShare =  sharesTrasactionsSum / this.sharesQty;
+    if (this.sharesQty !== 0) {
+      this.pricePerShare =  sharesTrasactionsSum / this.sharesQty;
+    }
+    else {
+      this.pricePerShare =  0;
+    }
+
     if (this.pricePerShare < 0) {
       this.pricePerShare = this.pricePerShare * -1;
     }
 
     var openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
+    var optionsOnly = transactions.filter(t => t.type === 'put' || t.type === 'call');
 
     this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + this.pricePerShare * this.sharesQty;
     this.breakEven = (this.risk - this.totalNetPremium) / (openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + this.sharesQty);
 
-    var openDate = this.earliestOpenDate(transactions)?.openDate!;
+    var openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
     var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
     //console.warn(openDate);
     //console.warn(expirationDate);

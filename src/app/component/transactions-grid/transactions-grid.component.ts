@@ -8,6 +8,7 @@ import { Transaction } from 'src/app/model/transaction';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 import { DataService } from 'src/app/service/data.service';
 import { FileSelectDialogComponent } from '../file-select-dialog/file-select-dialog.component';
+import { TickerData } from 'src/app/model/ticker-data';
 
 
 @Component({
@@ -18,7 +19,7 @@ import { FileSelectDialogComponent } from '../file-select-dialog/file-select-dia
 
 export class TransactionsGridComponent {
   @Input()
-  dataTicker!: string;
+  dataTicker!: TickerData;
 
   dataSource: any;
 
@@ -35,11 +36,11 @@ export class TransactionsGridComponent {
   }
 
   refreshTable() {
-    this.dataService.getTransactions(this.dataTicker).subscribe((res: any) => {
+    this.dataService.getTransactions(this.dataTicker.ticker).subscribe((res: any) => {
       console.warn(res);
       this.dataSource = res;
 
-      this.dataService.notifyAboutTransactionsUpdate(this.dataTicker, res);
+      this.dataService.notifyAboutTransactionsUpdate(this.dataTicker.ticker, res);
     });
     //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
@@ -64,7 +65,7 @@ export class TransactionsGridComponent {
     this.openTransactionForm(
       {
         id: -1,
-        ticker: this.dataTicker,
+        ticker: this.dataTicker.ticker,
         side: '',
         type: '',
         strike: 0,

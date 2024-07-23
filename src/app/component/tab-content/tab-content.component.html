@@ -1,21 +1,21 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
     <mat-tab label="SUMMARY">
         <div class="grid-container">
-            grid table
+            <app-summary-grid [tickersData]="tickersData"></app-summary-grid>
         </div>
     </mat-tab>
-    <div *ngFor="let ticker of items">
-        <mat-tab label="{{ticker}}">
+    <div *ngFor="let tickerData of tickersData">
+        <mat-tab label="{{tickerData.ticker}}">
             <div class="grid-container">
                 <mat-grid-list cols="6" rowHeight="1200px">
                     <mat-grid-tile [colspan]="2" [rowspan]="1">
                         <div class="mat-grid-tile-content">
-                            <app-trades-summary [dataTicker]="ticker"></app-trades-summary>
+                            <app-trades-summary [dataTicker]="tickerData"></app-trades-summary>
                         </div>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="3" [rowspan]="2">
                         <div class="mat-grid-tile-content">
-                            <app-transactions-grid [dataTicker]="ticker"></app-transactions-grid>
+                            <app-transactions-grid [dataTicker]="tickerData"></app-transactions-grid>
                         </div>
                     </mat-grid-tile>
                 </mat-grid-list>
