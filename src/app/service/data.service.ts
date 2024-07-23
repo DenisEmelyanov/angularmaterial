@@ -40,6 +40,11 @@ export class DataService {
         //  if (transaction.closeDate === null) {
         //       transaction.closeDate = '';
         // }
+        if (transaction.type === 'stock') {
+            delete transaction.strike;
+            delete transaction.expiration;
+        }
+
         if (transaction.type === 'dividend') {
             delete transaction.side;
             delete transaction.strike;
@@ -62,6 +67,11 @@ export class DataService {
 
         if (transaction.closeDate === null) {
             delete transaction.closeDate;
+        }
+
+        if (transaction.type === 'stock') {
+            delete transaction.strike;
+            delete transaction.expiration;
         }
 
         if (transaction.type === 'dividend') {

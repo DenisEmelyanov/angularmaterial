@@ -21,6 +21,16 @@
             </mat-list-item>
             <mat-divider></mat-divider>
             <mat-list-item>
+                <mat-label>OPEN SHARES QUANTITY: </mat-label>
+                <span>{{sharesQty}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-label>PRICE PER SHARE: </mat-label>
+                <span>{{pricePerShare | currency: 'USD'}}</span> 
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
                 <mat-label>RISK: </mat-label>
                 <span>{{risk | currency: 'USD'}}</span> 
             </mat-list-item>

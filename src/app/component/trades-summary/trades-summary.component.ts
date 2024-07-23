@@ -15,6 +15,8 @@ export class TradesSummaryComponent {
   putNetPremium!: number;
   callNetPremium!: number;
   totalNetPremium!: number;
+  sharesQty!: number;
+  pricePerShare!: number;
   risk!: number;
   breakEven!: number;
   days!: number;
@@ -40,10 +42,19 @@ export class TradesSummaryComponent {
     var totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
     this.totalNetPremium = this.putNetPremium + this.callNetPremium + totalDividend;
 
+    const boughtSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'buy').reduce((sum, current) => sum + current.quantity!, 0);
+    const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
+    this.sharesQty = boughtSharesQty - soldSharesQty;
+    const sharesTrasactionsSum = transactions.filter(t => t.type === 'stock').reduce((sum, current) => sum + current.premium, 0);
+    this.pricePerShare =  sharesTrasactionsSum / this.sharesQty;
+    if (this.pricePerShare < 0) {
+      this.pricePerShare = this.pricePerShare * -1;
+    }
+
     var openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
 
-    this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0);
-    this.breakEven = (this.risk - this.totalNetPremium) / openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0);
+    this.risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + this.pricePerShare * 100;
+    this.breakEven = (this.risk - this.totalNetPremium) / (openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + this.sharesQty);
 
     var openDate = this.earliestOpenDate(transactions)?.openDate!;
     var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
