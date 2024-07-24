@@ -9,7 +9,7 @@ import { DataService } from 'src/app/service/data.service';
   styleUrls: ['./trades-summary.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TradesSummaryComponent implements OnInit{
+export class TradesSummaryComponent implements OnInit {
   @Input()
   dataTicker!: TickerData;
 
@@ -27,7 +27,6 @@ export class TradesSummaryComponent implements OnInit{
   }
 
   ngOnInit() {
-
     // get transactions using BehaviorSubject, not API call
     this.dataService.currentTransactions.subscribe((data: any) => {
       if (data.ticker === this.dataTicker.ticker) {
@@ -38,7 +37,7 @@ export class TradesSummaryComponent implements OnInit{
   }
 
   calcSummary(transactions: Transaction[]) {
-    console.warn('calc summary is called: ' + this.dataTicker);
+    console.warn('calc summary is called: ' + this.dataTicker.ticker);
     console.warn(transactions.length);
 
     this.putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);

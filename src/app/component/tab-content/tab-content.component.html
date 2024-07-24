@@ -1,10 +1,12 @@
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight
+[selectedIndex]="tabIndex"
+               (selectedIndexChange)="tabIndex">
     <mat-tab label="SUMMARY">
         <div class="grid-container">
-            <app-summary-grid [tickersData]="tickersData"></app-summary-grid>
+            <app-summary-grid [tickersData]="tickersData" (detailsClickEvent)="onAddingTab($event)"></app-summary-grid>
         </div>
     </mat-tab>
-    <div *ngFor="let tickerData of tickersData">
+    <div *ngFor="let tickerData of openTabs">
         <mat-tab label="{{tickerData.ticker}}">
             <div class="grid-container">
                 <mat-grid-list cols="6" rowHeight="1200px">
