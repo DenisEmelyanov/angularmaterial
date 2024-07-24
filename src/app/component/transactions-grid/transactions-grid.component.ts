@@ -115,7 +115,7 @@ export class TransactionsGridComponent {
       data: {
         title: title,
         transaction: transaction,
-        ticker: this.dataTicker
+        ticker: this.dataTicker.ticker
       }
     });
 
