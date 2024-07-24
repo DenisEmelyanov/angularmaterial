@@ -17,20 +17,50 @@ export class DataService {
     private dataUpdated = new BehaviorSubject<any>([]);
     public currentData = this.dataUpdated.asObservable();
 
-    public tickersData: Record<string, TickerData> = {
-        'ASO': {
-            ticker: 'ASO',
-            description: 'ACADEMY SPORTS & OUTDOORS INC COM',
-            transactions: []
-        },
-        'SBUX': {
-            ticker: 'SBUX',
-            description: 'STARBUCKS CORP COM',
-            transactions: []
-        }
+    private tickersDescription: Record<string, string> = {
+        'ASO': 'ACADEMY SPORTS & OUTDOORS INC COM',
+        'SBUX': 'STARBUCKS CORP COM',
     };
 
-    public getTickerDataTransactions(ticker: string) {
+    public tickersData: Record<string, TickerData> = {};
+
+    constructor(private http: HttpClient) {
+        this.getAllTransactionsTickers().subscribe((res: any) => {
+            var tickers = Array.from(res);
+            console.log('get the following tickers: ' + tickers);
+            tickers.forEach((ticker: any) => {
+                this.tickersData[ticker] = {
+                    ticker: ticker,
+                    description: this.tickersDescription[ticker]
+                };
+            });
+
+
+            Object.keys(this.tickersData).forEach(t => {
+                console.warn('update data for :' + t);
+                this.updateTickerData(t);
+            });
+            console.warn(this.tickersData);
+        });
+
+    }
+
+    public getAllTransactionsTickers() {
+        return this.http
+            .get(this.transactionsServiceUrl + 'tickers')
+            .pipe(map((response: any) => response.data));
+    }
+
+    public notifyAboutTransactionsUpdate(ticker: string, transactions: Transaction[]) {
+        console.warn('notify about transactions update data service is called: ' + ticker)
+        const data: object = {
+            ticker: ticker,
+            transactions: transactions
+        };
+        this.dataUpdated.next(data);
+    }
+
+    public updateTickerData(ticker: string) {
         this.getTransactions(ticker).subscribe((res: any) => {
             console.warn('update ticker data is called: ' + ticker);
             this.tickersData[ticker].transactions = res;
@@ -55,28 +85,28 @@ export class DataService {
         const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
         const sharesQty = boughtSharesQty - soldSharesQty;
         const sharesTrasactionsSum = transactions.filter(t => t.type === 'stock').reduce((sum, current) => sum + current.premium, 0);
-        
-        var pricePerShare =  0;
+
+        var pricePerShare = 0;
         if (sharesQty !== 0) {
-           pricePerShare =  sharesTrasactionsSum / sharesQty;
+            pricePerShare = sharesTrasactionsSum / sharesQty;
         }
-    
+
         if (pricePerShare < 0) {
-          pricePerShare = pricePerShare * -1;
+            pricePerShare = pricePerShare * -1;
         }
-    
+
         const openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
         const optionsOnly = transactions.filter(t => t.type === 'put' || t.type === 'call');
-    
+
         const risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
         const breakEven = (risk - totalNetPremium) / (openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty);
-    
+
         const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
         const expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
         //console.warn(openDate);
         //console.warn(expirationDate);
         const days = this.daysBetween(openDate, expirationDate);
-    
+
         const period = days === 0 ? 1 : days;
         const annualizedReturn = (totalNetPremium / risk) * (365 / period);
 
@@ -122,22 +152,6 @@ export class DataService {
 
         const diffInMs = date2.getTime() - date1.getTime(); // Milliseconds difference
         return Math.floor(diffInMs / (1000 * 60 * 60 * 24)); // Convert to days and round down
-    }
-
-    constructor(private http: HttpClient) {
-        Object.keys(this.tickersData).forEach(ticker => {
-            this.getTickerDataTransactions(ticker);
-            this.getTickerDataSummary(ticker);
-        });
-    }
-
-    public notifyAboutTransactionsUpdate(ticker: string, transactions: Transaction[]) {
-        console.warn('notify about transactions update data service is called: ' + ticker)
-        const data: object = {
-            ticker: ticker,
-            transactions: transactions
-        };
-        this.dataUpdated.next(data);
     }
 
     public getTransactions(ticker: string): Observable<Transaction[]> {

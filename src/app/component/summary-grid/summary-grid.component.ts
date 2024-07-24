@@ -16,7 +16,7 @@ export class SummaryGridComponent {
 
   dataSource: any;
 
-  displayedColumns: string[] = ["ticker", "description", "risk", "totalNetPremium", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["ticker", "description", "totalNetPremium", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -33,6 +33,7 @@ export class SummaryGridComponent {
           description: data[ticker].description,
           risk: data[ticker].summary!.risk,
           totalNetPremium: data[ticker].summary!.totalNetPremium,
+          breakEven: data[ticker].summary!.breakEven,
           annualizedReturn: data[ticker].summary!.annualizedReturn
         });
       })

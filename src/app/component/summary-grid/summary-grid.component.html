@@ -27,6 +27,11 @@
                 <td mat-cell *matCellDef="let element">{{element.risk | currency: 'USD'}}</td>
             </ng-container>
 
+            <ng-container matColumnDef="breakEven">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Break Even</th>
+                <td mat-cell *matCellDef="let element">{{element.breakEven | currency: 'USD'}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="annualizedReturn">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Annualized Return</th>
                 <td mat-cell *matCellDef="let element">{{element.annualizedReturn | percent}}</td>
