@@ -95,14 +95,18 @@ export class DataService {
             pricePerShare = pricePerShare * -1;
         }
 
-        const openContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
         const optionsOnly = transactions.filter(t => t.type === 'put' || t.type === 'call');
+        // get open contracts, if no, then get transactions with latest close date
+        var riskContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
+        if (riskContracts.length === 0) {
+            riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
+        }
 
-        const risk = openContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
-        const breakEven = (risk - totalNetPremium) / (openContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty);
+        const risk = riskContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
+        const breakEven = (risk - totalNetPremium) / (riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty);
 
         const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
-        const expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
+        const expirationDate = this.latestExpirationDate(riskContracts)?.expiration!;
         //console.warn(openDate);
         //console.warn(expirationDate);
         const days = this.daysBetween(openDate, expirationDate);
@@ -128,6 +132,20 @@ export class DataService {
     private earliestOpenDate(transactions: Transaction[]) {
         return transactions.reduce((earliest, current) => {
             return earliest ? (new Date(earliest.openDate).getTime() < new Date(current.openDate).getTime() ? earliest : current) : current;
+        }, null as Transaction | null);
+    }
+
+    private getTransactionsWithLatestCloseDate(transactions: Transaction[]): Transaction[] {
+        // Find the maximum close date timestamp
+        const latestTimestamp = Math.max(...transactions.map(t => new Date(t.closeDate!).getTime()));
+
+        // Filter transactions with the latest close date
+        return transactions.filter(t => new Date(t.closeDate!).getTime() === latestTimestamp);
+    }
+
+    private latestCloseDate(transactions: Transaction[]) {
+        return transactions.reduce((latest, current) => {
+            return latest ? (new Date(latest.closeDate!).getTime() > new Date(current.closeDate!).getTime() ? latest : current) : current;
         }, null as Transaction | null);
     }
 
