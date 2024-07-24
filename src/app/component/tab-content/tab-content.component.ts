@@ -13,23 +13,14 @@ import { SummaryGridComponent } from '../summary-grid/summary-grid.component';
 //https://stackoverflow.com/questions/37587732/how-to-call-another-components-function-in-angular2
 export class TabContentComponent {
   
-  tickersData!: TickerData[];
-  openTabs: any= [];
-  tabIndex: any = 0;
+  openTabs: any = [];
+  selectedTabIndex: any = 0;
 
   constructor(private dataService: DataService) {
   }
 
   ngOnInit() {
-    this.tickersData = [
-      {
-        ticker: 'ASO',
-        description: 'ACADEMY SPORTS & OUTDOORS INC COM'
-      },
-      {
-        ticker: 'SBUX',
-        description: 'STARBUCKS CORP COM'
-      }];
+
   }
 
   onAddingTab(tickerData: any) {
@@ -38,10 +29,31 @@ export class TabContentComponent {
 
   addTab(tickerData: TickerData, selectAfterAdding: boolean) {
     //TODO:check if tab is already added
-    this.openTabs.push(tickerData);
-
-    if (selectAfterAdding) {
-      this.tabIndex = this.openTabs.length;
+    var index = this.findTabIndex(this.openTabs, "ticker", tickerData.ticker);
+    console.warn('tab index: ' + index);
+    if (index === -1) {
+      this.openTabs.push(tickerData);
+      if (selectAfterAdding) {
+        this.selectedTabIndex = this.openTabs.length;
+      }
     }
+    else {
+      index = index + 1;
+      console.warn(tickerData.ticker + ' tab is already opened. Index: ' + index);
+      console.warn(this.openTabs);
+      console.warn(this.selectedTabIndex);
+      this.selectedTabIndex = index;
+    }
+  }
+
+  removeTab(tickerData: TickerData) {
+    const index = this.findTabIndex(this.openTabs, "ticker", tickerData.ticker);
+    this.openTabs.splice(index, 1);
+    // select summary tab
+    this.selectedTabIndex = 0;
+  }
+
+  findTabIndex<T>(array: T[], property: keyof T, value: T[keyof T]): number {
+    return array.findIndex(item => item[property] === value);
   }
 }

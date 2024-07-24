@@ -80,8 +80,10 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Action</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="editTransaction(element)">Edit</button>
-          <button mat-raised-button color="warn" (click)="deleteTransaction(element)">Delete</button>
+          <mat-icon aria-hidden="false" (click)="editTransaction(element)" fontIcon="edit"></mat-icon>
+          <mat-icon aria-hidden="false" (click)="deleteTransaction(element)" fontIcon="delete"></mat-icon>
+          <!--<button mat-raised-button color="primary" (click)="editTransaction(element)">Edit</button>
+          <button mat-raised-button color="warn" (click)="deleteTransaction(element)">Delete</button>-->
         </td>
       </ng-container>
 

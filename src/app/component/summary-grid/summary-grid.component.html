@@ -17,6 +17,21 @@
                 <td mat-cell *matCellDef="let element">{{element.description}}</td>
             </ng-container>
 
+            <ng-container matColumnDef="totalNetPremium">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
+                <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.totalNetPremium )}">{{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="risk">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Risk</th>
+                <td mat-cell *matCellDef="let element">{{element.risk | currency: 'USD'}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="annualizedReturn">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Annualized Return</th>
+                <td mat-cell *matCellDef="let element">{{element.annualizedReturn | percent}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef> Action</th>
                 <td mat-cell *matCellDef="let element">
