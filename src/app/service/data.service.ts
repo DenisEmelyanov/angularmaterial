@@ -4,7 +4,6 @@ import { Transaction } from "../model/transaction";
 import { TickerData } from "../model/ticker-data";
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import jsonData from 'src/app/data/data.json';
 import { Observable } from "rxjs/internal/Observable";
 import { SummaryData } from "../model/summary-data";
 
