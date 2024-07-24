@@ -97,19 +97,24 @@ export class DataService {
 
         const optionsOnly = transactions.filter(t => t.type === 'put' || t.type === 'call');
         // get open contracts, if no, then get transactions with latest close date
-        var riskContracts = transactions.filter(t => t.closeDate === undefined || t.closeDate === null && (t.type === 'put' || t.type === 'call'));
-        if (riskContracts.length === 0) {
-            riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
+        const openContracts = optionsOnly.filter(t => t.closeDate === undefined || t.closeDate === null);
+        var riskContracts = openContracts;
+        if (openContracts.length === 0) {
+            var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
 
         const risk = riskContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
         const breakEven = (risk - totalNetPremium) / (riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty);
 
         const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
-        const expirationDate = this.latestExpirationDate(riskContracts)?.expiration!;
-        //console.warn(openDate);
-        //console.warn(expirationDate);
-        const days = this.daysBetween(openDate, expirationDate);
+
+        var expirationDate = this.latestExpirationDate(riskContracts)?.expiration!;
+        if (openContracts.length === 0) {
+            expirationDate = this.latestCloseDate(riskContracts)?.closeDate!
+        }
+        console.warn(openDate);
+        console.warn(expirationDate);
+        const days = this.daysDifference(openDate, expirationDate);
 
         const period = days === 0 ? 1 : days;
         const annualizedReturn = (totalNetPremium / risk) * (365 / period);
@@ -155,21 +160,23 @@ export class DataService {
         }, null as Transaction | null);
     }
 
-    private daysBetween(dateStr1: string, dateStr2: string): number {
-        var date1: Date = new Date(dateStr1)
-        var date2: Date = new Date(dateStr2)
-        if (date1 === undefined || date2 === undefined)
-            return 0;
+    daysDifference(date1: string, date2: string): number {
+        // Create Date objects from the strings
+        const dateObject1 = new Date(date1);
+        const dateObject2 = new Date(date2);
 
-        date2 = (date2.getTime() < new Date().getTime()) ? new Date() : date2;
-
-        // Ensure date1 is before date2 for consistent calculation
-        if (date1 > date2) {
-            [date1, date2] = [date2, date1]; // Swap dates if needed
+        // Handle invalid dates gracefully (optional)
+        if (isNaN(dateObject1.getTime()) || isNaN(dateObject2.getTime())) {
+            return -1; // Or throw an error if you prefer
         }
 
-        const diffInMs = date2.getTime() - date1.getTime(); // Milliseconds difference
-        return Math.floor(diffInMs / (1000 * 60 * 60 * 24)); // Convert to days and round down
+        // Get the difference in milliseconds
+        const timeDiff = Math.abs(dateObject1.getTime() - dateObject2.getTime());
+
+        // Convert milliseconds to days and round down to the nearest whole day
+        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+        return daysDiff;
     }
 
     public getTransactions(ticker: string): Observable<Transaction[]> {
