@@ -21,7 +21,18 @@ export class DataService {
         'ASO': 'ACADEMY SPORTS & OUTDOORS INC COM',
         'SBUX': 'STARBUCKS CORP COM',
         'NVDA': 'NVIDIA CORPORATION COM',
-        'CVS' : 'CVS HEALTH CORP COM'
+        'CVS' : 'CVS HEALTH CORP COM',
+        'DOCU': 'DOCUSIGN INC COM',
+        'SSRM': 'SSR MINING IN COM',
+        'INTC': 'INTEL CORP COM',
+        'PZZA': 'PAPA JOHNS INTL INC COM',
+        'TSLA': 'TESLA INC COM',
+        'NEM': 'NEWMONT CORP COM',
+        'GOOG': 'ALPHABET INC CAP STK CL C',
+        'SNAP': 'SNAP INC CL A',
+        'PYPL': 'PAYPAL HLDGS INC COM',
+        'AMZN': 'AMAZON COM INC COM',
+        'SQ': 'BLOCK INC CL A'
     };
 
     public tickersData: Record<string, TickerData> = {};
