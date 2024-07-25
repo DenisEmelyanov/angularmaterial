@@ -20,6 +20,8 @@ export class DataService {
     private tickersDescription: Record<string, string> = {
         'ASO': 'ACADEMY SPORTS & OUTDOORS INC COM',
         'SBUX': 'STARBUCKS CORP COM',
+        'NVDA': 'NVIDIA CORPORATION COM',
+        'CVS' : 'CVS HEALTH CORP COM'
     };
 
     public tickersData: Record<string, TickerData> = {};
@@ -79,12 +81,15 @@ export class DataService {
         const putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
         const callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
         const totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
-        const totalNetPremium = putNetPremium + callNetPremium + totalDividend;
-
+        
         const boughtSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'buy').reduce((sum, current) => sum + current.quantity!, 0);
         const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
         const sharesQty = boughtSharesQty - soldSharesQty;
+
         const sharesTrasactionsSum = transactions.filter(t => t.type === 'stock').reduce((sum, current) => sum + current.premium, 0);
+        const sharesClosedTransactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate !== null).reduce((sum, current) => sum + current.premium, 0);
+        
+        const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;
 
         var pricePerShare = 0;
         if (sharesQty !== 0) {
@@ -124,9 +129,12 @@ export class DataService {
             callNetPremium: callNetPremium,
             totalNetPremium: totalNetPremium,
             sharesQty: sharesQty,
+            sharesTotalNetPremium: sharesClosedTransactionsPremium,
             pricePerShare: pricePerShare,
             risk: risk,
             breakEven: breakEven,
+            openDate: openDate,
+            closeDate: expirationDate,
             days: days,
             annualizedReturn: annualizedReturn
         }

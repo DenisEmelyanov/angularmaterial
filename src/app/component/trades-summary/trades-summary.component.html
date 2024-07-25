@@ -14,6 +14,11 @@
                 <mat-label>SHORT CALL NET PREMIUM: </mat-label>
                 <span [ngStyle]="{'color': getColor(callNetPremium)}">{{callNetPremium | currency: 'USD' | customCurrency}}</span> 
             </mat-list-item>
+            <mat-divider *ngIf="sharesTotalNetPremium !== 0"></mat-divider>
+            <mat-list-item *ngIf="sharesTotalNetPremium !== 0">
+                <mat-label>CLOSED SHARES PREMIUM: </mat-label>
+                <span [ngStyle]="{'color': getColor(sharesTotalNetPremium)}">{{sharesTotalNetPremium | currency: 'USD' | customCurrency}}</span> 
+            </mat-list-item>
             <mat-divider></mat-divider>
             <mat-list-item>
                 <mat-label>TOTAL NET PREMIUM: </mat-label>

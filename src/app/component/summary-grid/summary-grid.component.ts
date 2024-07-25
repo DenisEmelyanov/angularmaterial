@@ -16,7 +16,7 @@ export class SummaryGridComponent {
 
   dataSource: any;
 
-  displayedColumns: string[] = ["ticker", "description", "totalNetPremium", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["ticker", "description", "open", "shares", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -32,7 +32,10 @@ export class SummaryGridComponent {
           ticker: ticker,
           description: data[ticker].description,
           risk: data[ticker].summary!.risk,
+          sharesQty: data[ticker].summary!.sharesQty,
           totalNetPremium: data[ticker].summary!.totalNetPremium,
+          openDate: data[ticker].summary!.openDate,
+          closeDate: data[ticker].summary!.closeDate,
           breakEven: data[ticker].summary!.breakEven,
           annualizedReturn: data[ticker].summary!.annualizedReturn
         });
@@ -51,4 +54,19 @@ export class SummaryGridComponent {
     else
       return value > 0 ? "green" : "red";
   }
+
+  isFutureDate(dateStr: string): boolean {
+    // Create Date objects
+    const today = new Date();
+    const checkDate = new Date(dateStr);
+  
+    // Handle invalid dates gracefully (optional)
+    if (isNaN(checkDate.getTime())) {
+      return false; // Or throw an error if you prefer
+    }
+  
+    // Compare with today's date
+    return checkDate.getTime() > today.getTime();
+  }
+  
 }

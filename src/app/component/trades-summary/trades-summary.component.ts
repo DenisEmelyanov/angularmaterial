@@ -15,6 +15,7 @@ export class TradesSummaryComponent implements OnInit {
   putNetPremium!: number;
   callNetPremium!: number;
   totalNetPremium!: number;
+  sharesTotalNetPremium!: number;
   sharesQty!: number;
   pricePerShare!: number;
   risk!: number;
@@ -32,6 +33,7 @@ export class TradesSummaryComponent implements OnInit {
         this.putNetPremium = summaryData?.putNetPremium!;
         this.callNetPremium = summaryData?.callNetPremium!;
         this.totalNetPremium = summaryData?.totalNetPremium!;
+        this.sharesTotalNetPremium = summaryData?.sharesTotalNetPremium!;
         this.sharesQty = summaryData?.sharesQty!;
         this.pricePerShare = summaryData?.pricePerShare!;
         this.risk = summaryData?.risk!;

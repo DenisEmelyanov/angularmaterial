@@ -1,0 +1,13 @@
+mat-chip.open-chip {
+    font-size: xx-small;
+    color: white;
+    background-color: whitesmoke;  /* Change this to your desired color */
+    color: rgb(248, 248, 248);  /* Adjust text color for contrast */
+  }
+
+  mat-chip.shares-chip {
+    font-size: xx-small;
+    color: white;
+    background-color: rgb(208, 236, 246);  /* Change this to your desired color */
+    color: rgb(248, 248, 248);  /* Adjust text color for contrast */
+  }
