@@ -25,7 +25,7 @@
         <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element" [ngStyle]="{'display': getColor(element.assigned)}">
           <mat-chip-set aria-label="assigned" *ngIf="element.assigned">
-            <mat-chip class="assigned-chip" disabled>assigned</mat-chip>
+            <mat-chip class="assigned-chip">assigned</mat-chip>
           </mat-chip-set>
         </td>
       </ng-container>

@@ -97,14 +97,14 @@ export class DataService {
         const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
         const sharesQty = boughtSharesQty - soldSharesQty;
 
-        const sharesTrasactionsSum = transactions.filter(t => t.type === 'stock').reduce((sum, current) => sum + current.premium, 0);
+        const sharesOpenTrasactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate === null).reduce((sum, current) => sum + current.premium, 0);
         const sharesClosedTransactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate !== null).reduce((sum, current) => sum + current.premium, 0);
         
         const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;
 
         var pricePerShare = 0;
         if (sharesQty !== 0) {
-            pricePerShare = sharesTrasactionsSum / sharesQty;
+            pricePerShare = sharesOpenTrasactionsPremium / sharesQty;
         }
 
         if (pricePerShare < 0) {
@@ -118,9 +118,30 @@ export class DataService {
         if (openContracts.length === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
+        console.warn('risk contracts: ' + riskContracts.length);
+        console.warn(riskContracts);
 
-        const risk = riskContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
-        const breakEven = (risk - totalNetPremium) / (riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty);
+        var risk = 0;
+        if (openContracts.length === 0 && sharesQty > 0) {
+            // no open contracts, only shares
+            risk = pricePerShare * sharesQty;
+        }
+        else { 
+            risk = riskContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
+        }
+
+        console.warn('open shares qty: ' + sharesQty);
+
+        var riskQty = 0;
+        if (openContracts.length === 0 && sharesQty > 0) {
+            riskQty = sharesQty;
+        }
+        else {
+            riskQty = riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty;
+        }
+        console.warn('risk qty: ' + riskQty);
+
+        const breakEven = (risk - totalNetPremium) / riskQty;
 
         const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
 
