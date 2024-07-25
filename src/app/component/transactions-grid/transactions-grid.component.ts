@@ -23,7 +23,7 @@ export class TransactionsGridComponent {
 
   dataSource: any;
 
-  displayedColumns: string[] = ["transaction", "assigned", "openDate", "closeDate", "premium", "action"];
+  displayedColumns: string[] = ["transaction", "chips", "openDate", "closeDate", "premium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 

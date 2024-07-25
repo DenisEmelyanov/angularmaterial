@@ -17,20 +17,12 @@
                 <td mat-cell *matCellDef="let element">{{element.description}}</td>
             </ng-container>
 
-            <ng-container matColumnDef="open">
+            <ng-container matColumnDef="chips">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element" [ngStyle]="{'display': isFutureDate(element.closeDate)}">
-                    <mat-chip-set aria-label="open" *ngIf="isFutureDate(element.closeDate)">
-                        <mat-chip class="open-chip">open</mat-chip>
-                    </mat-chip-set>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="shares">
-                <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element" [ngStyle]="{'display': element.sharesQty > 0}">
-                    <mat-chip-set aria-label="shares" *ngIf="element.sharesQty > 0">
-                        <mat-chip class="shares-chip">shares</mat-chip>
+                <td mat-cell *matCellDef="let element">
+                    <mat-chip-set aria-label="chips" >
+                        <mat-chip class="open-chip" *ngIf="isFutureDate(element.closeDate)">open</mat-chip>
+                        <mat-chip class="shares-chip" *ngIf="element.sharesQty > 0">shares</mat-chip>
                     </mat-chip-set>
                 </td>
             </ng-container>

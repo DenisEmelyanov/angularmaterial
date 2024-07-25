@@ -21,11 +21,12 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="assigned">
+      <ng-container matColumnDef="chips">
         <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element" [ngStyle]="{'display': getColor(element.assigned)}">
-          <mat-chip-set aria-label="assigned" *ngIf="element.assigned">
-            <mat-chip class="assigned-chip">assigned</mat-chip>
+        <td mat-cell *matCellDef="let element">
+          <mat-chip-set aria-label="chips">
+            <mat-chip class="assigned-chip" *ngIf="element.assigned">assigned</mat-chip>
+            <mat-chip class="open-chip" *ngIf="element.closeDate === null">open</mat-chip>
           </mat-chip-set>
         </td>
       </ng-container>

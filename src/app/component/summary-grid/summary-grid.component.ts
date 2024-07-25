@@ -16,7 +16,7 @@ export class SummaryGridComponent {
 
   dataSource: any;
 
-  displayedColumns: string[] = ["ticker", "description", "open", "shares", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["ticker", "description", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
