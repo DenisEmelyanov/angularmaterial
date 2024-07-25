@@ -2,6 +2,10 @@ mat-card-title {
     text-align: left;
     margin-left: 0%;
 }
+mat-card-subtitle {
+    text-align: left; 
+    margin-left: 0%;
+}
 
 mat-chip.open-chip {
     font-size: xx-small;
