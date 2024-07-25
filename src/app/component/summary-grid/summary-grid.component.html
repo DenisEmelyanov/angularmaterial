@@ -1,9 +1,10 @@
 <mat-card class="dashboard-card">
     <mat-card-header>
-
+        <mat-card-title>TRADES</mat-card-title>
+        <mat-card-subtitle>2024</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
-
+        <button style="margin-left: 92%;"(click)="openImportDialog()" mat-raised-button color="tertiary">Import</button>
     </mat-card-actions>
     <mat-card-content>
         <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">

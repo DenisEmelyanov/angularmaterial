@@ -2,7 +2,10 @@ import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { TickerData } from 'src/app/model/ticker-data';
+import { Transaction } from 'src/app/model/transaction';
 import { DataService } from 'src/app/service/data.service';
+import { FileSelectDialogComponent } from '../file-select-dialog/file-select-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-summary-grid',
@@ -20,7 +23,7 @@ export class SummaryGridComponent {
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private importDialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -46,6 +49,43 @@ export class SummaryGridComponent {
 
   onDetails(data: any) {
     this.detailsClickEvent.emit(data);
+  }
+
+  importTransactions() {
+    this.openImportDialog();
+    //this.downloadService.downloadJson(null, '');
+  }
+
+  openImportDialog() {
+    var _importDialogRef = this.importDialog.open(FileSelectDialogComponent);
+
+    _importDialogRef.afterClosed().subscribe(result => {
+      if (result != null) {
+        // Handle selected file here (e.g., read content, process data)
+        console.log('Selected file:', result);
+        const reader = new FileReader();
+        reader.readAsText(result); // Or readAsDataURL for base64 data
+
+        reader.onload = (e: any) => {
+          const content = e.target.result;  // String representation of file content
+          console.log('File content:', content);
+          // Process the loaded content (e.g., parse JSON, display data)
+          var transactions = JSON.parse(content) as Transaction[];
+          transactions.forEach(transaction => {
+            //console.warn(transaction);
+            this.dataService.addTransaction(transaction).subscribe((res: any) => {
+              console.warn(res);
+            });
+          });
+          //this.refreshTable();
+        };
+
+        reader.onerror = (error) => {
+          console.error('Error reading file:', error);
+          // Handle errors (e.g., file type not supported)
+        };
+      }
+    });
   }
 
   public getColor(value: number): string {

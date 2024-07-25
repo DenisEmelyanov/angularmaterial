@@ -7,7 +7,6 @@ import { MatCard } from '@angular/material/card';
 import { Transaction } from 'src/app/model/transaction';
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 import { DataService } from 'src/app/service/data.service';
-import { FileSelectDialogComponent } from '../file-select-dialog/file-select-dialog.component';
 import { TickerData } from 'src/app/model/ticker-data';
 
 
@@ -27,7 +26,7 @@ export class TransactionsGridComponent {
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private dataService: DataService, private transactionDialog: MatDialog, private importDialog: MatDialog) {
+  constructor(private dataService: DataService, private transactionDialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -56,11 +55,6 @@ export class TransactionsGridComponent {
     this.openTransactionForm(transaction, 'Edit', TransactionFormComponent);
   }
 
-  importTransactions() {
-    this.openImportDialog();
-    //this.downloadService.downloadJson(null, '');
-  }
-
   addTransaction() {
     this.openTransactionForm(
       {
@@ -75,38 +69,6 @@ export class TransactionsGridComponent {
         openDate: '',
         assigned: false
       }, 'Add', TransactionFormComponent);
-  }
-
-  openImportDialog() {
-    var _importDialogRef = this.importDialog.open(FileSelectDialogComponent);
-
-    _importDialogRef.afterClosed().subscribe(result => {
-      if (result != null) {
-        // Handle selected file here (e.g., read content, process data)
-        console.log('Selected file:', result);
-        const reader = new FileReader();
-        reader.readAsText(result); // Or readAsDataURL for base64 data
-
-        reader.onload = (e: any) => {
-          const content = e.target.result;  // String representation of file content
-          console.log('File content:', content);
-          // Process the loaded content (e.g., parse JSON, display data)
-          var transactions = JSON.parse(content) as Transaction[];
-          transactions.forEach(transaction => {
-            //console.warn(transaction);
-            this.dataService.addTransaction(transaction).subscribe((res: any) => {
-              console.warn(res);
-            });
-          });
-          this.refreshTable();
-        };
-
-        reader.onerror = (error) => {
-          console.error('Error reading file:', error);
-          // Handle errors (e.g., file type not supported)
-        };
-      }
-    });
   }
 
   openTransactionForm(transaction: Transaction, title: any, component: any) {
