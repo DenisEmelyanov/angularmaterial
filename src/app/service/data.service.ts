@@ -112,8 +112,8 @@ export class DataService {
         if (openContracts.length === 0) {
             expirationDate = this.latestCloseDate(riskContracts)?.closeDate!
         }
-        console.warn(openDate);
-        console.warn(expirationDate);
+        console.warn('open date: ' + openDate);
+        console.warn('close date: ' + expirationDate);
         const days = this.daysDifference(openDate, expirationDate);
 
         const period = days === 0 ? 1 : days;
