@@ -10,11 +10,13 @@ import { SummaryGridComponent } from '../summary-grid/summary-grid.component';
   templateUrl: './tab-content.component.html',
   styleUrls: ['./tab-content.component.css']
 })
+
 //https://stackoverflow.com/questions/37587732/how-to-call-another-components-function-in-angular2
 export class TabContentComponent {
-  
-  openTabs: any = [];
-  selectedTabIndex: any = 0;
+
+  summaryTab: string = 'SUMMARY';
+  openTabs: any = [this.summaryTab];
+  selectedTabIndex: number = 0;
 
   constructor(private dataService: DataService) {
   }
@@ -38,7 +40,7 @@ export class TabContentComponent {
       }
     }
     else {
-      index = index + 1;
+      //index = index + 1;
       console.warn(tickerData.ticker + ' tab is already opened. Index: ' + index);
       console.warn(this.openTabs);
       console.warn(this.selectedTabIndex);

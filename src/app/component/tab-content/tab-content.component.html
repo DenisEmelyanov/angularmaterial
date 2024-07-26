@@ -1,29 +1,29 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="selectedTabIndex">
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <b>SUMMARY</b>
-        </ng-template>
-        <div class="grid-container">
-            <app-summary-grid (detailsClickEvent)="onAddingTab($event)"></app-summary-grid>
-        </div>
-    </mat-tab>
-    <div *ngFor="let tickerData of openTabs">
-        <mat-tab>
+    <div *ngFor="let tab of openTabs">
+        <mat-tab *ngIf="tab === summaryTab">
             <ng-template mat-tab-label>
-                <b>{{tickerData.ticker}}</b>
-                <mat-icon aria-hidden="false" (click)="removeTab(tickerData)" fontIcon="close"></mat-icon>
+                <b>{{summaryTab}}</b>
+            </ng-template>
+            <div class="grid-container">
+                <app-summary-grid (detailsClickEvent)="onAddingTab($event)"></app-summary-grid>
+            </div>
+        </mat-tab>
+        <mat-tab *ngIf="tab !== summaryTab">
+            <ng-template mat-tab-label>
+                <b>{{tab.ticker}}</b>
+                <mat-icon aria-hidden="false" (click)="removeTab(tab)" fontIcon="close"></mat-icon>
             </ng-template>
             <div class="grid-container">
                 <mat-grid-list cols="6" rowHeight="1200px">
                     <mat-grid-tile [colspan]="2" [rowspan]="1">
                         <div class="mat-grid-tile-content">
-                            <app-trades-summary [dataTicker]="tickerData"></app-trades-summary>
+                            <app-trades-summary [dataTicker]="tab"></app-trades-summary>
                         </div>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="3" [rowspan]="2">
                         <div class="mat-grid-tile-content">
-                            <app-transactions-grid [dataTicker]="tickerData"></app-transactions-grid>
+                            <app-transactions-grid [dataTicker]="tab"></app-transactions-grid>
                         </div>
                     </mat-grid-tile>
                 </mat-grid-list>
