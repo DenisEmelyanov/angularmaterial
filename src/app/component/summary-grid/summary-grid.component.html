@@ -1,11 +1,36 @@
 <mat-card class="dashboard-card">
     <mat-card-header>
         <mat-card-title>TRADES SUMMARY</mat-card-title>
-        <mat-card-subtitle>2024</mat-card-subtitle>
+        <mat-card-subtitle>individual portfolio</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
-        <button style="margin-left: 92%;"(click)="openImportDialog()" mat-raised-button color="tertiary">Import</button>
+        <!--         <div>
+            <mat-button-toggle-group name="calendarYear" aria-label="Year">
+                <mat-button-toggle value="2022">2022</mat-button-toggle>
+                <mat-button-toggle value="2023">2023</mat-button-toggle>
+                <mat-button-toggle value="2024">2024</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div> -->
+<!--         <mat-form-field style="margin-left: 1%;">
+            <mat-label>Year</mat-label>
+            <mat-select [formControl]="calendarYear" single>
+                <mat-option [value]="2022">2022</mat-option>
+                <mat-option [value]="2023">2023</mat-option>
+                <mat-option [value]="2024">2024</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 1%;">
+            <mat-label>Group</mat-label>
+            <mat-select [formControl]="group" multiple>
+                <mat-option [value]="group">META</mat-option>
+                <mat-option [value]="group">BIG 2022</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+        <button style="margin-left: 70%;" (click)="openImportDialog()" mat-raised-button
+            color="tertiary">Import</button>
     </mat-card-actions>
+
+
     <mat-card-content>
         <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container matColumnDef="ticker">
@@ -21,7 +46,7 @@
             <ng-container matColumnDef="chips">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element">
-                    <mat-chip-set aria-label="chips" >
+                    <mat-chip-set aria-label="chips">
                         <mat-chip class="open-chip" *ngIf="isFutureDate(element.closeDate)">open</mat-chip>
                         <mat-chip class="shares-chip" *ngIf="element.sharesQty > 0">shares</mat-chip>
                     </mat-chip-set>

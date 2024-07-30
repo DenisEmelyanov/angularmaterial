@@ -21,6 +21,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox"
 import {MatDialogModule} from "@angular/material/dialog"
 import {MatChipsModule} from "@angular/material/chips"
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
 exports:[
@@ -45,7 +46,8 @@ exports:[
     MatCheckboxModule,
     MatDialogModule,
     MatChipsModule,
-    MatTabsModule
+    MatTabsModule,
+    MatButtonToggleModule
 ]
 })
 export class MaterialModule{}

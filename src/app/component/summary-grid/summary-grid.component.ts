@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { TickerData } from 'src/app/model/ticker-data';
@@ -10,7 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-summary-grid',
   templateUrl: './summary-grid.component.html',
-  styleUrls: ['./summary-grid.component.css']
+  styleUrls: ['./summary-grid.component.css'],
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SummaryGridComponent {
 
@@ -18,6 +19,8 @@ export class SummaryGridComponent {
   detailsClickEvent = new EventEmitter<TickerData>();
 
   dataSource: any;
+  calendarYear: any;
+  group: any;
 
   displayedColumns: string[] = ["ticker", "description", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;

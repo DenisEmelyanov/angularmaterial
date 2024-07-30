@@ -32,7 +32,8 @@ export class DataService {
         'SNAP': 'SNAP INC CL A',
         'PYPL': 'PAYPAL HLDGS INC COM',
         'AMZN': 'AMAZON COM INC COM',
-        'SQ': 'BLOCK INC CL A'
+        'SQ': 'BLOCK INC CL A',
+        'F': 'FORD MTR CO DEL COM'
     };
 
     public tickersData: Record<string, TickerData> = {};

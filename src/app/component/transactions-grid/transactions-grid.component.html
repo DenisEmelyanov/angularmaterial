@@ -4,7 +4,10 @@
     <mat-card-subtitle>{{dataTicker.description}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-actions>
-    <button style="margin-left: 85%;" (click)="addTransaction()" mat-raised-button color="primary">Add (+)</button>
+    <button style="margin-left: 85%;" (click)="addTransaction()" mat-raised-button color="primary">
+      Add 
+      <mat-icon aria-hidden="false" fontIcon="add_circle_outline"></mat-icon>
+    </button>
   </mat-card-actions>
   <mat-card-content>
     <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
