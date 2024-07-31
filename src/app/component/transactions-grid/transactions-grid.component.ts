@@ -35,11 +35,11 @@ export class TransactionsGridComponent {
   }
 
   refreshTable() {
-    this.dataService.getTransactions(this.dataTicker.ticker).subscribe((res: any) => {
+    this.dataService.getTickerTransactions(this.dataTicker.ticker, this.dataTicker.year!).subscribe((res: any) => {
       console.warn(res);
       this.dataSource = res;
 
-      this.dataService.updateTickerData(this.dataTicker.ticker);
+      this.dataService.updateTickerData(this.dataTicker.ticker, this.dataTicker.year!);
     });
     //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }

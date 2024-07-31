@@ -39,35 +39,48 @@ export class DataService {
 
     private portfolio: any = 'individual portfolio';
 
-    private tickersData: Record<string, TickerData> = {};
+    //private tickersData: Record<string, TickerData> = {};
+    private yearsData: Record<number, Record<string, TickerData>> = {};
 
     constructor(private http: HttpClient, private calcService: CalculationService) {
-        this.getAllTransactionsTickers().subscribe((res: any) => {
-            var tickers = Array.from(res);
-            console.log('get the following tickers: ' + tickers);
-            tickers.forEach((ticker: any) => {
-                this.tickersData[ticker] = {
-                    ticker: ticker,
-                    description: this.tickersDescription[ticker]
-                };
-            });
+        this.getAllTransactionsYears().subscribe((years: any) => {
+            years.forEach((year: number) => {
+                
+                this.yearsData[year] = {};
 
-            Object.keys(this.tickersData).forEach(t => {
-                console.warn('update data for :' + t);
-                this.updateTickerData(t);
+                var tickersData: Record<string, TickerData> = {};
+                this.getAllTransactionsTickers(year).subscribe((res: any) => {
+                    var tickers = Array.from(res);
+                    console.log('get the following tickers: ' + tickers);
+                    tickers.forEach((ticker: any) => {
+                        tickersData[ticker] = {
+                            ticker: ticker,
+                            description: this.tickersDescription[ticker],
+                            year: year
+                        };
+                    });
+        
+                    Object.keys(tickersData).forEach(ticker => {
+                        console.warn('update data for :' + ticker);
+
+
+                        this.updateTickerData(ticker, year);
+                    });
+                    console.warn(tickersData);
+                });
+
+                this.yearsData[year] = tickersData;
             });
-            console.warn(this.tickersData);
         });
-
     }
 
     public getTickersData(year: any) {
-        return this.tickersData;
+        return this.yearsData[year];
     }
 
-    public getAllTransactionsTickers() {
+    public getAllTransactionsTickers(year: number) {
         return this.http
-            .get(this.transactionsServiceUrl + 'tickers')
+            .get(this.transactionsServiceUrl + 'tickers?year=' + year)
             .pipe(map((response: any) => response.data));
     }
 
@@ -86,22 +99,24 @@ export class DataService {
         this.dataUpdated.next(data);
     }
 
-    public updateTickerData(ticker: string) {
-        this.getTransactions(ticker).subscribe((res: any) => {
+    public updateTickerData(ticker: string, year: number) {
+        this.getTickerTransactions(ticker, year).subscribe((res: any) => {
             console.warn('update ticker data is called: ' + ticker);
-            this.tickersData[ticker].transactions = res;
-            console.log(this.tickersData[ticker].transactions);
 
-            this.tickersData[ticker].summary = this.calcService.calcSummary(this.tickersData[ticker].transactions!);
+            this.yearsData[year][ticker].transactions = res;
+            //this.tickersData[ticker].transactions = res;
+            console.log(this.yearsData[year][ticker].transactions);
+
+            this.yearsData[year][ticker].summary = this.calcService.calcSummary(this.yearsData[year][ticker].transactions!);
 
             this.notifyAboutTransactionsUpdate(ticker, res);
-            return this.tickersData[ticker].transactions;
+            return this.yearsData[year][ticker].transactions;
         });
     }
 
-    public getTransactions(ticker: string): Observable<Transaction[]> {
+    public getTickerTransactions(ticker: string, year: number): Observable<Transaction[]> {
         return this.http
-            .get(this.transactionsServiceUrl + '?ticker=' + ticker)
+            .get(this.transactionsServiceUrl + '?ticker=' + ticker + '&year=' + year)
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
 
