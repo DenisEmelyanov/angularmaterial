@@ -6,4 +6,5 @@ export interface TickerData {
     description: string;
     transactions?: Transaction[];
     summary?: SummaryData;
+    year?: number;
 }

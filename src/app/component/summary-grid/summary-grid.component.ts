@@ -15,11 +15,14 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class SummaryGridComponent {
 
-  @Output() 
+  @Output()
   detailsClickEvent = new EventEmitter<TickerData>();
 
   dataSource: any;
+
   calendarYear: any;
+  yearOptions: any;
+
   group: any;
 
   displayedColumns: string[] = ["ticker", "description", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
@@ -30,28 +33,47 @@ export class SummaryGridComponent {
   }
 
   ngOnInit() {
+
     this.dataService.currentData.subscribe(() => {
-      const data = this.dataService.tickersData;
-      var tableDataArr: any[] = [];
-      Object.keys(data).forEach(ticker => {
-        tableDataArr.push({
-          ticker: ticker,
-          description: data[ticker].description,
-          risk: data[ticker].summary!.risk,
-          sharesQty: data[ticker].summary!.sharesQty,
-          totalNetPremium: data[ticker].summary!.totalNetPremium,
-          openDate: data[ticker].summary!.openDate,
-          closeDate: data[ticker].summary!.closeDate,
-          breakEven: data[ticker].summary!.breakEven,
-          annualizedReturn: data[ticker].summary!.annualizedReturn
-        });
-      })
-      this.dataSource = tableDataArr;
+          // set year options from tableDataArr 
+    this.dataService.getAllTransactionsYears().subscribe((res: any) => {
+      this.yearOptions = Array.from(res);
+    });
+    // use the latest to set current filter
+    this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
+
+      this.populateTable();
     });
   }
 
-  onDetails(data: any) {
+  populateTable() {
+    const data = this.dataService.getTickersData(this.calendarYear);
+    var tableDataArr: any[] = [];
+    Object.keys(data).forEach(ticker => {
+      tableDataArr.push({
+        ticker: ticker,
+        description: data[ticker].description,
+        risk: data[ticker].summary!.risk,
+        sharesQty: data[ticker].summary!.sharesQty,
+        totalNetPremium: data[ticker].summary!.totalNetPremium,
+        openDate: data[ticker].summary!.openDate,
+        closeDate: data[ticker].summary!.closeDate,
+        breakEven: data[ticker].summary!.breakEven,
+        annualizedReturn: data[ticker].summary!.annualizedReturn
+      });
+    })
+
+    this.dataSource = tableDataArr;
+  }
+
+  onDetails(data: TickerData) {
+    data.year = this.calendarYear
+
     this.detailsClickEvent.emit(data);
+  }
+
+  filterByYear(event: any) {
+    console.log("selected year:" + event.value);
   }
 
   importTransactions() {
@@ -102,14 +124,14 @@ export class SummaryGridComponent {
     // Create Date objects
     const today = new Date();
     const checkDate = new Date(dateStr);
-  
+
     // Handle invalid dates gracefully (optional)
     if (isNaN(checkDate.getTime())) {
       return false; // Or throw an error if you prefer
     }
-  
+
     // Compare with today's date
     return checkDate.getTime() > today.getTime();
   }
-  
+
 }

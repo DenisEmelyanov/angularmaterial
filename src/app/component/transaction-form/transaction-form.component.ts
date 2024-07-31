@@ -30,6 +30,7 @@ export class TransactionFormComponent implements OnInit {
       premium: this.formBuilder.control(''),
       openDate: this.formBuilder.control(null),
       closeDate: this.formBuilder.control(null),
+      year: this.formBuilder.control(new Date().getFullYear()),
       assigned: this.formBuilder.control(false)
     });
   }
@@ -60,6 +61,7 @@ export class TransactionFormComponent implements OnInit {
       premium: this.editData.premium,
       openDate: this.editData.openDate,
       closeDate: this.editData.closeDate,
+      year: this.editData.year,
       assigned: this.editData.assigned
     })
   }

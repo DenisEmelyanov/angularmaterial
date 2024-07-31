@@ -36,7 +36,9 @@ export class DataService {
         'F': 'FORD MTR CO DEL COM'
     };
 
-    public tickersData: Record<string, TickerData> = {};
+    private portfolio: any = 'individual portfolio';
+
+    private tickersData: Record<string, TickerData> = {};
 
     constructor(private http: HttpClient) {
         this.getAllTransactionsTickers().subscribe((res: any) => {
@@ -59,9 +61,19 @@ export class DataService {
 
     }
 
+    public getTickersData(year: any) {
+        return this.tickersData;
+    }
+
     public getAllTransactionsTickers() {
         return this.http
             .get(this.transactionsServiceUrl + 'tickers')
+            .pipe(map((response: any) => response.data));
+    }
+
+    public getAllTransactionsYears() {
+        return this.http
+            .get(this.transactionsServiceUrl + 'years')
             .pipe(map((response: any) => response.data));
     }
 
@@ -228,6 +240,8 @@ export class DataService {
 
     public updateTransaction(transaction: Transaction): Observable<Transaction> {
 
+        // set portfolio
+        transaction.portfolio = this.portfolio;
         // remove id
         const id = transaction.id;
         delete transaction.id;
@@ -256,6 +270,8 @@ export class DataService {
     }
 
     public addTransaction(transaction: Transaction): Observable<Transaction> {
+        // set portfolio
+        transaction.portfolio = this.portfolio;
         // remove id
         const id = transaction.id;
         delete transaction.id;

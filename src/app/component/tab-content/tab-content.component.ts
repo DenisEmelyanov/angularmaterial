@@ -25,7 +25,7 @@ export class TabContentComponent {
 
   }
 
-  onAddingTab(tickerData: any) {
+  onAddingTab(tickerData: TickerData) {
     this.addTab(tickerData, true);
   }
 

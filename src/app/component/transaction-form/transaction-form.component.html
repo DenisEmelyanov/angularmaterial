@@ -75,6 +75,12 @@
             <mat-datepicker-toggle matIconSuffix [for]="closeDatePicker"></mat-datepicker-toggle>
             <mat-datepicker [dateClass]="dateClass" #closeDatePicker></mat-datepicker>
         </mat-form-field>
+
+        <mat-form-field floatLabel="always" appearance="outline">
+            <mat-label>Year</mat-label>
+            <input matInput type="number" formControlName="year" />
+        </mat-form-field>
+
         <p>
             <mat-checkbox matInput formControlName="assigned"
                 *ngIf="selectedType === 'put' || selectedType === 'call'">Assigned</mat-checkbox>
