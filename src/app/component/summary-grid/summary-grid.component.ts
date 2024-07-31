@@ -75,6 +75,8 @@ export class SummaryGridComponent {
 
   filterByYear(event: any) {
     console.log("selected year:" + event.value);
+
+    this.populateTable();
   }
 
   importTransactions() {
