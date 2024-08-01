@@ -34,17 +34,16 @@ export class SummaryGridComponent {
   }
 
   ngOnInit() {
+    this.dataService.getAllTransactionsYears().subscribe((res: any) => {
+      this.yearOptions = Array.from(res);
+
+          // use the latest to set current filter
+          if (this.calendarYear === undefined) {
+            this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
+          }
+    });
+
     this.dataService.currentData.subscribe(() => {
-      // set year options from tableDataArr 
-      this.dataService.getAllTransactionsYears().subscribe((res: any) => {
-        this.yearOptions = Array.from(res);
-
-            // use the latest to set current filter
-            if (this.calendarYear === undefined) {
-              this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
-            }
-      });
-
       this.populateTable();
     });
   }
