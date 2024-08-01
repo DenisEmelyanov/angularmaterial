@@ -31,7 +31,8 @@ export class TabContentComponent {
 
   addTab(tickerData: TickerData, selectAfterAdding: boolean) {
     //TODO:check if tab is already added
-    var index = this.findTabIndex(this.openTabs, "ticker", tickerData.ticker);
+    console.warn('tab tickerData: ' + tickerData.ticker + ' ' + tickerData.year);
+    const index = this.findTabIndex(this.openTabs, "ticker", "year", tickerData.ticker, tickerData.year);
     console.warn('tab index: ' + index);
     if (index === -1) {
       this.openTabs.push(tickerData);
@@ -49,13 +50,13 @@ export class TabContentComponent {
   }
 
   removeTab(tickerData: TickerData) {
-    const index = this.findTabIndex(this.openTabs, "ticker", tickerData.ticker);
+    const index = this.findTabIndex(this.openTabs, "ticker", "year", tickerData.ticker, tickerData.year);
     this.openTabs.splice(index, 1);
     // select summary tab
     this.selectedTabIndex = 0;
   }
 
-  findTabIndex<T>(array: T[], property: keyof T, value: T[keyof T]): number {
-    return array.findIndex(item => item[property] === value);
+  findTabIndex<T>(array: T[], property1: keyof T, property2: keyof T, value1: T[keyof T], value2: T[keyof T]): number {
+    return array.findIndex(item => item[property1] === value1 && item[property2] === value2);
   }
 }
