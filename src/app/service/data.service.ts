@@ -43,35 +43,49 @@ export class DataService {
     private yearsData: Record<number, Record<string, TickerData>> = {};
 
     constructor(private http: HttpClient, private calcService: CalculationService) {
+        // get all years and update yearsData object
         this.getAllTransactionsYears().subscribe((years: any) => {
             years.forEach((year: number) => {
-                
-                this.yearsData[year] = {};
-
-                var tickersData: Record<string, TickerData> = {};
-                this.getAllTransactionsTickers(year).subscribe((res: any) => {
-                    var tickers = Array.from(res);
-                    console.log('get the following tickers: ' + tickers);
-                    tickers.forEach((ticker: any) => {
-                        tickersData[ticker] = {
-                            ticker: ticker,
-                            description: this.tickersDescription[ticker],
-                            year: year
-                        };
-                    });
-        
-                    Object.keys(tickersData).forEach(ticker => {
-                        console.warn('update data for :' + ticker);
+                this.refreshYearData(year);
 
 
-                        this.updateTickerData(ticker, year);
-                    });
-                    console.warn(tickersData);
-                });
-
-                this.yearsData[year] = tickersData;
             });
         });
+    }
+
+    private refreshYearData(year: number) {
+
+        var tickersData: Record<string, TickerData> = {};
+        this.getAllTransactionsTickers(year).subscribe((res: any) => {
+            var tickers = Array.from(res);
+            console.log('get the following tickers: ' + tickers);
+            tickers.forEach((ticker: any) => {
+                tickersData[ticker] = {
+                    ticker: ticker,
+                    description: this.tickersDescription[ticker],
+                    year: year
+                };
+            });
+
+            Object.keys(tickersData).forEach(ticker => {
+                console.warn('update data for :' + ticker + ' ' + year);
+
+
+                this.updateTickerData(ticker, year);
+            });
+            console.warn(tickersData);
+        });
+
+        this.yearsData[year] = tickersData;
+    }
+
+    public notifyAboutTransactionsUpdate(year: number, ticker: any = undefined) {
+        console.warn('notify about transactions update data service is called: ' + ticker + ' ' + year);
+        const data: object = {
+            ticker: ticker,
+            year: year
+        };
+        this.dataUpdated.next(data);
     }
 
     public getTickersData(year: any) {
@@ -90,15 +104,6 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
-    public notifyAboutTransactionsUpdate(ticker: string, transactions: Transaction[]) {
-        console.warn('notify about transactions update data service is called: ' + ticker)
-        const data: object = {
-            ticker: ticker,
-            transactions: transactions
-        };
-        this.dataUpdated.next(data);
-    }
-
     public updateTickerData(ticker: string, year: number) {
         this.getTickerTransactions(ticker, year).subscribe((res: any) => {
             console.warn('update ticker data is called: ' + ticker);
@@ -109,7 +114,7 @@ export class DataService {
 
             this.yearsData[year][ticker].summary = this.calcService.calcSummary(this.yearsData[year][ticker].transactions!);
 
-            this.notifyAboutTransactionsUpdate(ticker, res);
+            this.notifyAboutTransactionsUpdate(year, ticker);
             return this.yearsData[year][ticker].transactions;
         });
     }

@@ -6,6 +6,7 @@ import { Transaction } from 'src/app/model/transaction';
 import { DataService } from 'src/app/service/data.service';
 import { FileSelectDialogComponent } from '../file-select-dialog/file-select-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-summary-grid',
@@ -43,8 +44,11 @@ export class SummaryGridComponent {
           }
     });
 
-    this.dataService.currentData.subscribe(() => {
-      this.populateTable();
+    this.dataService.currentData.subscribe((data) => {
+      // update only if notification about currently selected year
+      if (data.year === this.calendarYear) {
+        this.populateTable();
+      }
     });
   }
 
@@ -65,7 +69,8 @@ export class SummaryGridComponent {
       });
     })
 
-    this.dataSource = tableDataArr;
+    //this.dataSource = tableDataArr;
+    this.dataSource = new MatTableDataSource<any>(tableDataArr);
   }
 
   onDetails(data: TickerData) {
