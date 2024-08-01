@@ -30,17 +30,19 @@ export class SummaryGridComponent {
   @ViewChild(MatSort) sort !: MatSort;
 
   constructor(private dataService: DataService, private importDialog: MatDialog) {
+
   }
 
   ngOnInit() {
-
     this.dataService.currentData.subscribe(() => {
       // set year options from tableDataArr 
       this.dataService.getAllTransactionsYears().subscribe((res: any) => {
         this.yearOptions = Array.from(res);
 
-        // use the latest to set current filter
-        this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
+            // use the latest to set current filter
+            if (this.calendarYear === undefined) {
+              this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
+            }
       });
 
       this.populateTable();
