@@ -12,4 +12,5 @@ export interface SummaryData {
     closeDate?: string;
     days?: number;
     annualizedReturn?: number;
+    warningFlag?: boolean;
 }

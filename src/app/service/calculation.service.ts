@@ -80,6 +80,12 @@ export class CalculationService {
         const period = days === 0 ? 1 : days;
         const annualizedReturn = (totalNetPremium / risk) * (365 / period);
 
+        //set warning flag if there are some not closed stocks and stockQty = 0
+        var warningFlag = false;
+        if (sharesQty === 0) {
+            warningFlag = transactions.filter(t => t.type === 'stock' && !t.closeDate).length > 0;
+        }
+
         return {
             putNetPremium: putNetPremium,
             callNetPremium: callNetPremium,
@@ -92,7 +98,8 @@ export class CalculationService {
             openDate: openDate,
             closeDate: expirationDate,
             days: days,
-            annualizedReturn: annualizedReturn
+            annualizedReturn: annualizedReturn,
+            warningFlag: warningFlag
         }
     }
 

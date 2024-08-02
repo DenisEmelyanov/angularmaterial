@@ -55,6 +55,9 @@
                     <mat-chip-set aria-label="chips">
                         <mat-chip class="open-chip" *ngIf="isFutureDate(element.closeDate)">open</mat-chip>
                         <mat-chip class="shares-chip" *ngIf="element.sharesQty > 0">shares</mat-chip>
+                        <mat-chip class="warning-chip" *ngIf="element.warningFlag"><span class="material-icons" color="red">
+                            warning
+                            </span></mat-chip>
                     </mat-chip-set>
                 </td>
             </ng-container>

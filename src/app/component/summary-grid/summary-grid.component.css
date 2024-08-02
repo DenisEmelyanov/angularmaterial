@@ -20,3 +20,10 @@ mat-chip.open-chip {
     background-color: rgb(208, 236, 246);  /* Change this to your desired color */
     color: rgb(248, 248, 248);  /* Adjust text color for contrast */
   }
+
+  mat-chip.warning-chip {
+    font-size: xx-small;
+    color: rgb(183, 9, 9);
+    background-color: rgb(255, 172, 172);  /* Change this to your desired color */
+    color: rgb(248, 248, 248);  /* Adjust text color for contrast */
+  }

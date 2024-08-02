@@ -57,7 +57,7 @@ export class SummaryGridComponent {
     var tableDataArr: any[] = [];
     Object.keys(data).forEach(ticker => {
       //skip removed transactions
-      if (data[ticker].summary!.openDate !== undefined) {
+      if (data[ticker].summary !== undefined && data[ticker].summary!.openDate !== undefined) {
         tableDataArr.push({
           ticker: ticker,
           description: data[ticker].description,
@@ -67,7 +67,8 @@ export class SummaryGridComponent {
           openDate: data[ticker].summary!.openDate,
           closeDate: data[ticker].summary!.closeDate,
           breakEven: data[ticker].summary!.breakEven,
-          annualizedReturn: data[ticker].summary!.annualizedReturn
+          annualizedReturn: data[ticker].summary!.annualizedReturn,
+          warningFlag: data[ticker].summary!.warningFlag
         });
       }
     })
