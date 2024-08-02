@@ -15,7 +15,8 @@ import { SummaryGridComponent } from '../summary-grid/summary-grid.component';
 export class TabContentComponent {
 
   summaryTab: string = 'SUMMARY';
-  openTabs: any = [this.summaryTab];
+  statisticTab: string = 'DATA ANALYTICS';
+  openTabs: any = [this.summaryTab, this.statisticTab];
   selectedTabIndex: number = 0;
 
   constructor(private dataService: DataService) {

@@ -28,6 +28,7 @@ import { CustomCurrencyPipe } from './pipes/customCurrency-pipe';
 import { TradesSummaryComponent } from './component/trades-summary/trades-summary.component';
 import { FileSelectDialogComponent } from './component/file-select-dialog/file-select-dialog.component';
 import { SummaryGridComponent } from './component/summary-grid/summary-grid.component';
+import { TradesStatisticGridComponent } from './component/trades-statistic-grid/trades-statistic-grid.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { SummaryGridComponent } from './component/summary-grid/summary-grid.comp
     TradesSummaryComponent,
     FileSelectDialogComponent,
     SummaryGridComponent,
+    TradesStatisticGridComponent,
   ],
   imports: [
     BrowserModule,
