@@ -47,8 +47,8 @@ export class TransactionsGridComponent {
   deleteTransaction(transaction: Transaction) {
     this.dataService.deleteTransaction(transaction).subscribe((res: any) => {
       console.warn(res);
-    });
-    this.refreshTable();
+      this.refreshTable();
+    });   
   }
 
   editTransaction(transaction: Transaction) {
@@ -89,14 +89,16 @@ export class TransactionsGridComponent {
         if (transaction.id !== -1) {
           this.dataService.updateTransaction(transaction).subscribe((res: any) => {
             console.warn(res);
+            this.refreshTable();
           });
+
         }
         else {
           this.dataService.addTransaction(transaction).subscribe((res: any) => {
             console.warn(res);
-          });
+            this.refreshTable();
+          });         
         }
-        this.refreshTable();
       }
       else {
         console.log('form cancelled')

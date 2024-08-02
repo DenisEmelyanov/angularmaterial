@@ -47,8 +47,6 @@ export class DataService {
         this.getAllTransactionsYears().subscribe((years: any) => {
             years.forEach((year: number) => {
                 this.refreshYearData(year);
-
-
             });
         });
     }

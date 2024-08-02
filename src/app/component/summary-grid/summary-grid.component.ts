@@ -38,10 +38,10 @@ export class SummaryGridComponent {
     this.dataService.getAllTransactionsYears().subscribe((res: any) => {
       this.yearOptions = Array.from(res);
 
-          // use the latest to set current filter
-          if (this.calendarYear === undefined) {
-            this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
-          }
+      // use the latest to set current filter
+      if (this.calendarYear === undefined) {
+        this.calendarYear = this.yearOptions.reduce((max: number, current: number) => (max > current ? max : current), 1900);
+      }
     });
 
     this.dataService.currentData.subscribe((data) => {
@@ -56,17 +56,20 @@ export class SummaryGridComponent {
     const data = this.dataService.getTickersData(this.calendarYear);
     var tableDataArr: any[] = [];
     Object.keys(data).forEach(ticker => {
-      tableDataArr.push({
-        ticker: ticker,
-        description: data[ticker].description,
-        risk: data[ticker].summary!.risk,
-        sharesQty: data[ticker].summary!.sharesQty,
-        totalNetPremium: data[ticker].summary!.totalNetPremium,
-        openDate: data[ticker].summary!.openDate,
-        closeDate: data[ticker].summary!.closeDate,
-        breakEven: data[ticker].summary!.breakEven,
-        annualizedReturn: data[ticker].summary!.annualizedReturn
-      });
+      //skip removed transactions
+      if (data[ticker].summary!.openDate !== undefined) {
+        tableDataArr.push({
+          ticker: ticker,
+          description: data[ticker].description,
+          risk: data[ticker].summary!.risk,
+          sharesQty: data[ticker].summary!.sharesQty,
+          totalNetPremium: data[ticker].summary!.totalNetPremium,
+          openDate: data[ticker].summary!.openDate,
+          closeDate: data[ticker].summary!.closeDate,
+          breakEven: data[ticker].summary!.breakEven,
+          annualizedReturn: data[ticker].summary!.annualizedReturn
+        });
+      }
     })
 
     //this.dataSource = tableDataArr;
