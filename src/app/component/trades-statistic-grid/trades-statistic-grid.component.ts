@@ -182,7 +182,7 @@ export class TradesStatisticGridComponent {
 
   public backGroundColor(value: string) {
     if (value.includes('TOTAL'))
-      return "lightgray";
+      return "whitesmoke";
     else
       return "inherit";
   }
