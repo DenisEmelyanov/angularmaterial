@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { TickerData } from 'src/app/model/ticker-data';
+import { DataService } from 'src/app/service/data.service';
 
 @Component({
   selector: 'app-trades-statistic-grid',
@@ -7,4 +12,100 @@ import { Component } from '@angular/core';
 })
 export class TradesStatisticGridComponent {
 
+  dataSource: any;
+  yearOptions: number[] = [];
+
+
+  displayedColumns: string[] = ["year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  @ViewChild(MatPaginator) paginatior !: MatPaginator;
+  @ViewChild(MatSort) sort !: MatSort;
+
+  constructor(private dataService: DataService) {
+
+  }
+
+  ngOnInit() {
+    this.dataService.currentData.subscribe((data) => {
+      // get all years array
+      this.populateTable();
+    });
+  }
+
+  populateTable() {
+    const tableDataArr: any[] = [];
+  
+    const data = this.dataService.getAllYearsTickersData();
+    const yearsArr = Object.keys(data).map(Number);
+  
+    console.warn('data analytics: ' + yearsArr);
+  
+    for (const year of yearsArr) {
+      let yearTotalNetPremium = 0;
+      const yearTickersData = data[year];
+  
+      if (yearTickersData) {
+        for (const ticker in yearTickersData) {
+          const tickerData = yearTickersData[ticker];
+          yearTotalNetPremium += tickerData.summary?.totalNetPremium || 0; // Handle potential null or undefined
+        }
+  
+        tableDataArr.push({
+          year,
+          totalNetPremium: yearTotalNetPremium
+        });
+      }
+    }
+  
+    console.warn(tableDataArr);
+    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  populateTableOld() {
+    var tableDataArr: any[] = [];
+
+    const data = this.dataService.getAllYearsTickersData();
+    const yearsArr = Object.keys(data).map(Number);
+
+    console.warn('data analytics: ' + yearsArr);
+    Object.keys(yearsArr).forEach((year: any) => {
+      var yearTotalNetPremium = 0;
+      //skip unavailable years
+      if (data[year] !== undefined) {
+        const yearTickersData = data[year];
+        Object.keys(yearTickersData).forEach((ticker) => {
+          yearTotalNetPremium = yearTotalNetPremium + yearTickersData[ticker].summary?.totalNetPremium!;
+        });
+
+        tableDataArr.push({
+          year: year,
+          totalNetPremium: yearTotalNetPremium
+        });
+      }
+    })
+    console.warn(tableDataArr);
+
+    //this.dataSource = tableDataArr;
+    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  public getColor(value: number): string {
+    if (value === 0)
+      return "black";
+    else
+      return value > 0 ? "green" : "red";
+  }
+
+  isFutureDate(dateStr: string): boolean {
+    // Create Date objects
+    const today = new Date();
+    const checkDate = new Date(dateStr);
+
+    // Handle invalid dates gracefully (optional)
+    if (isNaN(checkDate.getTime())) {
+      return false; // Or throw an error if you prefer
+    }
+
+    // Compare with today's date
+    return checkDate.getTime() > today.getTime();
+  }
 }

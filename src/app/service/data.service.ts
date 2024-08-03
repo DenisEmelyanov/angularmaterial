@@ -86,6 +86,10 @@ export class DataService {
         this.dataUpdated.next(data);
     }
 
+    public getAllYearsTickersData() {
+        return this.yearsData;
+    }
+
     public getTickersData(year: any) {
         return this.yearsData[year];
     }
