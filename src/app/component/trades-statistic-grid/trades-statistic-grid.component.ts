@@ -16,7 +16,7 @@ export class TradesStatisticGridComponent {
   yearOptions: number[] = [];
 
 
-  displayedColumns: string[] = ["ticker", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -49,7 +49,8 @@ export class TradesStatisticGridComponent {
           const totalNetPremium = tickerData.summary?.totalNetPremium || 0;
   
           tableDataArr.push({
-            ticker,
+            ticker: ticker,
+            description: tickerData.description,
             year,
             totalNetPremium
           });
@@ -76,10 +77,10 @@ export class TradesStatisticGridComponent {
       }
     });
 
-    // remove ticker from total rows
+    // TODO remove ticker from total rows
 
   
-    console.warn(tableDataArr);
+    //console.warn(tableDataArr);
     this.dataSource = new MatTableDataSource<any>(tableDataArr);
   }
 
