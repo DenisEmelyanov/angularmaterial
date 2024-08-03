@@ -27,7 +27,7 @@ export class CalculationService {
         const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;
 
         var pricePerShare = 0;
-        if (sharesQty !== 0) {
+        if (sharesQty > 0) {
             pricePerShare = sharesOpenTrasactionsPremium / sharesQty;
         }
 

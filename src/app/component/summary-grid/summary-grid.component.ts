@@ -35,8 +35,8 @@ export class SummaryGridComponent {
   }
 
   ngOnInit() {
-    this.dataService.getAllTransactionsYears().subscribe((res: any) => {
-      this.yearOptions = Array.from(res);
+    this.dataService.getAllTransactionsYears().subscribe((res: number[]) => {
+      this.yearOptions = Array.from(res).sort((a, b) => b - a);
 
       // use the latest to set current filter
       if (this.calendarYear === undefined) {
