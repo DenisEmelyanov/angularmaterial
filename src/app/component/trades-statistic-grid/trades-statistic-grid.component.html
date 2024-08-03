@@ -9,17 +9,17 @@
         <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container matColumnDef="ticker">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
-                <td mat-cell *matCellDef="let element">{{element.ticker}}</td>
+                <td mat-cell *matCellDef="let element" [ngStyle]="{'background-color': backGroundColor(element.ticker)}">{{updateTotalRows(element.ticker)}}</td>
             </ng-container>
 
             <ng-container matColumnDef="year">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
-                <td mat-cell *matCellDef="let element">{{element.year}}</td>
+                <td mat-cell *matCellDef="let element" [ngStyle]="{'background-color': backGroundColor(element.ticker)}">{{element.year}}</td>
             </ng-container>
 
             <ng-container matColumnDef="totalNetPremium">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
-                <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.totalNetPremium )}">
+                <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': backGroundColor(element.ticker)}">
                     {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
             </ng-container>
 

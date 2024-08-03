@@ -33,6 +33,58 @@ export class TradesStatisticGridComponent {
 
   populateTable() {
     const tableDataArr: any[] = [];
+    const tickerTotals: { [ticker: string]: number } = {};
+  
+    const data = this.dataService.getAllYearsTickersData();
+    const yearsArr = Object.keys(data).map(Number);
+  
+    console.warn('data analytics: ' + yearsArr);
+  
+    for (const year of yearsArr) {
+      const yearTickersData = data[year];
+  
+      if (yearTickersData) {
+        for (const ticker in yearTickersData) {
+          const tickerData = yearTickersData[ticker];
+          const totalNetPremium = tickerData.summary?.totalNetPremium || 0;
+  
+          tableDataArr.push({
+            ticker,
+            year,
+            totalNetPremium
+          });
+  
+          tickerTotals[ticker] = (tickerTotals[ticker] || 0) + totalNetPremium;
+        }
+      }
+    }
+  
+    // Add total rows for each ticker
+    for (const ticker in tickerTotals) {
+      tableDataArr.push({
+        ticker: ticker + ' TOTAL',
+        year: null, // Or any other value to indicate a total row
+        totalNetPremium: tickerTotals[ticker]
+      });
+    }
+  
+    tableDataArr.sort((a, b) => {
+      if (a.ticker !== b.ticker) {
+        return a.ticker.localeCompare(b.ticker);
+      } else {
+        return b.year ? b.year - a.year : -1; // Sort total rows at the end
+      }
+    });
+
+    // remove ticker from total rows
+
+  
+    console.warn(tableDataArr);
+    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  populateTable2() {
+    const tableDataArr: any[] = [];
 
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
@@ -126,6 +178,20 @@ export class TradesStatisticGridComponent {
 
     //this.dataSource = tableDataArr;
     this.dataSource = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  public backGroundColor(value: string) {
+    if (value.includes('TOTAL'))
+      return "lightgray";
+    else
+      return "inherit";
+  }
+
+  public updateTotalRows(value: string) {
+    if (value.includes('TOTAL'))
+      return "TOTAL";
+    else
+      return value;  
   }
 
   public getColor(value: number): string {
