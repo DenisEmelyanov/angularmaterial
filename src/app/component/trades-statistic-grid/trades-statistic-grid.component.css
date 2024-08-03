@@ -6,3 +6,8 @@ mat-card-subtitle {
     text-align: left; 
     margin-left: 0%;
 }
+
+mat-card-content {
+    overflow-y: auto;
+    height: 1000px; /* Adjust height as needed */
+  }
