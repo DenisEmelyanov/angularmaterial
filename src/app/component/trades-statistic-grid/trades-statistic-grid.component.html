@@ -7,6 +7,11 @@
     </mat-card-actions>
     <mat-card-content>
         <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="ticker">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
+                <td mat-cell *matCellDef="let element">{{element.ticker}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="year">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
                 <td mat-cell *matCellDef="let element">{{element.year}}</td>

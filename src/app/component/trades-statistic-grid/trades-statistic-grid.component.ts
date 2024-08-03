@@ -16,7 +16,7 @@ export class TradesStatisticGridComponent {
   yearOptions: number[] = [];
 
 
-  displayedColumns: string[] = ["year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["ticker", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -32,6 +32,46 @@ export class TradesStatisticGridComponent {
   }
 
   populateTable() {
+    const tableDataArr: any[] = [];
+
+    const data = this.dataService.getAllYearsTickersData();
+    const yearsArr = Object.keys(data).map(Number);
+
+    console.warn('data analytics: ' + yearsArr);
+
+    for (const year of yearsArr) {
+
+      const yearTickersData = data[year];
+
+      if (yearTickersData) {
+        let yearTotalTickerNetPremium = 0;
+
+        for (const ticker in yearTickersData) {
+          const tickerData = yearTickersData[ticker];
+          yearTotalTickerNetPremium += tickerData.summary?.totalNetPremium || 0; // Handle potential null or undefined
+
+          tableDataArr.push({
+            ticker,
+            year,
+            totalNetPremium: tickerData.summary?.totalNetPremium
+          });
+        }
+      }
+    }
+
+    tableDataArr.sort((a, b) => {
+      if (a.ticker !== b.ticker) {
+        return a.ticker.localeCompare(b.ticker);
+      } else {
+        return b.year - a.year;
+      }
+    });
+
+    console.warn(tableDataArr);
+    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  populateTotalByYearTable() {
     const tableDataArr: any[] = [];
   
     const data = this.dataService.getAllYearsTickersData();
