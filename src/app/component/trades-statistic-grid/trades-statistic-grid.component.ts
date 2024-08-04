@@ -12,11 +12,14 @@ import { DataService } from 'src/app/service/data.service';
 })
 export class TradesStatisticGridComponent {
 
-  dataSource: any;
+  dataSourceByTickers: any;
+  dataSourceByYears: any;
+
   yearOptions: number[] = [];
 
 
-  displayedColumns: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsByYears: string[] = ["year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -27,11 +30,12 @@ export class TradesStatisticGridComponent {
   ngOnInit() {
     this.dataService.currentData.subscribe((data) => {
       // get all years array
-      this.populateTable();
+      this.populateTickersTable();
+      this.populateTotalByYearTable();
     });
   }
 
-  populateTable() {
+  populateTickersTable() {
     const tableDataArr: any[] = [];
     const tickerTotals: { [ticker: string]: number } = {};
   
@@ -81,7 +85,7 @@ export class TradesStatisticGridComponent {
 
   
     //console.warn(tableDataArr);
-    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTable2() {
@@ -121,7 +125,7 @@ export class TradesStatisticGridComponent {
     });
 
     console.warn(tableDataArr);
-    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTotalByYearTable() {
@@ -148,9 +152,11 @@ export class TradesStatisticGridComponent {
         });
       }
     }
+
+    tableDataArr.sort((a, b) => b.year - a.year);
   
     console.warn(tableDataArr);
-    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceByYears = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTableOld() {
@@ -178,7 +184,7 @@ export class TradesStatisticGridComponent {
     console.warn(tableDataArr);
 
     //this.dataSource = tableDataArr;
-    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
   public backGroundColor(value: string) {

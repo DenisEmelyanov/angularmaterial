@@ -8,8 +8,14 @@ mat-card-subtitle {
     margin-left: 0%;
 }
 
-mat-card-content {
+mat-card-content.total-by-tickers {
     overflow-y: auto;
     height: 1000px;
+    /* Adjust height as needed */
+}
+
+mat-card-content.total-by-years {
+    overflow-y: auto;
+    height: 300px;
     /* Adjust height as needed */
 }
