@@ -130,6 +130,7 @@ export class TradesStatisticGridComponent {
 
   populateTotalByYearTable() {
     const tableDataArr: any[] = [];
+    let totalNetPremium = 0;
   
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
@@ -144,6 +145,7 @@ export class TradesStatisticGridComponent {
         for (const ticker in yearTickersData) {
           const tickerData = yearTickersData[ticker];
           yearTotalNetPremium += tickerData.summary?.totalNetPremium || 0; // Handle potential null or undefined
+          totalNetPremium += tickerData.summary?.totalNetPremium || 0;
         }
   
         tableDataArr.push({
@@ -152,7 +154,12 @@ export class TradesStatisticGridComponent {
         });
       }
     }
-
+  
+    tableDataArr.push({
+      year: 'TOTAL',
+      totalNetPremium
+    });
+  
     tableDataArr.sort((a, b) => b.year - a.year);
   
     console.warn(tableDataArr);
