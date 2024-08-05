@@ -5,7 +5,6 @@ import { TickerData } from "../model/ticker-data";
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from "rxjs/internal/Observable";
-import { SummaryData } from "../model/summary-data";
 import { CalculationService } from "./calculation.service";
 
 @Injectable({
@@ -66,7 +65,7 @@ export class DataService {
             });
 
             Object.keys(tickersData).forEach(ticker => {
-                console.warn('update data for :' + ticker + ' ' + year);
+                console.warn('update data for: ' + ticker + ' ' + year);
 
 
                 this.updateTickerData(ticker, year);

@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { Transaction } from 'src/app/model/transaction';
+import { group } from '@angular/animations';
 
 @Component({
   selector: 'app-transaction-form',
@@ -31,6 +32,7 @@ export class TransactionFormComponent implements OnInit {
       openDate: this.formBuilder.control(null),
       closeDate: this.formBuilder.control(null),
       year: this.formBuilder.control(new Date().getFullYear()),
+      group: this.formBuilder.control(''),
       assigned: this.formBuilder.control(false)
     });
   }
@@ -62,6 +64,7 @@ export class TransactionFormComponent implements OnInit {
       openDate: this.editData.openDate,
       closeDate: this.editData.closeDate,
       year: this.editData.year,
+      group: this.editData.group,
       assigned: this.editData.assigned
     })
   }
