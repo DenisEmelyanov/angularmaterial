@@ -19,3 +19,7 @@ mat-card-content.total-by-years {
     height: 400px;
     /* Adjust height as needed */
 }
+
+div.mat-grid-tile-content {
+    width: 100%; display: flex; align-items: flex-start; margin: 10px;
+}
