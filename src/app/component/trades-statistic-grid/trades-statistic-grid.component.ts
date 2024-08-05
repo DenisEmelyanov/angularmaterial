@@ -14,12 +14,15 @@ export class TradesStatisticGridComponent {
 
   dataSourceByTickers: any;
   dataSourceByYears: any;
+  dataSourceByMonth: any;
 
   yearOptions: number[] = [];
+  selectedYear: any;
 
 
   displayedColumnsByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
-  displayedColumnsByYears: string[] = ["year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsByMonths: string[] = ["month", "totalNetPremium"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -33,6 +36,10 @@ export class TradesStatisticGridComponent {
       this.populateTickersTable();
       this.populateTotalByYearTable();
     });
+  }
+
+  onDetails(data: any) {
+    this.selectedYear = data;
   }
 
   populateTickersTable() {
@@ -134,6 +141,7 @@ export class TradesStatisticGridComponent {
   
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
+    this.selectedYear = yearsArr.sort((a, b) => b - a)[0];
   
     console.warn('data analytics: ' + yearsArr);
   
