@@ -35,6 +35,7 @@ export class TradesStatisticGridComponent {
       // get all years array
       this.populateTickersTable();
       this.populateTotalByYearTable();
+      this.populateTotalByMonthTable();
     });
   }
 
@@ -172,6 +173,45 @@ export class TradesStatisticGridComponent {
   
     console.warn(tableDataArr);
     this.dataSourceByYears = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  populateTotalByMonthTable() {
+    // const tableDataArr: any[] = [];
+    // let totalNetPremium = 0;
+  
+    // const data = this.dataService.getAllYearsTickersData();
+    // const yearsArr = Object.keys(data).map(Number);
+    // this.selectedYear = yearsArr.sort((a, b) => b - a)[0];
+  
+    // const selectedYearData = data[this.selectedYear];
+  
+    // if (selectedYearData) {
+    //   const monthTotals: { [month: number]: number } = {};
+  
+    //   for (const ticker in selectedYearData) {
+    //     const tickerData = selectedYearData[ticker];
+    //     for (const transaction in tickerData.transactions) {
+    //       const month = transaction.openDate.getMonth() + 1; // Assuming date is a Date object
+    //       monthTotals[month] = (monthTotals[month] || 0) + (transaction.summary?.totalNetPremium || 0);
+    //       totalNetPremium += transaction.summary?.totalNetPremium || 0;
+    //     }
+    //   }
+  
+    //   for (const month in monthTotals) {
+    //     tableDataArr.push({
+    //       month: month,
+    //       totalNetPremium: monthTotals[month]
+    //     });
+    //   }
+  
+    //   tableDataArr.push({
+    //     month: 'Total',
+    //     totalNetPremium
+    //   });
+    // }
+  
+    // console.warn(tableDataArr);
+    // this.dataSourceByMonths = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTableOld() {
