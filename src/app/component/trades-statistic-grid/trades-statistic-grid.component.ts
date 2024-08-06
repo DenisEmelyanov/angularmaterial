@@ -22,6 +22,7 @@ export class TradesStatisticGridComponent {
 
   yearOptions: number[] = [];
   selectedYear: any;
+  monthTrades: Record<string, Transaction[]> = {};
   monthTransactions: Record<string, Transaction[]> = {};
 
   displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
@@ -52,19 +53,20 @@ export class TradesStatisticGridComponent {
   }
 
   onTradesMonthDetails(month: any) {
-    this.openDetails(month, 'TRADES DETAILS ' + month + ' ' + this.selectedYear, TradesDetailsDialogComponent);
+    this.openDetails('TRADES DETAILS ' + month + ' ' + this.selectedYear, ["transaction", "chips", "openDate", "closeDate", "premium"], this.monthTrades[month], TradesDetailsDialogComponent);
   }
 
   onTransactionsMonthDetails(month: any) {
-    this.openDetails(month, 'TRANSACTIONS DETAILS ' + month + ' ' + this.selectedYear, TradesDetailsDialogComponent);
+    this.openDetails('TRANSACTIONS DETAILS ' + month + ' ' + this.selectedYear, ["transaction", "chips", "openDate", "premium"], this.monthTransactions[month], TradesDetailsDialogComponent);
   }
 
-  openDetails(month: any, title: string, component: any) {
+  openDetails(title: string, columns: string[], transactions: Transaction[], component: any) {
     var _transactionFormRef = this.tradesDetailsDialog.open(component, {
       width: '40%',
       data: {
         title: title,
-        transactions: this.monthTransactions[month]
+        columns: columns,
+        transactions: transactions
       }
     });
 
@@ -202,7 +204,7 @@ export class TradesStatisticGridComponent {
       const monthStr = this.getMonthAbbreviation(parseInt(month));
 
       //save month transactions for details
-      this.monthTransactions[monthStr] = monthTransactions[month];
+      this.monthTrades[monthStr] = monthTransactions[month];
 
       tableDataArr.push({
         month: monthStr,
@@ -257,7 +259,7 @@ export class TradesStatisticGridComponent {
               openSide: transaction.openSide,
               openDate: transaction.openDate,
               assigned: false
-            }           
+            }
             transactionsArr.push(openTransaction);
 
             if (transaction.closeDate !== null) {
@@ -284,7 +286,7 @@ export class TradesStatisticGridComponent {
 
     for (const transaction of transactionsArr) {
       const openMonth = this.getMonthFromString(transaction.openDate); // Months are zero-indexed
-    
+
       monthTotals[openMonth] = (monthTotals[openMonth] || 0) + transaction.premium;
 
       if (transaction.type === 'call' || transaction.type === 'put') {
@@ -293,7 +295,7 @@ export class TradesStatisticGridComponent {
       else {
         totalStocksNetPremium += transaction.premium;
       }
-    
+
       monthTransactions[openMonth] = monthTransactions[openMonth] || [];
       monthTransactions[openMonth].push(transaction);
     }

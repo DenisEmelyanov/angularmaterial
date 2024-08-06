@@ -15,12 +15,12 @@ export class TradesDetailsDialogComponent implements OnInit {
   dataSource: any;
   title: any;
 
-  displayedColumns: string[] = ["transaction", "chips", "openDate", "closeDate", "premium"];
+  displayedColumns: string[] = [];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>) {
-    
+    this.displayedColumns = data.columns;
   }
 
   ngOnInit(): void {
