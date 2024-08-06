@@ -55,7 +55,7 @@ export class TransactionFormComponent implements OnInit {
     this.selectedType = this.editData.type;
     this.transactionForm.patchValue({
       //ticker: this.editData.ticker, 
-      side: this.editData.side,
+      side: this.editData.opeSide,
       quantity: this.editData.quantity,
       type: this.editData.type,
       strike: this.editData.strike,

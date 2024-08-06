@@ -5,7 +5,7 @@
         <ng-container matColumnDef="transaction">
           <th mat-sort-header mat-header-cell *matHeaderCellDef> Transaction</th>
           <td mat-cell *matCellDef="let element">
-            {{element.side | customSide}}
+            {{element.openSide | customSide}}
             {{element.quantity}}
             {{element.ticker}}
             {{element.expiration | date:'MMM dd, yyyy'}}
@@ -26,7 +26,7 @@
   
         <ng-container matColumnDef="side">
           <th mat-sort-header mat-header-cell *matHeaderCellDef> Side</th>
-          <td mat-cell *matCellDef="let element">{{element.side | customSide}}</td>
+          <td mat-cell *matCellDef="let element">{{element.openSide | customSide}}</td>
         </ng-container>
   
         <ng-container matColumnDef="quantity">
