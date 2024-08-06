@@ -53,7 +53,7 @@ export class SummaryGridComponent {
   }
 
   populateTable() {
-    const data = this.dataService.getTickersData(this.calendarYear);
+    const data = this.dataService.getTickersDataByYear(this.calendarYear);
     var tableDataArr: any[] = [];
     Object.keys(data).forEach(ticker => {
       //skip removed transactions

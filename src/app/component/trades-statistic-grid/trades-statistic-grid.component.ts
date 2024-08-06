@@ -14,7 +14,7 @@ export class TradesStatisticGridComponent {
 
   dataSourceByTickers: any;
   dataSourceByYears: any;
-  dataSourceByMonth: any;
+  dataSourceByMonths: any;
 
   yearOptions: number[] = [];
   selectedYear: any;
@@ -35,12 +35,13 @@ export class TradesStatisticGridComponent {
       // get all years array
       this.populateTickersTable();
       this.populateTotalByYearTable();
-      this.populateTotalByMonthTable();
+      this.populateTotalByMonthTable(this.selectedYear);
     });
   }
 
   onDetails(data: any) {
     this.selectedYear = data;
+    this.populateTotalByMonthTable(this.selectedYear);
   }
 
   populateTickersTable() {
@@ -175,44 +176,71 @@ export class TradesStatisticGridComponent {
     this.dataSourceByYears = new MatTableDataSource<any>(tableDataArr);
   }
 
-  populateTotalByMonthTable() {
-    // const tableDataArr: any[] = [];
-    // let totalNetPremium = 0;
+  populateTotalByMonthTable(year: number) {
+    const tableDataArr: any[] = [];
+    let totalOptionsNetPremium = 0;
+    let totalStocksNetPremium = 0;
   
-    // const data = this.dataService.getAllYearsTickersData();
-    // const yearsArr = Object.keys(data).map(Number);
-    // this.selectedYear = yearsArr.sort((a, b) => b - a)[0];
+    const data = this.dataService.getTickersDataByYear(year);
   
-    // const selectedYearData = data[this.selectedYear];
+    const monthTotals: { [month: number]: number } = {};
   
-    // if (selectedYearData) {
-    //   const monthTotals: { [month: number]: number } = {};
+    for (const ticker in data) {
+      const tickerData = data[ticker];
+      if (tickerData.transactions) {
+        for (const transaction of tickerData.transactions) {
+          if (transaction.type !== 'stock') {
+            const transactionDate = new Date(transaction.openDate);
+            const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+            monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
+            totalOptionsNetPremium += transaction.premium;
+          }
+          else if (transaction.closeDate !== null) {
+            totalStocksNetPremium += transaction.premium;
+          }
+        }
+      }
+    }
   
-    //   for (const ticker in selectedYearData) {
-    //     const tickerData = selectedYearData[ticker];
-    //     for (const transaction in tickerData.transactions) {
-    //       const month = transaction.openDate.getMonth() + 1; // Assuming date is a Date object
-    //       monthTotals[month] = (monthTotals[month] || 0) + (transaction.summary?.totalNetPremium || 0);
-    //       totalNetPremium += transaction.summary?.totalNetPremium || 0;
-    //     }
-    //   }
+    for (const month in monthTotals) {
+      tableDataArr.push({
+        month: this.getMonthAbbreviation(parseInt(month)),
+        totalNetPremium: monthTotals[month]
+      });
+    }
+
+    tableDataArr.sort(this.compareMonths);
   
-    //   for (const month in monthTotals) {
-    //     tableDataArr.push({
-    //       month: month,
-    //       totalNetPremium: monthTotals[month]
-    //     });
-    //   }
+    tableDataArr.push({
+      month: 'TOTAL OPTIONS',
+      totalNetPremium: totalOptionsNetPremium
+    });
+
+    tableDataArr.push({
+      month: 'TOTAL STOCKS',
+      totalNetPremium: totalStocksNetPremium
+    });
+
+    tableDataArr.push({
+      month: 'TOTAL',
+      totalNetPremium: totalOptionsNetPremium + totalStocksNetPremium
+    });
   
-    //   tableDataArr.push({
-    //     month: 'Total',
-    //     totalNetPremium
-    //   });
-    // }
-  
-    // console.warn(tableDataArr);
-    // this.dataSourceByMonths = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceByMonths = new MatTableDataSource<any>(tableDataArr);
   }
+
+  getMonthAbbreviation(monthNumber: number): string {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[monthNumber - 1];
+  }
+
+  compareMonths(a: { month: string }, b: { month: string }): number {
+    const monthMap: { [key: string]: number } = {
+      Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12
+    };
+    return monthMap[b.month] - monthMap[a.month];
+  }
+  
 
   populateTableOld() {
     var tableDataArr: any[] = [];

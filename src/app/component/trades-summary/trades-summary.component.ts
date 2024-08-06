@@ -29,7 +29,7 @@ export class TradesSummaryComponent implements OnInit {
   ngOnInit() {
     this.dataService.currentData.subscribe((data: any) => {
       if (data.ticker === this.dataTicker.ticker && data.year === this.dataTicker.year) {
-        const summaryData = this.dataService.getTickersData(this.dataTicker.year)[this.dataTicker.ticker].summary;
+        const summaryData = this.dataService.getTickersDataByYear(this.dataTicker.year)[this.dataTicker.ticker].summary;
         this.putNetPremium = summaryData?.putNetPremium!;
         this.callNetPremium = summaryData?.callNetPremium!;
         this.totalNetPremium = summaryData?.totalNetPremium!;

@@ -89,7 +89,7 @@ export class DataService {
         return this.yearsData;
     }
 
-    public getTickersData(year: any) {
+    public getTickersDataByYear(year: any) {
         return this.yearsData[year];
     }
 
