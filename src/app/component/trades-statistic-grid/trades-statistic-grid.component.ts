@@ -41,12 +41,14 @@ export class TradesStatisticGridComponent {
       this.populateTradesTickersTable();
       this.populateTradesTotalByYearTable();
       this.populateTradesTotalByMonthTable(this.selectedYear);
+      this.populateTransactionsTotalByMonthTable(this.selectedYear);
     });
   }
 
   onYearDetails(year: any) {
     this.selectedYear = year;
     this.populateTradesTotalByMonthTable(this.selectedYear);
+    this.populateTransactionsTotalByMonthTable(this.selectedYear);
   }
 
   onMonthDetails(month: any) {
@@ -222,6 +224,103 @@ export class TradesStatisticGridComponent {
     });
 
     this.dataSourceTradesByMonths = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  populateTransactionsTotalByMonthTable(year: number) {
+    const tableDataArr: any[] = [];
+    let totalOptionsNetPremium = 0;
+    let totalStocksNetPremium = 0;
+
+    const data = this.dataService.getTickersDataByYear(year);
+
+    const monthTotals: { [month: number]: number } = {};
+    const monthTransactions: { [month: number]: Transaction[] } = {};
+
+    for (const ticker in data) {
+      const tickerData = data[ticker];
+      if (tickerData.transactions) {
+        for (const transaction of tickerData.transactions) {
+          // calculate total premium from non-stock trades
+          if (transaction.type === 'call' || transaction.type === 'put') {
+            const openTransaction: Transaction = {
+              ticker: transaction.ticker,
+              type: transaction.type,
+              quantity: transaction.quantity,
+              strike: transaction.strike,
+              premium: transaction.openAmount!,
+              openSide: transaction.openSide,
+              openDate: transaction.openDate,
+              assigned: false
+            }
+
+            const month = new Date(openTransaction.openDate).getMonth() + 1; // Months are zero-indexed
+
+            monthTotals[month] = (monthTotals[month] || 0) + openTransaction.premium;
+            totalOptionsNetPremium += openTransaction.premium;
+
+            monthTransactions[month] = monthTransactions[month] || [];
+            monthTransactions[month].push(openTransaction);
+
+            if (transaction.closeDate !== null) {
+              const closeTransaction: Transaction = {
+                ticker: transaction.ticker,
+                type: transaction.type,
+                quantity: transaction.quantity,
+                strike: transaction.strike,
+                premium: transaction.closeAmount!,
+                openSide: transaction.closeSide,
+                openDate: transaction.closeDate!,
+                assigned: transaction.assigned
+              }
+
+              const month = new Date(closeTransaction.openDate).getMonth() + 1; // Months are zero-indexed
+
+              monthTotals[month] = (monthTotals[month] || 0) + closeTransaction.premium;
+              totalOptionsNetPremium += closeTransaction.premium;
+  
+              monthTransactions[month].push(closeTransaction);
+            }
+
+
+          }
+          // calculate premium from closed stock trades
+          else if (transaction.closeDate !== null) {
+            totalStocksNetPremium += transaction.premium;
+          }
+        }
+      }
+    }
+
+    for (const month in monthTotals) {
+      const monthStr = this.getMonthAbbreviation(parseInt(month));
+
+      //save month transactions for details
+      this.monthTransactions[monthStr] = monthTransactions[month];
+
+      tableDataArr.push({
+        month: monthStr,
+        totalNetPremium: monthTotals[month]
+      });
+    }
+
+    tableDataArr.sort(this.compareMonths);
+
+    tableDataArr.push({
+      month: 'TOTAL OPTIONS',
+      totalNetPremium: totalOptionsNetPremium
+    });
+
+    tableDataArr.push({
+      month: 'TOTAL STOCKS',
+      totalNetPremium: totalStocksNetPremium
+    });
+
+    tableDataArr.push({
+      month: 'TOTAL',
+      totalNetPremium: totalOptionsNetPremium + totalStocksNetPremium
+    });
+
+    this.dataSourceTransactionsByMonths = new MatTableDataSource<any>(tableDataArr);
   }
 
   getMonthAbbreviation(monthNumber: number): string {

@@ -19,6 +19,7 @@
           <td mat-cell *matCellDef="let element">
             <mat-chip-set aria-label="chips">
               <mat-chip class="assigned-chip" *ngIf="element.assigned">assigned</mat-chip>
+              <mat-chip class="assigned-chip" *ngIf="element.openSide === 'expiration'">expired</mat-chip>
               <mat-chip class="open-chip" *ngIf="element.closeDate === null">open</mat-chip>
             </mat-chip-set>
           </td>
