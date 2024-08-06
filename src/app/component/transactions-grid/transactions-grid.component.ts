@@ -37,11 +37,15 @@ export class TransactionsGridComponent {
   refreshTable() {
     this.dataService.getTickerTransactions(this.dataTicker.ticker, this.dataTicker.year!).subscribe((res: any) => {
       console.warn(res);
-      this.dataSource = res;
+      this.dataSource = this.sortByOpenDate(res);
 
       this.dataService.updateTickerData(this.dataTicker.ticker, this.dataTicker.year!);
     });
     //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
+  }
+
+  sortByOpenDate(data: Transaction[]): Transaction[] {
+    return data.sort((a, b) => new Date(b.openDate).getTime() - new Date(a.openDate).getTime());
   }
 
   deleteTransaction(transaction: Transaction) {

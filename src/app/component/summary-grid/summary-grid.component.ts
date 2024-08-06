@@ -75,7 +75,11 @@ export class SummaryGridComponent {
     })
 
     //this.dataSource = tableDataArr;
-    this.dataSource = new MatTableDataSource<any>(tableDataArr);
+    this.dataSource = new MatTableDataSource<any>(this.sortByOpenDate(tableDataArr));
+  }
+
+  sortByOpenDate(data: Transaction[]): Transaction[] {
+    return data.sort((a, b) => new Date(b.openDate).getTime() - new Date(a.openDate).getTime());
   }
 
   onDetails(data: TickerData) {
