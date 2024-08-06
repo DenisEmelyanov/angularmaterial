@@ -22,7 +22,7 @@ export class TradesStatisticGridComponent {
 
   displayedColumnsByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
-  displayedColumnsByMonths: string[] = ["month", "totalNetPremium"];
+  displayedColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -39,9 +39,13 @@ export class TradesStatisticGridComponent {
     });
   }
 
-  onDetails(data: any) {
-    this.selectedYear = data;
+  onYearDetails(year: any) {
+    this.selectedYear = year;
     this.populateTotalByMonthTable(this.selectedYear);
+  }
+
+  onMonthDetails(month: any) {
+    
   }
 
   populateTickersTable() {

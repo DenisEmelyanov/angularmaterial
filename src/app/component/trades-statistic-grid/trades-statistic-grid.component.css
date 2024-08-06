@@ -16,13 +16,13 @@ mat-card-content.total-by-tickers {
 
 mat-card-content.total-by-years {
     overflow-y: auto;
-    height: 400px;
+    height: auto;
     /* Adjust height as needed */
 }
 
 mat-card-content.total-by-months {
     overflow-y: auto;
-    height: 900px;
+    height: auto;
     /* Adjust height as needed */
 }
 
