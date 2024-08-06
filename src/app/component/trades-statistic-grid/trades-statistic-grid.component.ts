@@ -235,6 +235,9 @@ export class TradesStatisticGridComponent {
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
+    const transactionsArr: Transaction[] = [];
+
+
 
     for (const ticker in data) {
       const tickerData = data[ticker];
@@ -247,19 +250,13 @@ export class TradesStatisticGridComponent {
               type: transaction.type,
               quantity: transaction.quantity,
               strike: transaction.strike,
+              expiration: transaction.expiration,
               premium: transaction.openAmount!,
               openSide: transaction.openSide,
               openDate: transaction.openDate,
               assigned: false
-            }
-
-            const month = new Date(openTransaction.openDate).getMonth() + 1; // Months are zero-indexed
-
-            monthTotals[month] = (monthTotals[month] || 0) + openTransaction.premium;
-            totalOptionsNetPremium += openTransaction.premium;
-
-            monthTransactions[month] = monthTransactions[month] || [];
-            monthTransactions[month].push(openTransaction);
+            }           
+            transactionsArr.push(openTransaction);
 
             if (transaction.closeDate !== null) {
               const closeTransaction: Transaction = {
@@ -267,28 +264,36 @@ export class TradesStatisticGridComponent {
                 type: transaction.type,
                 quantity: transaction.quantity,
                 strike: transaction.strike,
+                expiration: transaction.expiration,
                 premium: transaction.closeAmount!,
                 openSide: transaction.closeSide,
                 openDate: transaction.closeDate!,
                 assigned: transaction.assigned
               }
-
-              const month = new Date(closeTransaction.openDate).getMonth() + 1; // Months are zero-indexed
-
-              monthTotals[month] = (monthTotals[month] || 0) + closeTransaction.premium;
-              totalOptionsNetPremium += closeTransaction.premium;
-  
-              monthTransactions[month].push(closeTransaction);
+              transactionsArr.push(closeTransaction);
             }
-
-
           }
-          // calculate premium from closed stock trades
           else if (transaction.closeDate !== null) {
-            totalStocksNetPremium += transaction.premium;
+            transactionsArr.push(transaction);
           }
         }
       }
+    }
+
+    for (const transaction of transactionsArr) {
+      const openMonth = this.getMonthFromString(transaction.openDate); // Months are zero-indexed
+    
+      monthTotals[openMonth] = (monthTotals[openMonth] || 0) + transaction.premium;
+
+      if (transaction.type === 'call' || transaction.type === 'put') {
+        totalOptionsNetPremium += transaction.premium;
+      }
+      else {
+        totalStocksNetPremium += transaction.premium;
+      }
+    
+      monthTransactions[openMonth] = monthTransactions[openMonth] || [];
+      monthTransactions[openMonth].push(transaction);
     }
 
     for (const month in monthTotals) {
@@ -321,6 +326,11 @@ export class TradesStatisticGridComponent {
     });
 
     this.dataSourceTransactionsByMonths = new MatTableDataSource<any>(tableDataArr);
+  }
+
+  getMonthFromString(dateString: string): number {
+    const parts = dateString.split('-');
+    return parseInt(parts[1], 10);
   }
 
   getMonthAbbreviation(monthNumber: number): string {

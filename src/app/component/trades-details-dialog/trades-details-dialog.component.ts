@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { Transaction } from 'src/app/model/transaction';
 
 @Component({
   selector: 'app-trades-details-dialog',
@@ -24,7 +25,12 @@ export class TradesDetailsDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.title = this.data.title.toUpperCase();
-    this.dataSource = this.data.transactions;
+
+    this.dataSource = this.sortByOpenDate(this.data.transactions);
+  }
+
+  sortByOpenDate(data: Transaction[]): Transaction[] {
+    return data.sort((a, b) => new Date(b.openDate).getTime() - new Date(a.openDate).getTime());
   }
 
   closeDialog() {
