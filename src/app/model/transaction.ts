@@ -5,7 +5,7 @@ export interface Transaction {
     type: string;
     strike?: number;
     expiration?: string;
-    side?: string;
+    openSide?: string;
     closeSide?: string;
     quantity?: number;
     premium: number;

@@ -64,7 +64,7 @@ export class TransactionsGridComponent {
       {
         id: -1,
         ticker: this.dataTicker.ticker,
-        side: '',
+        openSide: '',
         type: '',
         strike: 0,
         expiration: '',

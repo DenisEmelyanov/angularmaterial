@@ -17,8 +17,8 @@ export class CalculationService {
         const callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
         const totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
 
-        const boughtSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'buy').reduce((sum, current) => sum + current.quantity!, 0);
-        const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.side === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
+        const boughtSharesQty = transactions.filter(t => t.type === 'stock' && t.openSide === 'buy').reduce((sum, current) => sum + current.quantity!, 0);
+        const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.openSide === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
         const sharesQty = boughtSharesQty - soldSharesQty;
 
         const sharesOpenTrasactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate === null).reduce((sum, current) => sum + current.premium, 0);

@@ -146,7 +146,7 @@ export class DataService {
         }
 
         if (transaction.type === 'dividend') {
-            delete transaction.side;
+            delete transaction.openSide;
             delete transaction.strike;
             delete transaction.quantity;
             delete transaction.expiration;
@@ -177,7 +177,7 @@ export class DataService {
         }
 
         if (transaction.type === 'dividend') {
-            delete transaction.side;
+            delete transaction.openSide;
             delete transaction.strike;
             delete transaction.quantity;
             delete transaction.expiration;
