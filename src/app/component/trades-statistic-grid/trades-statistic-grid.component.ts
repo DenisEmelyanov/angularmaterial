@@ -171,24 +171,46 @@ export class TradesStatisticGridComponent {
       const tickerData = data[ticker];
       if (tickerData.transactions) {
         for (const transaction of tickerData.transactions) {
-          const transactionDate = new Date(transaction.openDate);
-          const month = transactionDate.getMonth() + 1; // Months are zero-indexed
-  
-          if (transaction.type !== 'stock' || transaction.closeDate !== null) {
+
+          if (transaction.type !== 'stock') {
+            const transactionDate = new Date(transaction.openDate);
+            const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+
             monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
             totalOptionsNetPremium += transaction.premium;
-  
-            if (transaction.type !== 'stock') {
-              totalOptionsNetPremium += transaction.premium;
-              monthTransactions[month] = monthTransactions[month] || [];
-              monthTransactions[month].push(transaction);
-            } else {
-              totalStocksNetPremium += transaction.premium;
-            }
+
+            monthTransactions[month] = monthTransactions[month] || [];
+            monthTransactions[month].push(transaction);
+          }
+          else if (transaction.closeDate !== null) {
+            totalStocksNetPremium += transaction.premium;
           }
         }
       }
     }
+
+    // for (const ticker in data) {
+    //   const tickerData = data[ticker];
+    //   if (tickerData.transactions) {
+    //     for (const transaction of tickerData.transactions) {
+    //       const transactionDate = new Date(transaction.openDate);
+    //       const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+  
+    //       if (transaction.type !== 'stock' || transaction.closeDate !== null) {
+    //         monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
+    //         totalNetPremium += transaction.premium;
+  
+    //         if (transaction.type !== 'stock') {
+    //           totalOptionsNetPremium += transaction.premium;
+    //           monthTransactions[month] = monthTransactions[month] || [];
+    //           monthTransactions[month].push(transaction);
+    //         } else {
+    //           totalStocksNetPremium += transaction.premium;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     for (const month in monthTotals) {
       const monthStr = this.getMonthAbbreviation(parseInt(month));
