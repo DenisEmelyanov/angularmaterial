@@ -83,7 +83,7 @@
             <mat-datepicker [dateClass]="dateClass" #openDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field floatLabel="always" appearance="outline">
+        <mat-form-field floatLabel="always" appearance="outline" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call'">
             <mat-label>Open Amount</mat-label>
             <input matInput type="number" placeholder="0.00" formControlName="openAmount" />
             <span matTextPrefix>$&nbsp;</span>
@@ -97,7 +97,7 @@
             <mat-datepicker [dateClass]="dateClass" #closeDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field floatLabel="always" appearance="outline">
+        <mat-form-field floatLabel="always" appearance="outline" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call'">
             <mat-label>Close Amount</mat-label>
             <input matInput type="number" placeholder="0.00" formControlName="closeAmount" />
             <span matTextPrefix>$&nbsp;</span>
