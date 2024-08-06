@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TickerData } from 'src/app/model/ticker-data';
 import { DataService } from 'src/app/service/data.service';
 import { TradesDetailsDialogComponent } from '../trades-details-dialog/trades-details-dialog.component';
+import { Transaction } from 'src/app/model/transaction';
 
 @Component({
   selector: 'app-trades-statistic-grid',
@@ -20,7 +21,7 @@ export class TradesStatisticGridComponent {
 
   yearOptions: number[] = [];
   selectedYear: any;
-
+  monthTransactions: Record<string, Transaction[]> = {};
 
   displayedColumnsByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
@@ -47,51 +48,52 @@ export class TradesStatisticGridComponent {
   }
 
   onMonthDetails(month: any) {
-    this.openTradesDetails(TradesDetailsDialogComponent);
+    this.openTradesDetails(month, TradesDetailsDialogComponent);
   }
 
-  openTradesDetails(component: any) {
+  openTradesDetails(month: any, component: any) {
     var _transactionFormRef = this.tradesDetailsDialog.open(component, {
       width: '40%',
       data: {
-        
+        title: month + ' ' + this.selectedYear,
+        transactions: this.monthTransactions[month]
       }
     });
 
     _transactionFormRef.afterClosed().subscribe(() => {
-      console.warn('Trades Details is closed');  
+      console.warn('Trades Details is closed');
     })
   }
 
   populateTickersTable() {
     const tableDataArr: any[] = [];
     const tickerTotals: { [ticker: string]: number } = {};
-  
+
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
-  
+
     console.warn('data analytics: ' + yearsArr);
-  
+
     for (const year of yearsArr) {
       const yearTickersData = data[year];
-  
+
       if (yearTickersData) {
         for (const ticker in yearTickersData) {
           const tickerData = yearTickersData[ticker];
           const totalNetPremium = tickerData.summary?.totalNetPremium || 0;
-  
+
           tableDataArr.push({
             ticker: ticker,
             description: tickerData.description,
             year,
             totalNetPremium
           });
-  
+
           tickerTotals[ticker] = (tickerTotals[ticker] || 0) + totalNetPremium;
         }
       }
     }
-  
+
     // Add total rows for each ticker
     for (const ticker in tickerTotals) {
       tableDataArr.push({
@@ -100,7 +102,7 @@ export class TradesStatisticGridComponent {
         totalNetPremium: tickerTotals[ticker]
       });
     }
-  
+
     tableDataArr.sort((a, b) => {
       if (a.ticker !== b.ticker) {
         return a.ticker.localeCompare(b.ticker);
@@ -111,7 +113,7 @@ export class TradesStatisticGridComponent {
 
     // TODO remove ticker from total rows
 
-  
+
     //console.warn(tableDataArr);
     this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
   }
@@ -119,38 +121,38 @@ export class TradesStatisticGridComponent {
   populateTotalByYearTable() {
     const tableDataArr: any[] = [];
     let totalNetPremium = 0;
-  
+
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
     this.selectedYear = yearsArr.sort((a, b) => b - a)[0];
-  
+
     console.warn('data analytics: ' + yearsArr);
-  
+
     for (const year of yearsArr) {
       let yearTotalNetPremium = 0;
       const yearTickersData = data[year];
-  
+
       if (yearTickersData) {
         for (const ticker in yearTickersData) {
           const tickerData = yearTickersData[ticker];
           yearTotalNetPremium += tickerData.summary?.totalNetPremium || 0; // Handle potential null or undefined
           totalNetPremium += tickerData.summary?.totalNetPremium || 0;
         }
-  
+
         tableDataArr.push({
           year,
           totalNetPremium: yearTotalNetPremium
         });
       }
     }
-  
+
     tableDataArr.push({
       year: 'TOTAL',
       totalNetPremium
     });
-  
+
     tableDataArr.sort((a, b) => b.year - a.year);
-  
+
     console.warn(tableDataArr);
     this.dataSourceByYears = new MatTableDataSource<any>(tableDataArr);
   }
@@ -159,37 +161,49 @@ export class TradesStatisticGridComponent {
     const tableDataArr: any[] = [];
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
-  
+
     const data = this.dataService.getTickersDataByYear(year);
-  
+
     const monthTotals: { [month: number]: number } = {};
-  
+    const monthTransactions: { [month: number]: Transaction[] } = {};
+
     for (const ticker in data) {
       const tickerData = data[ticker];
       if (tickerData.transactions) {
         for (const transaction of tickerData.transactions) {
-          if (transaction.type !== 'stock') {
-            const transactionDate = new Date(transaction.openDate);
-            const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+          const transactionDate = new Date(transaction.openDate);
+          const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+  
+          if (transaction.type !== 'stock' || transaction.closeDate !== null) {
             monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
             totalOptionsNetPremium += transaction.premium;
-          }
-          else if (transaction.closeDate !== null) {
-            totalStocksNetPremium += transaction.premium;
+  
+            if (transaction.type !== 'stock') {
+              totalOptionsNetPremium += transaction.premium;
+              monthTransactions[month] = monthTransactions[month] || [];
+              monthTransactions[month].push(transaction);
+            } else {
+              totalStocksNetPremium += transaction.premium;
+            }
           }
         }
       }
     }
-  
+
     for (const month in monthTotals) {
+      const monthStr = this.getMonthAbbreviation(parseInt(month));
+
+      //save month transactions for details
+      this.monthTransactions[monthStr] = monthTransactions[month];
+
       tableDataArr.push({
-        month: this.getMonthAbbreviation(parseInt(month)),
+        month: monthStr,
         totalNetPremium: monthTotals[month]
       });
     }
 
     tableDataArr.sort(this.compareMonths);
-  
+
     tableDataArr.push({
       month: 'TOTAL OPTIONS',
       totalNetPremium: totalOptionsNetPremium
@@ -204,7 +218,7 @@ export class TradesStatisticGridComponent {
       month: 'TOTAL',
       totalNetPremium: totalOptionsNetPremium + totalStocksNetPremium
     });
-  
+
     this.dataSourceByMonths = new MatTableDataSource<any>(tableDataArr);
   }
 
@@ -231,7 +245,7 @@ export class TradesStatisticGridComponent {
     if (value.includes('TOTAL'))
       return "TOTAL";
     else
-      return value;  
+      return value;
   }
 
   public getColor(value: number): string {

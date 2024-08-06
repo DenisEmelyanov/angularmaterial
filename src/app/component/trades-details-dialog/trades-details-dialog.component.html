@@ -1,5 +1,6 @@
-<h2 mat-dialog-title>TRADES DETAILS</h2>
+<h2 mat-dialog-title>TRADES DETAILS {{title}}</h2>
 <mat-dialog-content>
+    <p></p>
     <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="transaction">
           <th mat-sort-header mat-header-cell *matHeaderCellDef> Transaction</th>

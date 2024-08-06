@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatPaginator } from '@angular/material/paginator';
@@ -9,9 +9,10 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './trades-details-dialog.component.html',
   styleUrls: ['./trades-details-dialog.component.css']
 })
-export class TradesDetailsDialogComponent {
+export class TradesDetailsDialogComponent implements OnInit {
 
   dataSource: any;
+  title: any;
 
   displayedColumns: string[] = ["transaction", "chips", "openDate", "closeDate", "premium"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
@@ -20,6 +21,12 @@ export class TradesDetailsDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>) {
     
   }
+
+  ngOnInit(): void {
+    this.title = this.data.title.toUpperCase();
+    this.dataSource = this.data.transactions;
+  }
+
   closeDialog() {
     this.ref.close();
   }
