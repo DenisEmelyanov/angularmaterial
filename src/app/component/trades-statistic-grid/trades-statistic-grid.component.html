@@ -139,7 +139,7 @@
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
                                     <td mat-cell *matCellDef="let element"
                                         [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
-                                        <button mat-raised-button color="primary" (click)="onMonthDetails(element.month)"
+                                        <button mat-raised-button color="primary" (click)="onTradesMonthDetails(element.month)"
                                             *ngIf="element.month !== 'TOTAL'">Details</button>
                                     </td>
                                 </ng-container>
@@ -192,7 +192,7 @@
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
                                     <td mat-cell *matCellDef="let element"
                                         [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
-                                        <button mat-raised-button color="primary" (click)="onMonthDetails(element.month)"
+                                        <button mat-raised-button color="primary" (click)="onTransactionsMonthDetails(element.month)"
                                             *ngIf="element.month !== 'TOTAL'">Details</button>
                                     </td>
                                 </ng-container>

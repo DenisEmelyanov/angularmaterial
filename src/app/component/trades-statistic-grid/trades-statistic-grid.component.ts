@@ -51,15 +51,19 @@ export class TradesStatisticGridComponent {
     this.populateTransactionsTotalByMonthTable(this.selectedYear);
   }
 
-  onMonthDetails(month: any) {
-    this.openTradesDetails(month, TradesDetailsDialogComponent);
+  onTradesMonthDetails(month: any) {
+    this.openDetails(month, 'TRADES DETAILS ' + month + ' ' + this.selectedYear, TradesDetailsDialogComponent);
   }
 
-  openTradesDetails(month: any, component: any) {
+  onTransactionsMonthDetails(month: any) {
+    this.openDetails(month, 'TRANSACTIONS DETAILS ' + month + ' ' + this.selectedYear, TradesDetailsDialogComponent);
+  }
+
+  openDetails(month: any, title: string, component: any) {
     var _transactionFormRef = this.tradesDetailsDialog.open(component, {
       width: '40%',
       data: {
-        title: month + ' ' + this.selectedYear,
+        title: title,
         transactions: this.monthTransactions[month]
       }
     });
@@ -236,8 +240,6 @@ export class TradesStatisticGridComponent {
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
     const transactionsArr: Transaction[] = [];
-
-
 
     for (const ticker in data) {
       const tickerData = data[ticker];
