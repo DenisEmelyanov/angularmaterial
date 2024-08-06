@@ -16,28 +16,28 @@
                                 <ng-container matColumnDef="ticker">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'background-color': backGroundColor(element.ticker)}">
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.ticker)}">
                                         {{updateTotalRows(element.ticker)}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="description">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Description</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'background-color': backGroundColor(element.ticker)}">
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.ticker)}">
                                         {{element.description}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="year">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'background-color': backGroundColor(element.ticker)}">
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.ticker)}">
                                         {{element.year}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="totalNetPremium">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': backGroundColor(element.ticker)}">
+                                        [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': getBackgroundColor(element.ticker)}">
                                         {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
                                 </ng-container>
 
@@ -71,24 +71,24 @@
 
                                 <ng-container matColumnDef="year">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
-                                    <td mat-cell *matCellDef="let element">
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.year)}">
                                         {{element.year}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="totalNetPremium">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'color': getColor(element.totalNetPremium)}">
+                                        [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': getBackgroundColor(element.year)}">
                                         {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="action">
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
-                                    <td mat-cell *matCellDef="let element" >
-                                        <button mat-raised-button color="primary"
-                                        (click)="onDetails(element.year)"
-                                        *ngIf="element.year !== 'TOTAL'"
-                                            >Details</button>
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.year)}">
+                                        <button mat-raised-button color="primary" (click)="onDetails(element.year)"
+                                            *ngIf="element.year !== 'TOTAL'">Details</button>
                                     </td>
                                 </ng-container>
 
@@ -121,17 +121,17 @@
                             <p></p>
                             <table matSort mat-table [dataSource]="dataSourceByMonths" class="mat-elevation-z8">
 
-
                                 <ng-container matColumnDef="month">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Month</th>
-                                    <td mat-cell *matCellDef="let element">
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
                                         {{element.month}}</td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="totalNetPremium">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
                                     <td mat-cell *matCellDef="let element"
-                                        [ngStyle]="{'color': getColor(element.totalNetPremium)}">
+                                        [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': getBackgroundColor(element.month)}">
                                         {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
                                 </ng-container>
 

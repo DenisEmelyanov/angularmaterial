@@ -270,8 +270,8 @@ export class TradesStatisticGridComponent {
     this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
-  public backGroundColor(value: string) {
-    if (value.includes('TOTAL'))
+  public getBackgroundColor(value: string) {
+    if (value.toString().includes('TOTAL'))
       return "whitesmoke";
     else
       return "inherit";
