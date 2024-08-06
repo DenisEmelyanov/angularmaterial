@@ -171,7 +171,7 @@ export class TradesStatisticGridComponent {
       const tickerData = data[ticker];
       if (tickerData.transactions) {
         for (const transaction of tickerData.transactions) {
-
+          // calculate total premium from non-stock trades
           if (transaction.type !== 'stock') {
             const transactionDate = new Date(transaction.openDate);
             const month = transactionDate.getMonth() + 1; // Months are zero-indexed
@@ -182,6 +182,7 @@ export class TradesStatisticGridComponent {
             monthTransactions[month] = monthTransactions[month] || [];
             monthTransactions[month].push(transaction);
           }
+          // calculate premium from closed stock trades
           else if (transaction.closeDate !== null) {
             totalStocksNetPremium += transaction.premium;
           }
