@@ -83,7 +83,8 @@
             <mat-datepicker [dateClass]="dateClass" #openDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field floatLabel="always" appearance="outline" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
+        <mat-form-field floatLabel="always" appearance="outline" appearance="outline"
+            *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
             <mat-label>Open Amount</mat-label>
             <input matInput type="number" placeholder="0.00" formControlName="openAmount" />
             <span matTextPrefix>$&nbsp;</span>
@@ -97,7 +98,8 @@
             <mat-datepicker [dateClass]="dateClass" #closeDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field floatLabel="always" appearance="outline" appearance="outline" *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
+        <mat-form-field floatLabel="always" appearance="outline" appearance="outline"
+            *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
             <mat-label>Close Amount</mat-label>
             <input matInput type="number" placeholder="0.00" formControlName="closeAmount" />
             <span matTextPrefix>$&nbsp;</span>
@@ -117,15 +119,52 @@
             <mat-checkbox matInput formControlName="assigned"
                 *ngIf="selectedType === 'put' || selectedType === 'call'">Assigned</mat-checkbox>
         </p>
-        <p *ngIf="stockOpenTrades.length > 0">
-            <span *ngFor="let trade of stockOpenTrades">
-                {{trade.openSide}}
-                {{trade.quantity}}
-                {{trade.ticker}}
-                {{trade.type}} @
-                {{trade.premium}} ({{trade.openDate}})
-            </span><br>
-        </p>
+        <div *ngIf="stockOpenTrades.length > 0">
+            <p></p>
+            <table matSort mat-table [dataSource]="tableDataSource" class="mat-elevation-z8">
+                <ng-container matColumnDef="select">
+                    <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-checkbox class="example-margin" (change)="onCheckboxClick($event, element.id)"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="transaction">
+                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Transaction</th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.openSide | customSide}}
+                        {{element.quantity}}
+                        {{element.ticker}}
+                        {{element.expiration | date:'MMM dd, yyyy'}}
+                        {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
+                        {{element.type | customType}}
+                        <span *ngIf="element.type ==='stock'">@ {{getAbs(element.premium / element.quantity) | currency:
+                            'USD' : 'symbol' : '1.0-2'}}</span>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="openDate">
+                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Open Date</th>
+                    <td mat-cell *matCellDef="let element">{{element.openDate | date:'MMM dd, yyyy'}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="closeDate">
+                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Close Date</th>
+                    <td mat-cell *matCellDef="let element">{{element.closeDate | date:'MMM dd, yyyy'}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="premium">
+                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Premium</th>
+                    <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.premium)}">
+                        {{element.premium |
+                        currency: 'USD' | customCurrency}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row;columns:displayedColumns"></tr>
+
+            </table>
+        </div>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

@@ -21,6 +21,9 @@ export class TransactionFormComponent implements OnInit {
   selectedType: any;
 
   stockOpenTrades: Transaction[] = [];
+  tableDataSource: any;
+  displayedColumns: string[] = ["select", "transaction", "openDate", "closeDate", "premium"];
+  selected_trade_ids: number[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder, private dataService: DataService) {
     this.transactionForm = this.formBuilder.group({
@@ -83,8 +86,16 @@ export class TransactionFormComponent implements OnInit {
         const openDateCloseTrade = this.editData.openDate;
         const filteredTransactions = res.filter(transaction => transaction.closeDate === null && transaction.openDate <= openDateCloseTrade);
         this.stockOpenTrades = filteredTransactions;
+
+        this.tableDataSource = this.stockOpenTrades;
       });
     }
+  }
+
+  onCheckboxClick(event: any, id: number) {
+    const isChecked = event.checked;
+    // Use isChecked to determine checkbox state for element with id
+    console.log(`Checkbox with id ${id} is ${isChecked ? 'checked' : 'unchecked'}`);
   }
 
   saveTransaction() {
@@ -107,4 +118,15 @@ export class TransactionFormComponent implements OnInit {
 
     return '';
   };
+
+  public getColor(value: number): string {
+    if (value === 0)
+      return "black";
+    else
+      return value > 0 ? "green" : "red";
+  }
+
+  getAbs(value: number) {
+    return Math.abs(value);
+  }
 }
