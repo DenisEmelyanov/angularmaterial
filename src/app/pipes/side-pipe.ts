@@ -18,6 +18,10 @@ export class CustomSidePipe implements PipeTransform {
         return 'Buy Open';
       case 'buy-to-close':
         return 'Buy Close';
+      case 'expiration':
+        return 'Option Expiration';
+      case 'assignment':
+        return 'Option Assignment';
       case 'buy':
         return 'Buy';
       case 'sell':

@@ -6,8 +6,11 @@ export interface Transaction {
     strike?: number;
     expiration?: string;
     side?: string;
+    closeSide?: string;
     quantity?: number;
     premium: number;
+    openAmount?: number;
+    closeAmount?: number;
     openDate: string;
     closeDate?: string | null;
     year?: number;
