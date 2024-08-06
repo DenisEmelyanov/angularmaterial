@@ -18,8 +18,9 @@
           {{element.quantity}}
           {{element.ticker}}
           {{element.expiration | date:'MMM dd, yyyy'}}
-          {{element.strike | currency: 'USD' : 'symbol' : '2.0' }}
+          {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
           {{element.type | customType}}
+          <span *ngIf="element.type ==='stock'">@ {{getAbs(element.premium / element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
         </td>
       </ng-container>
 
