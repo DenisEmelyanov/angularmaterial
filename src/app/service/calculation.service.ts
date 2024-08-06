@@ -10,7 +10,7 @@ import { DataService } from "./data.service";
 export class CalculationService {
 
     constructor() {
-    }  
+    }
 
     public calcSummary(transactions: Transaction[]) {
         const putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
@@ -80,12 +80,11 @@ export class CalculationService {
         const period = days === 0 ? 1 : days;
         const annualizedReturn = (totalNetPremium / risk) * (365 / period);
 
-        //set warning flag if there are some not closed stocks and stockQty = 0
-        var warningFlag = sharesQty < 0;
-
-        if (sharesQty === 0) {
-          warningFlag = warningFlag || transactions.filter(t => t.type === 'stock' && !t.closeDate).length > 0;
-        }
+        //set warning flag if there are some not closed stocks and stockQty = 0, or < 0, or sell does not have close date
+        const warningFlag =
+            sharesQty < 0 ||
+            (sharesQty === 0 && transactions.some(t => t.type === 'stock' && !t.closeDate)) ||
+            (sharesQty > 0 && transactions.some(t => t.type === 'stock' && !t.closeDate && t.openSide === 'sell'));
 
         return {
             putNetPremium: putNetPremium,
