@@ -1,5 +1,5 @@
 <div class="grid-container">
-    <mat-grid-list cols="10" rowHeight="1200px">
+    <mat-grid-list cols="13" rowHeight="1200px">
         <mat-grid-tile [colspan]="4" [rowspan]="1">
             <div class="mat-grid-tile-content">
                 <mat-card class="dashboard-card">
@@ -12,7 +12,7 @@
                     <mat-card-content class="total-by-tickers">
                         <div class="card-content-container">
                             <p></p>
-                            <table matSort mat-table [dataSource]="dataSourceByTickers" class="mat-elevation-z8">
+                            <table matSort mat-table [dataSource]="dataSourceTradesByTickers" class="mat-elevation-z8">
                                 <ng-container matColumnDef="ticker">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
                                     <td mat-cell *matCellDef="let element"
@@ -41,8 +41,8 @@
                                         {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumnsByTickers"></tr>
-                                <tr mat-row *matRowDef="let row;columns:displayedColumnsByTickers"></tr>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsTradesByTickers"></tr>
+                                <tr mat-row *matRowDef="let row;columns:displayedColumnsTradesByTickers"></tr>
 
                             </table>
                             <p></p>
@@ -67,7 +67,7 @@
                     <mat-card-content class="total-by-years">
                         <div class="card-content-container">
                             <p></p>
-                            <table matSort mat-table [dataSource]="dataSourceByYears" class="mat-elevation-z8">
+                            <table matSort mat-table [dataSource]="dataSourceTradesByYears" class="mat-elevation-z8">
 
                                 <ng-container matColumnDef="year">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
@@ -92,8 +92,8 @@
                                     </td>
                                 </ng-container>
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumnsByYears"></tr>
-                                <tr mat-row *matRowDef="let row;columns:displayedColumnsByYears"></tr>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsTradesByYears"></tr>
+                                <tr mat-row *matRowDef="let row;columns:displayedColumnsTradesByYears"></tr>
 
                             </table>
                             <p></p>
@@ -119,7 +119,7 @@
                     <mat-card-content class="total-by-months">
                         <div class="card-content-container">
                             <p></p>
-                            <table matSort mat-table [dataSource]="dataSourceByMonths" class="mat-elevation-z8">
+                            <table matSort mat-table [dataSource]="dataSourceTradesByMonths" class="mat-elevation-z8">
 
                                 <ng-container matColumnDef="month">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Month</th>
@@ -145,8 +145,61 @@
                                 </ng-container>
 
 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumnsByMonths"></tr>
-                                <tr mat-row *matRowDef="let row;columns:displayedColumnsByMonths"></tr>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumnsTradesByMonths"></tr>
+                                <tr mat-row *matRowDef="let row;columns:displayedColumnsTradesByMonths"></tr>
+
+                            </table>
+                            <p></p>
+                        </div>
+                    </mat-card-content>
+                    <br>
+                    <mat-card-footer>
+                        <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
+            <div class="mat-grid-tile-content">
+                <mat-card class="dashboard-card">
+                    <mat-card-header>
+                        <mat-card-title>TRANSACTIONS TOTAL NET PREMIUM BY MONTH {{selectedYear}}</mat-card-title>
+                        <mat-card-subtitle>individual portfolio</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-actions>
+                    </mat-card-actions>
+                    <mat-card-content class="total-by-months">
+                        <div class="card-content-container">
+                            <p></p>
+                            <table matSort mat-table [dataSource]="dataSourceTransactionsByMonths" class="mat-elevation-z8">
+
+                                <ng-container matColumnDef="month">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Month</th>
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
+                                        {{element.month}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="totalNetPremium">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'color': getColor(element.totalNetPremium), 'background-color': getBackgroundColor(element.month)}">
+                                        {{element.totalNetPremium | currency: 'USD' | customCurrency}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef> Action</th>
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
+                                        <button mat-raised-button color="primary" (click)="onMonthDetails(element.month)"
+                                            *ngIf="element.month !== 'TOTAL'">Details</button>
+                                    </td>
+                                </ng-container>
+
+
+                                <tr mat-header-row *matHeaderRowDef="displayedTransactionsColumnsByMonths"></tr>
+                                <tr mat-row *matRowDef="let row;columns:displayedTransactionsColumnsByMonths"></tr>
 
                             </table>
                             <p></p>

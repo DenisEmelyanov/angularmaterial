@@ -15,17 +15,19 @@ import { Transaction } from 'src/app/model/transaction';
 })
 export class TradesStatisticGridComponent {
 
-  dataSourceByTickers: any;
-  dataSourceByYears: any;
-  dataSourceByMonths: any;
+  dataSourceTradesByTickers: any;
+  dataSourceTradesByYears: any;
+  dataSourceTradesByMonths: any;
+  dataSourceTransactionsByMonths: any;
 
   yearOptions: number[] = [];
   selectedYear: any;
   monthTransactions: Record<string, Transaction[]> = {};
 
-  displayedColumnsByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
-  displayedColumnsByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
-  displayedColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
+  displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsTradesByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumnsTradesByMonths: string[] = ["month", "totalNetPremium", "action"];
+  displayedTransactionsColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -115,7 +117,7 @@ export class TradesStatisticGridComponent {
 
 
     //console.warn(tableDataArr);
-    this.dataSourceByTickers = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceTradesByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTotalByYearTable() {
@@ -154,7 +156,7 @@ export class TradesStatisticGridComponent {
     tableDataArr.sort((a, b) => b.year - a.year);
 
     console.warn(tableDataArr);
-    this.dataSourceByYears = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceTradesByYears = new MatTableDataSource<any>(tableDataArr);
   }
 
   populateTotalByMonthTable(year: number) {
@@ -242,7 +244,7 @@ export class TradesStatisticGridComponent {
       totalNetPremium: totalOptionsNetPremium + totalStocksNetPremium
     });
 
-    this.dataSourceByMonths = new MatTableDataSource<any>(tableDataArr);
+    this.dataSourceTradesByMonths = new MatTableDataSource<any>(tableDataArr);
   }
 
   getMonthAbbreviation(monthNumber: number): string {
