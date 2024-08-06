@@ -40,13 +40,16 @@ export class DataService {
 
     //private tickersData: Record<string, TickerData> = {};
     private yearsData: Record<number, Record<string, TickerData>> = {};
+    private dataLoad: boolean = false;
 
     constructor(private http: HttpClient, private calcService: CalculationService) {
         // get all years and update yearsData object
+        this.dataLoad = true;
         this.getAllTransactionsYears().subscribe((years: any) => {
             years.forEach((year: number) => {
                 this.refreshYearData(year);
             });
+            this.dataLoad = false;
         });
     }
 

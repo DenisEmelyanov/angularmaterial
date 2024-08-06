@@ -29,6 +29,7 @@ import { TradesSummaryComponent } from './component/trades-summary/trades-summar
 import { FileSelectDialogComponent } from './component/file-select-dialog/file-select-dialog.component';
 import { SummaryGridComponent } from './component/summary-grid/summary-grid.component';
 import { TradesStatisticGridComponent } from './component/trades-statistic-grid/trades-statistic-grid.component';
+import { TradesDetailsDialogComponent } from './component/trades-details-dialog/trades-details-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { TradesStatisticGridComponent } from './component/trades-statistic-grid/
     FileSelectDialogComponent,
     SummaryGridComponent,
     TradesStatisticGridComponent,
+    TradesDetailsDialogComponent,
   ],
   imports: [
     BrowserModule,
