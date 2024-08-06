@@ -5,6 +5,7 @@ import { PopupComponent } from '../popup/popup.component';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { Transaction } from 'src/app/model/transaction';
 import { group } from '@angular/animations';
+import { DataService } from 'src/app/service/data.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -19,7 +20,9 @@ export class TransactionFormComponent implements OnInit {
   transactionForm: any;
   selectedType: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder) {
+  stockOpenTrades: Transaction[] = [];
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder, private dataService: DataService) {
     this.transactionForm = this.formBuilder.group({
       id: this.formBuilder.control(this.data.transaction.id),
       ticker: this.formBuilder.control(this.data.ticker),
@@ -72,7 +75,16 @@ export class TransactionFormComponent implements OnInit {
       year: this.editData.year,
       group: this.editData.group,
       assigned: this.editData.assigned
-    })
+    });
+
+    // get open stock trades if it is stock
+    if (this.editData.type === 'stock' && this.editData.openSide === 'sell') {
+      this.dataService.getOpenStockTransactions(this.editData.ticker, 'buy').subscribe((res) => {
+        const openDateCloseTrade = this.editData.openDate;
+        const filteredTransactions = res.filter(transaction => transaction.closeDate === null && transaction.openDate <= openDateCloseTrade);
+        this.stockOpenTrades = filteredTransactions;
+      });
+    }
   }
 
   saveTransaction() {

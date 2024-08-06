@@ -129,6 +129,12 @@ export class DataService {
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
 
+    public getOpenStockTransactions(ticker: string, openSide: string) {
+        return this.http
+            .get(this.transactionsServiceUrl + '?ticker=' + ticker + '&type=stock&openSide=' + openSide)
+            .pipe<Transaction[]>(map((response: any) => response.data));
+    }
+
     public updateTransaction(transaction: Transaction): Observable<Transaction> {
 
         // set portfolio
