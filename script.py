@@ -5,7 +5,7 @@ import re;
 from datetime import datetime
 import json
 
-transaction_data = pd.read_csv('data.csv', sep=',')
+transaction_data = pd.read_csv('data.csv', sep=',')# data.csv #INTC_test_trades
 #converty all qty to positive numbers
 transaction_data['Quantity'] = transaction_data['Quantity'].abs();
     
@@ -17,7 +17,7 @@ class Transaction:
   A class to represent a financial transaction.
   """
 
-  def __init__(self, symbol=None, ticker=None, type=None, premium=None, openDate=None, side=None, quantity=None, strike=None, expiration=None, assigned=False, closeDate=None, year=None):
+  def __init__(self, symbol=None, ticker=None, type=None, premium=None, openDate=None, openAmount=None, closeAmount=None, side=None, closeSide=None, quantity=None, strike=None, expiration=None, assigned=False, closeDate=None, year=None):
     """
     Initializes a Transaction object.
 
@@ -37,9 +37,12 @@ class Transaction:
     self.type = type
     self.strike = strike
     self.expiration = expiration
-    self.side = side
+    self.openSide = side
+    self.closeSide = closeSide
     self.quantity = quantity
     self.premium = premium
+    self.openAmount = openAmount
+    self.closeAmount = closeAmount
     self.openDate = openDate
     self.closeDate = closeDate
     self.year = year
@@ -51,7 +54,7 @@ class Transaction:
             "type": self.type,
             "strike": self.strike,
             "expiration": self.expiration,
-            "side": self.side,
+            "side": self.openSide,
             "quantity": self.quantity,
             "premium": self.premium,
             "openDate": self.openDate,
@@ -69,16 +72,16 @@ class Transaction:
     """
 
     closed_date_str = self.closeDate if self.closeDate else None
-    return f"Transaction(ticker='{self.ticker}', type='{self.type}', strike={self.strike}, expiration='{self.expiration}', side='{self.side}', quantity={self.quantity}, premium={self.premium}, openDate='{self.openDate}', closeDate='{closed_date_str}', symbol='{self.symbol}', assigned='{self.assigned}', year='{self.year}')"
+    return f"Transaction(ticker='{self.ticker}', type='{self.type}', strike={self.strike}, expiration='{self.expiration}', side='{self.openSide}', quantity={self.quantity}, premium={self.premium}, openAmount={self.openAmount}, closeAmount={self.closeAmount}, openDate='{self.openDate}', closeDate='{closed_date_str}', symbol='{self.symbol}', assigned='{self.assigned}', year='{self.year}')"
 
   def to_json(self):
     if self.type in ('call', 'put'):
         if self.closeDate == None:
-            return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "strike": {self.strike}, "expiration": "{self.expiration}", "side": "{self.side}", "quantity": {self.quantity}, "premium": {self.premium}, "openDate": "{self.openDate}", "year": {self.year}", "assigned": {self.assigned}}}'
+            return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "strike": {self.strike}, "expiration": "{self.expiration}", "side": "{self.openSide}", "quantity": {self.quantity}, "premium": {self.premium}, "openDate": "{self.openDate}", "year": {self.year}", "assigned": {self.assigned}}}'
         else:
-            return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "strike": {self.strike}, "expiration": "{self.expiration}", "side": "{self.side}", "quantity": {self.quantity}, "premium": {self.premium}, "openDate": "{self.openDate}", "closeDate": "{self.closeDate}", "year": {self.year}", "assigned": {self.assigned}}}'
+            return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "strike": {self.strike}, "expiration": "{self.expiration}", "side": "{self.openSide}", "quantity": {self.quantity}, "premium": {self.premium}, "openDate": "{self.openDate}", "closeDate": "{self.closeDate}", "year": {self.year}", "assigned": {self.assigned}}}'
     if self.type == 'stock':
-        return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "side": "{self.side}", "quantity": {self.quantity}, "openDate": "{self.openDate}", "year": {self.year}", "assigned": {self.assigned}}}'
+        return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "side": "{self.openSide}", "quantity": {self.quantity}, "openDate": "{self.openDate}", "year": {self.year}", "assigned": {self.assigned}}}'
     if self.type == 'dividend':
         return f'{{"ticker": "{self.ticker}", "type": "{self.type}", "openDate": "{self.openDate}", "closeDate": "{self.closeDate}", "year": {self.year}", "assigned": {self.assigned}}}'
 
@@ -199,16 +202,27 @@ month_map = {
   "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12
 }
 
+side_map = {
+  "Bought To Cover": "buy-to-close",
+  "Option Expiration": "expiration",
+  "Sold To Close": "sell-to-close",
+  "Option Assignment": "assignment"
+}
+
 #collect closing transactions
 closing_transactions = [];
 
 for index, row in transaction_data.iterrows():
     if row['TransactionType'].strip() in ('Bought To Cover', 'Option Expiration', 'Sold To Close', 'Option Assignment'):
+      original_closing_qty = row['Quantity'];
+      for i in range(0, original_closing_qty):
         closing_transaction = Transaction(
             symbol=row['Symbol'],
-            quantity=row['Quantity'],
+            quantity=1,
             closeDate=row['TransactionDate'],
-            premium=row['Amount']);
+            premium=row['Amount']/original_closing_qty,
+            closeAmount=row['Amount'],
+            closeSide=side_map.get(row['TransactionType']));
         if row['TransactionType'] == 'Option Assignment':
             closing_transaction.assigned = True;
         print(closing_transaction);    
@@ -241,6 +255,7 @@ for index, row in transaction_data.iterrows():
                 type=extracted_values['option_type'].lower(),
                 quantity=row['Quantity'],
                 premium=row['Amount'],
+                openAmount=row['Amount'],
                 openDate=row['TransactionDate'],
                 symbol=row['Symbol']
             )
@@ -267,6 +282,7 @@ for index, row in transaction_data.iterrows():
                 type=extracted_values['option_type'].lower(),
                 quantity=row['Quantity'],
                 premium=row['Amount'],
+                openAmount=row['Amount'],
                 openDate=row['TransactionDate'],
                 symbol=row['Symbol']
             )
@@ -309,45 +325,65 @@ for index, row in transaction_data.iterrows():
             )
         #print(transaction);
         final_transactions.append(transaction);        
-
+print("-----------------------------------------> LOOK FOR CLOSING");
 # find closing transactions
 for transaction in final_transactions:
     # search only for option transactions
     if transaction.type == 'call' or transaction.type == 'put':
         # get qty of transaction to close
         original_qty = transaction.quantity;
-        #print("looking for: {0}".format(transaction));
+        print("looking for: {0}".format(transaction));
         for i in range(4):
-            if original_qty < 1:
-               break;
-            for closing_transaction in closing_transactions:           
+            if original_qty == 0:
+              print("opening transaction is closed: {0}".format(transaction));
+              break;
+            for closing_transaction in closing_transactions:
+                print(" >>>>> {0} with Qty = {1}, closeDate = {2}, premium = {3}".format(closing_transaction.symbol, closing_transaction.quantity, closing_transaction.closeDate, closing_transaction.premium));
                 if transaction.symbol == closing_transaction.symbol and closing_transaction.quantity > 0:
-                    #print("found {0} with Qty = {1}, closeDate = {2}".format(closing_transaction.symbol, closing_transaction.quantity, closing_transaction.closeDate));
+                    print("found {0} with Qty = {1}, closeDate = {2}, premium = {3}".format(closing_transaction.symbol, closing_transaction.quantity, closing_transaction.closeDate, closing_transaction.premium));
                     
                     closing_qty = closing_transaction.quantity;
-                    if original_qty < closing_qty:
-                        closing_premium_to_take = original_qty * closing_transaction.premium / closing_qty;
-                        transaction.premium = transaction.premium + closing_premium_to_take;
+                    #if original_qty < closing_qty:
+                      #print(">>>>>>>>>>>> ERROR");
+                      # this code does not work - split closing transaction when collecting it
+                        #closing_premium_to_take = original_qty * closing_transaction.premium / closing_qty;
+                        #transaction.premium = transaction.premium + closing_premium_to_take;
+                        #transaction.closeAmount = closing_premium_to_take;
                         # update closing transaction qty
-                        closing_transaction.quantity = closing_qty - original_qty;
-                        closing_transaction.premium = closing_transaction.premium - closing_premium_to_take;
-                        original_qty = 0
-                    elif original_qty >= closing_qty:
-                        transaction.premium = transaction.premium + closing_transaction.premium;
-                        closing_transaction.quantity = 0;
+                        #closing_transaction.quantity = closing_qty - original_qty;
+                        #closing_transaction.premium = closing_transaction.premium - closing_premium_to_take;
+                        #original_qty = 0
+                    #elif original_qty >= closing_qty:
+                    transaction.premium = transaction.premium + closing_transaction.premium;
+                    if transaction.closeAmount is not None:
+                        transaction.closeAmount += closing_transaction.premium
+                    else:
+                            # Handle the case where closeAmount is None
+                        transaction.closeAmount = closing_transaction.premium
+                    closing_transaction.quantity = 0;
                         # update original transaction qty to close
-                        original_qty = original_qty - closing_qty;
+                    original_qty = original_qty - closing_qty;
+                        # end if
                     transaction.closeDate = closing_transaction.closeDate;
+                    transaction.closeSide = closing_transaction.closeSide;
                     transaction.assigned = closing_transaction.assigned
+                    if original_qty == 0:
+                      print("opening transaction is closed: {0}".format(transaction));
+                      break;
     
         if original_qty > 0:
             print("closing transaction is not found for {0}".format(transaction.symbol));
             transaction.closeDate = None;
-        
-# transform dates
+print("-----------------------------------------> LOOK FOR CLOSING");
+for closing_transaction in closing_transactions:
+  print(" >>>>> {0} with Qty = {1}, closeDate = {2}, premium = {3}".format(closing_transaction.symbol, closing_transaction.quantity, closing_transaction.closeDate, closing_transaction.premium));
+print("-----------------------------------------> LOOK FOR CLOSING");
+
+# transform dates and set default group
 for transaction in final_transactions:
     transaction.openDate =  transform_date(transaction.openDate)
     transaction.year = extract_full_year(transaction.openDate)
+    transaction.group = "{0} {1}".format(transaction.ticker, transaction.year)
     if transaction.expiration != None:
         transaction.expiration = transform_date(transaction.expiration)
     if transaction.closeDate != None:
