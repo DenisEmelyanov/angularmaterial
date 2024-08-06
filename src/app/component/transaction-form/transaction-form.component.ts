@@ -23,7 +23,7 @@ export class TransactionFormComponent implements OnInit {
     this.transactionForm = this.formBuilder.group({
       id: this.formBuilder.control(this.data.transaction.id),
       ticker: this.formBuilder.control(this.data.ticker),
-      side: this.formBuilder.control(''),
+      openSide: this.formBuilder.control(''),
       quantity: this.formBuilder.control(1),
       type: this.formBuilder.control(''),
       strike: this.formBuilder.control(''),
@@ -55,7 +55,7 @@ export class TransactionFormComponent implements OnInit {
     this.selectedType = this.editData.type;
     this.transactionForm.patchValue({
       //ticker: this.editData.ticker, 
-      side: this.editData.openSide,
+      openSide: this.editData.openSide,
       quantity: this.editData.quantity,
       type: this.editData.type,
       strike: this.editData.strike,

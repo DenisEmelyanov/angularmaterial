@@ -8,8 +8,8 @@
 
         <mat-form-field appearance="outline"
             *ngIf="selectedType === 'put' || selectedType === 'call' || selectedType === 'stock'">
-            <mat-label>Side</mat-label>
-            <mat-select formControlName="side">
+            <mat-label>Open Side</mat-label>
+            <mat-select formControlName="openSide">
                 <mat-option value="buy-to-open" *ngIf="selectedType === 'put' || selectedType === 'call'">Buy to
                     Open</mat-option>
                 <mat-option value="sell-to-open" *ngIf="selectedType === 'put' || selectedType === 'call'">Sell to
