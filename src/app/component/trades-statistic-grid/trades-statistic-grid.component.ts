@@ -53,7 +53,7 @@ export class TradesStatisticGridComponent {
   }
 
   onTradesMonthDetails(month: any) {
-    this.openDetails('TRADES DETAILS ' + month + ' ' + this.selectedYear, ["transaction", "chips", "openDate", "closeDate", "premium"], this.monthTrades[month], TradesDetailsDialogComponent);
+    this.openDetails('TRADES DETAILS ' + month + ' ' + this.selectedYear, ["transaction", "chips", "openDate", "openAmount", "closeDate", "closeAmount", "premium"], this.monthTrades[month], TradesDetailsDialogComponent);
   }
 
   onTransactionsMonthDetails(month: any) {

@@ -1,80 +1,63 @@
 <h2 mat-dialog-title>{{title}}</h2>
 <mat-dialog-content>
     <p></p>
-    <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="transaction">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Transaction</th>
-          <td mat-cell *matCellDef="let element">
-            {{element.openSide | customSide}}
-            {{element.quantity}}
-            {{element.ticker}}
-            {{element.expiration | date:'MMM dd, yyyy'}}
-            {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
-            {{element.type | customType}}
-          </td>
+            <th mat-header-cell *matHeaderCellDef> Transaction</th>
+            <td mat-cell *matCellDef="let element">
+                {{element.openSide | customSide}}
+                {{element.quantity}}
+                {{element.ticker}}
+                {{element.expiration | date:'MMM dd, yyyy'}}
+                {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
+                {{element.type | customType}}
+            </td>
         </ng-container>
-  
+
         <ng-container matColumnDef="chips">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
-            <mat-chip-set aria-label="chips">
-              <mat-chip class="assigned-chip" *ngIf="element.assigned">assigned</mat-chip>
-              <mat-chip class="assigned-chip" *ngIf="element.openSide === 'expiration'">expired</mat-chip>
-              <mat-chip class="open-chip" *ngIf="element.closeDate === null">open</mat-chip>
-            </mat-chip-set>
-          </td>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+                <mat-chip-set aria-label="chips">
+                    <mat-chip class="assigned-chip" *ngIf="element.assigned">assigned</mat-chip>
+                    <mat-chip class="assigned-chip" *ngIf="element.openSide === 'expiration'">expired</mat-chip>
+                    <mat-chip class="open-chip" *ngIf="element.closeDate === null">open</mat-chip>
+                </mat-chip-set>
+            </td>
         </ng-container>
-  
-        <ng-container matColumnDef="side">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Side</th>
-          <td mat-cell *matCellDef="let element">{{element.openSide | customSide}}</td>
-        </ng-container>
-  
-        <ng-container matColumnDef="quantity">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Quantity</th>
-          <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
-        </ng-container>
-  
-        <ng-container matColumnDef="ticker">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
-          <td mat-cell *matCellDef="let element">{{element.ticker}}</td>
-        </ng-container>
-  
-        <ng-container matColumnDef="expiration">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Expiration</th>
-          <td mat-cell *matCellDef="let element">{{element.expiration | date:'MMM dd, yyyy'}}</td>
-        </ng-container>
-  
-        <ng-container matColumnDef="strike">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Strike</th>
-          <td mat-cell *matCellDef="let element">{{element.strike | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
-        </ng-container>
-  
-        <ng-container matColumnDef="type">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Call / Put</th>
-          <td mat-cell *matCellDef="let element">{{element.type | customType}}</td>
-        </ng-container>
-  
+
         <ng-container matColumnDef="openDate">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Open Date</th>
-          <td mat-cell *matCellDef="let element">{{element.openDate | date:'MMM dd, yyyy'}}</td>
+            <th mat-header-cell *matHeaderCellDef> Open Date</th>
+            <td mat-cell *matCellDef="let element">{{element.openDate | date:'MMM dd, yyyy'}}</td>
         </ng-container>
-  
+
+        <ng-container matColumnDef="openAmount">
+            <th mat-header-cell *matHeaderCellDef> Open Amount</th>
+            <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.openAmount)}">{{element.openAmount
+                | currency: 'USD' | customCurrency}}</td>
+        </ng-container>
+
         <ng-container matColumnDef="closeDate">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Close Date</th>
-          <td mat-cell *matCellDef="let element">{{element.closeDate | date:'MMM dd, yyyy'}}</td>
+            <th mat-header-cell *matHeaderCellDef> Close Date</th>
+            <td mat-cell *matCellDef="let element">{{element.closeDate | date:'MMM dd, yyyy'}}</td>
         </ng-container>
-  
+
+        <ng-container matColumnDef="closeAmount">
+            <th mat-header-cell *matHeaderCellDef> Close Amount</th>
+            <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.closeAmount)}">
+                {{element.closeAmount |
+                currency: 'USD' | customCurrency}}</td>
+        </ng-container>
+
         <ng-container matColumnDef="premium">
-          <th mat-sort-header mat-header-cell *matHeaderCellDef> Premium</th>
-          <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.premium)}">{{element.premium |
-            currency: 'USD' | customCurrency}}</td>
+            <th mat-header-cell *matHeaderCellDef> Premium</th>
+            <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.premium)}">{{element.premium |
+                currency: 'USD' | customCurrency}}</td>
         </ng-container>
-  
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row;columns:displayedColumns"></tr>
-  
-      </table>
+
+    </table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <a (click)="closeDialog()" mat-raised-button color="warn">Close</a>
