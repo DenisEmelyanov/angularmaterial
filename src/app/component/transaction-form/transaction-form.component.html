@@ -69,7 +69,7 @@
             <mat-datepicker [dateClass]="dateClass" #expirationDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field floatLabel="always" appearance="outline">
+        <mat-form-field floatLabel="always" appearance="outline" [ariaDisabled]="premiumFieldDisabled">
             <mat-label>Premium</mat-label>
             <input matInput type="number" placeholder="0.00" formControlName="premium" (ngModelChange)="premiumUpdate($event)"/>
             <span matTextPrefix>$&nbsp;</span>

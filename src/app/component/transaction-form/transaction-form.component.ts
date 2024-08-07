@@ -19,6 +19,7 @@ export class TransactionFormComponent implements OnInit {
   editData: any;
   transactionForm: any;
   selectedType: any;
+  premiumFieldDisabled: boolean = false;
 
   stockOpenTrades: Transaction[] = [];
   tableDataSource: any;
@@ -48,7 +49,7 @@ export class TransactionFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.inputData = this.data;
-    
+
     console.warn(this.inputData.id);
     if (this.inputData.title === "Edit") {
       this.setFormData(this.inputData.transaction)
@@ -62,6 +63,10 @@ export class TransactionFormComponent implements OnInit {
     console.warn(transaction.type);
     //set transaction type
     this.selectedType = this.editData.type;
+
+    // TODO disable premium if openAmount and closeAmount are entered
+    this.premiumFieldDisabled = this.editData.openAmount !== null && this.editData.closeAmount !== null;
+
     this.transactionForm.patchValue({
       //ticker: this.editData.ticker, 
       openSide: this.editData.openSide,
@@ -71,6 +76,10 @@ export class TransactionFormComponent implements OnInit {
       strike: this.editData.strike,
       expiration: this.editData.expiration,
       premium: this.editData.premium,
+      // {
+      //   value: this.editData.premium,
+      //   disabled: this.premiumFieldDisabled
+      // },
       openAmount: this.editData.openAmount,
       closeAmount: this.editData.closeAmount,
       openDate: this.editData.openDate,
@@ -95,9 +104,29 @@ export class TransactionFormComponent implements OnInit {
   premiumUpdate(event: number) {
     console.log('premium update: ' + event);
     const currentValues = this.transactionForm.value;
-    console.log('current premium: ' + currentValues.premium);
-    console.log('current openAmount: ' + currentValues.openAmount);
-    console.log('current closeAmount: ' + currentValues.closeAmount);
+
+    // update only for call, put and stock types
+    if (currentValues.type === 'call' || currentValues.type === 'put' || currentValues.type === 'stock') {
+      console.log('current premium: ' + currentValues.premium);
+      console.log('current openAmount: ' + currentValues.openAmount);
+      console.log('current closeAmount: ' + currentValues.closeAmount);
+
+      // disable premium field if open and current amount 
+      this.premiumFieldDisabled = currentValues.openAmount !== null && currentValues.closeAmount !== null;
+      // this.transactionForm.patchValue ({
+      //   premium:
+      //   {
+      //     value: currentValues.premium,
+      //     disabled: this.premiumFieldDisabled
+      //   },
+      // });
+      if (currentValues.openAmount !== null && currentValues.closeAmount !== null) {
+        const newPremium = currentValues.openAmount + currentValues.closeAmount;
+        this.transactionForm.patchValue({
+          premium: newPremium
+        });
+      }
+    }
   }
 
   onCheckboxClick(event: any, id: number) {
