@@ -92,6 +92,14 @@ export class TransactionFormComponent implements OnInit {
     }
   }
 
+  premiumUpdate(event: number) {
+    console.log('premium update: ' + event);
+    const currentValues = this.transactionForm.value;
+    console.log('current premium: ' + currentValues.premium);
+    console.log('current openAmount: ' + currentValues.openAmount);
+    console.log('current closeAmount: ' + currentValues.closeAmount);
+  }
+
   onCheckboxClick(event: any, id: number) {
     const isChecked = event.checked;
     // Use isChecked to determine checkbox state for element with id
