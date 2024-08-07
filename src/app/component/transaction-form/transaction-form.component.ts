@@ -145,10 +145,9 @@ export class TransactionFormComponent implements OnInit {
     const currentValues = this.transactionForm.value;
 
     if (currentValues.type === 'stock' && currentValues.openSide === 'sell') {
-      if (isChecked) {
-        const transaction = this.stockOpenTrades.find(t => t.id === id);
-
-        if (transaction) {
+      const transaction = this.stockOpenTrades.find(t => t.id === id);
+      if (transaction) {
+        if (isChecked) {
           console.log(`Found transaction with id ${transaction.id}: ${transaction.premium}`);
 
           this.transactionForm.patchValue({
@@ -156,18 +155,21 @@ export class TransactionFormComponent implements OnInit {
             premium: transaction.premium + currentValues.closeAmount,
             closeDate: currentValues.openDate
           });
+          // set closeDate for used buy trade
+          transaction.closeDate = currentValues.openDate;
+        }
+        else {
+
+          this.transactionForm.patchValue({
+            openAmount: null,
+            premium: currentValues.closeAmount,
+            closeDate: null
+          });
+
+          transaction.closeDate = null;
         }
       }
-      else {
-
-        this.transactionForm.patchValue({
-          openAmount: null,
-          premium: currentValues.closeAmount,
-          closeDate: null
-        });
-      }
     }
-
   }
 
   saveTransaction() {
