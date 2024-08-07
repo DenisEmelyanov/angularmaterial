@@ -67,6 +67,17 @@ export class TransactionFormComponent implements OnInit {
     // TODO disable premium if openAmount and closeAmount are entered
     this.premiumFieldDisabled = this.editData.openAmount !== null && this.editData.closeAmount !== null;
 
+    // set open / close amount for open stock trades
+    if (this.editData.type === 'stock' && (this.editData.closeDate === null || this.editData.closeDate === undefined)) {
+      if (this.editData.openSide === 'sell'){
+        this.editData.closeAmount = this.editData.premium;
+      }
+      else if (this.editData.openSide === 'buy') {
+        this.editData.openAmount = this.editData.premium;
+      }
+    }
+    console.log(this.editData);
+
     this.transactionForm.patchValue({
       //ticker: this.editData.ticker, 
       openSide: this.editData.openSide,
