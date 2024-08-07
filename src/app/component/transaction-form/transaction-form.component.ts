@@ -144,36 +144,36 @@ export class TransactionFormComponent implements OnInit {
     const isChecked = event.checked;
     const currentValues = this.transactionForm.value;
 
-    if (currentValues.type === 'stock' && currentValues.openSide === 'sell') {
-      const transaction = this.stockOpenTrades.find(t => t.id === id);
-      if (transaction) {
-        if (isChecked) {
-          console.log(`Found transaction with id ${transaction.id}: ${transaction.premium}`);
+    const transaction = this.stockOpenTrades.find(t => t.id === id);
+    if (transaction) {
+      if (isChecked) {
+        console.log(`Found transaction with id ${transaction.id}: ${transaction.premium}`);
 
-          this.transactionForm.patchValue({
-            openAmount: transaction.premium,
-            premium: transaction.premium + currentValues.closeAmount,
-            closeDate: currentValues.openDate
-          });
-          // set closeDate for used buy trade
-          transaction.closeDate = currentValues.openDate;
-        }
-        else {
+        this.transactionForm.patchValue({
+          openAmount: transaction.premium,
+          premium: transaction.premium + currentValues.closeAmount,
+          closeDate: currentValues.openDate
+        });
+        // set closeDate for used buy trade
+        transaction.closeDate = currentValues.openDate;
+      }
+      else {
 
-          this.transactionForm.patchValue({
-            openAmount: null,
-            premium: currentValues.closeAmount,
-            closeDate: null
-          });
+        this.transactionForm.patchValue({
+          openAmount: null,
+          premium: currentValues.closeAmount,
+          closeDate: null
+        });
 
-          transaction.closeDate = null;
-        }
+        transaction.closeDate = null;
       }
     }
   }
 
   saveTransaction() {
-    this.ref.close(this.transactionForm.value);
+    var updatedTrades: Transaction[] = [this.transactionForm.value];
+
+    this.ref.close(updatedTrades);
   }
 
   closeForm() {
