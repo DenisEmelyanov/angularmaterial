@@ -69,7 +69,7 @@ export class TransactionFormComponent implements OnInit {
 
     // set open / close amount for open stock trades
     if (this.editData.type === 'stock' && (this.editData.closeDate === null || this.editData.closeDate === undefined)) {
-      if (this.editData.openSide === 'sell'){
+      if (this.editData.openSide === 'sell') {
         this.editData.closeAmount = this.editData.premium;
       }
       else if (this.editData.openSide === 'buy') {
@@ -142,8 +142,32 @@ export class TransactionFormComponent implements OnInit {
 
   onCheckboxClick(event: any, id: number) {
     const isChecked = event.checked;
-    // Use isChecked to determine checkbox state for element with id
-    console.log(`Checkbox with id ${id} is ${isChecked ? 'checked' : 'unchecked'}`);
+    const currentValues = this.transactionForm.value;
+
+    if (currentValues.type === 'stock' && currentValues.openSide === 'sell') {
+      if (isChecked) {
+        const transaction = this.stockOpenTrades.find(t => t.id === id);
+
+        if (transaction) {
+          console.log(`Found transaction with id ${transaction.id}: ${transaction.premium}`);
+
+          this.transactionForm.patchValue({
+            openAmount: transaction.premium,
+            premium: transaction.premium + currentValues.closeAmount,
+            closeDate: currentValues.openDate
+          });
+        }
+      }
+      else {
+
+        this.transactionForm.patchValue({
+          openAmount: null,
+          premium: currentValues.closeAmount,
+          closeDate: null
+        });
+      }
+    }
+
   }
 
   saveTransaction() {
