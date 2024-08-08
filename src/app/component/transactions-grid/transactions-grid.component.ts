@@ -30,13 +30,13 @@ export class TransactionsGridComponent {
   }
 
   ngOnInit() {
-    console.warn(this.dataTicker)
+    //console.warn(this.dataTicker)
     this.refreshTable();
   }
 
   refreshTable() {
     this.dataService.getTickerTransactions(this.dataTicker.ticker, this.dataTicker.year!).subscribe((res: any) => {
-      console.warn(res);
+      //console.warn(res);
       this.dataSource = this.sortByOpenDate(res);
 
       this.dataService.updateTickerData(this.dataTicker.ticker, this.dataTicker.year!);
@@ -50,7 +50,7 @@ export class TransactionsGridComponent {
 
   deleteTransaction(transaction: Transaction) {
     this.dataService.deleteTransaction(transaction).subscribe((res: any) => {
-      console.warn(res);
+      //console.warn(res);
       this.refreshTable();
     });
   }
@@ -93,14 +93,14 @@ export class TransactionsGridComponent {
         transactions.forEach((t: Transaction) => {
           if (t.id !== -1) {
             this.dataService.updateTransaction(t).subscribe((res: any) => {
-              console.warn(res);
+              //console.warn(res);
               this.refreshTable();
             });
 
           }
           else {
             this.dataService.addTransaction(t).subscribe((res: any) => {
-              console.warn(res);
+              //console.warn(res);
               this.refreshTable();
             });
           }

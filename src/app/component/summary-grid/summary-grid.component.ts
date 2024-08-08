@@ -115,9 +115,9 @@ export class SummaryGridComponent {
           // Process the loaded content (e.g., parse JSON, display data)
           var transactions = JSON.parse(content) as Transaction[];
           transactions.forEach(transaction => {
-            //console.warn(transaction);
+            ////console.warn(transaction);
             this.dataService.addTransaction(transaction).subscribe((res: any) => {
-              console.warn(res);
+              //console.warn(res);
             });
           });
           //this.refreshTable();

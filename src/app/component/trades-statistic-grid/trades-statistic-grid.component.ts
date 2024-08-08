@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { TickerData } from 'src/app/model/ticker-data';
 import { DataService } from 'src/app/service/data.service';
 import { TradesDetailsDialogComponent } from '../trades-details-dialog/trades-details-dialog.component';
 import { Transaction } from 'src/app/model/transaction';
@@ -71,7 +70,7 @@ export class TradesStatisticGridComponent {
     });
 
     _transactionFormRef.afterClosed().subscribe(() => {
-      console.warn('Trades Details is closed');
+      //console.warn('Trades Details is closed');
     })
   }
 
@@ -82,7 +81,7 @@ export class TradesStatisticGridComponent {
     const data = this.dataService.getAllYearsTickersData();
     const yearsArr = Object.keys(data).map(Number);
 
-    console.warn('data analytics: ' + yearsArr);
+    //console.warn('data analytics: ' + yearsArr);
 
     for (const year of yearsArr) {
       const yearTickersData = data[year];
@@ -124,7 +123,7 @@ export class TradesStatisticGridComponent {
     // TODO remove ticker from total rows
 
 
-    //console.warn(tableDataArr);
+    ////console.warn(tableDataArr);
     this.dataSourceTradesByTickers = new MatTableDataSource<any>(tableDataArr);
   }
 
@@ -136,7 +135,7 @@ export class TradesStatisticGridComponent {
     const yearsArr = Object.keys(data).map(Number);
     this.selectedYear = yearsArr.sort((a, b) => b - a)[0];
 
-    console.warn('data analytics: ' + yearsArr);
+    //console.warn('data analytics: ' + yearsArr);
 
     for (const year of yearsArr) {
       let yearTotalNetPremium = 0;
@@ -163,7 +162,7 @@ export class TradesStatisticGridComponent {
 
     tableDataArr.sort((a, b) => b.year - a.year);
 
-    console.warn(tableDataArr);
+    //console.warn(tableDataArr);
     this.dataSourceTradesByYears = new MatTableDataSource<any>(tableDataArr);
   }
 

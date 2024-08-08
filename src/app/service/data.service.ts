@@ -68,19 +68,19 @@ export class DataService {
             });
 
             Object.keys(tickersData).forEach(ticker => {
-                console.warn('update data for: ' + ticker + ' ' + year);
+                //console.warn('update data for: ' + ticker + ' ' + year);
 
 
                 this.updateTickerData(ticker, year);
             });
-            console.warn(tickersData);
+            //console.warn(tickersData);
         });
 
         this.yearsData[year] = tickersData;
     }
 
     public notifyAboutTransactionsUpdate(year: number, ticker: any = undefined) {
-        console.warn('notify about transactions update data service is called: ' + ticker + ' ' + year);
+        //console.warn('notify about transactions update data service is called: ' + ticker + ' ' + year);
         const data: object = {
             ticker: ticker,
             year: year
@@ -110,7 +110,7 @@ export class DataService {
 
     public updateTickerData(ticker: string, year: number) {
         this.getTickerTransactions(ticker, year).subscribe((res: any) => {
-            console.warn('update ticker data is called: ' + ticker);
+            //console.warn('update ticker data is called: ' + ticker);
 
             this.yearsData[year][ticker].transactions = res;
             //this.tickersData[ticker].transactions = res;
@@ -158,8 +158,8 @@ export class DataService {
             delete transaction.expiration;
         }
 
-        console.warn('update transaction: ' + id);
-        console.warn(JSON.stringify(transaction));
+        //console.warn('update transaction: ' + id);
+        //console.warn(JSON.stringify(transaction));
 
         // update transaction
         return this.http.patch<Transaction>(this.transactionsServiceUrl + id, transaction);
@@ -189,14 +189,14 @@ export class DataService {
             delete transaction.expiration;
         }
 
-        console.warn('add transaction: ' + id);
-        console.warn(JSON.stringify(transaction));
+        //console.warn('add transaction: ' + id);
+        //console.warn(JSON.stringify(transaction));
         // create transaction
         return this.http.post<Transaction>(this.transactionsServiceUrl, transaction).pipe<Transaction>(map((response: any) => response.data));
     }
 
     deleteTransaction(transaction: Transaction): Observable<Transaction> {
-        console.warn('delete transaction: ' + transaction);
+        //console.warn('delete transaction: ' + transaction);
         return this.http.delete<Transaction>(this.transactionsServiceUrl + transaction.id).pipe<Transaction>(map((response: any) => response.data));
     }
 }

@@ -42,8 +42,8 @@ export class CalculationService {
         if (openContracts.length === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
-        console.warn('risk contracts: ' + riskContracts.length);
-        console.warn(riskContracts);
+        //console.warn('risk contracts: ' + riskContracts.length);
+        //console.warn(riskContracts);
 
         var risk = 0;
         if (openContracts.length === 0 && sharesQty > 0) {
@@ -54,7 +54,7 @@ export class CalculationService {
             risk = riskContracts.reduce((sum, current) => sum + current.strike! * current.quantity! * 100, 0) + pricePerShare * sharesQty;
         }
 
-        console.warn('open shares qty: ' + sharesQty);
+        //console.warn('open shares qty: ' + sharesQty);
 
         var riskQty = 0;
         if (openContracts.length === 0 && sharesQty > 0) {
@@ -63,7 +63,7 @@ export class CalculationService {
         else {
             riskQty = riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty;
         }
-        console.warn('risk qty: ' + riskQty);
+        //console.warn('risk qty: ' + riskQty);
 
         const breakEven = (risk - totalNetPremium) / riskQty;
 
@@ -73,8 +73,8 @@ export class CalculationService {
         if (openContracts.length === 0) {
             expirationDate = this.latestCloseDate(riskContracts)?.closeDate!
         }
-        console.warn('open date: ' + openDate);
-        console.warn('close date: ' + expirationDate);
+        //console.warn('open date: ' + openDate);
+        //console.warn('close date: ' + expirationDate);
         const days = this.daysDifference(openDate, expirationDate);
 
         const period = days === 0 ? 1 : days;

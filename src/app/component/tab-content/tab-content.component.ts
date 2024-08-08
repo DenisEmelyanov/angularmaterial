@@ -32,9 +32,9 @@ export class TabContentComponent {
 
   addTab(tickerData: TickerData, selectAfterAdding: boolean) {
     //TODO:check if tab is already added
-    console.warn('tab tickerData: ' + tickerData.ticker + ' ' + tickerData.year);
+    //console.warn('tab tickerData: ' + tickerData.ticker + ' ' + tickerData.year);
     const index = this.findTabIndex(this.openTabs, "ticker", "year", tickerData.ticker, tickerData.year);
-    console.warn('tab index: ' + index);
+    //console.warn('tab index: ' + index);
     if (index === -1) {
       this.openTabs.push(tickerData);
       if (selectAfterAdding) {
@@ -43,9 +43,9 @@ export class TabContentComponent {
     }
     else {
       //index = index + 1;
-      console.warn(tickerData.ticker + ' tab is already opened. Index: ' + index);
-      console.warn(this.openTabs);
-      console.warn(this.selectedTabIndex);
+      //console.warn(tickerData.ticker + ' tab is already opened. Index: ' + index);
+      //console.warn(this.openTabs);
+      //console.warn(this.selectedTabIndex);
       this.selectedTabIndex = index;
     }
   }

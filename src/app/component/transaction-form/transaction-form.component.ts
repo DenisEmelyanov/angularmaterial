@@ -49,7 +49,7 @@ export class TransactionFormComponent implements OnInit {
   ngOnInit(): void {
     this.inputData = this.data;
 
-    console.warn(this.inputData.id);
+    //console.warn(this.inputData.id);
     if (this.inputData.title === "Edit") {
       this.setFormData(this.inputData.transaction)
     }
@@ -57,9 +57,9 @@ export class TransactionFormComponent implements OnInit {
 
   setFormData(transaction: Transaction) {
     this.editData = transaction;
-    console.warn('set form data is called');
-    console.warn(transaction.id);
-    console.warn(transaction.type);
+    //console.warn('set form data is called');
+    //console.warn(transaction.id);
+    //console.warn(transaction.type);
     //set transaction type
     this.selectedType = this.editData.type;
 
