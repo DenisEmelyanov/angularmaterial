@@ -24,7 +24,6 @@ export class TransactionFormComponent implements OnInit {
   stockOpenTrades: Transaction[] = [];
   tableDataSource: any;
   displayedColumns: string[] = ["select", "transaction", "openDate", "closeDate", "premium"];
-  selected_trade_ids: number[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder, private dataService: DataService) {
     this.transactionForm = this.formBuilder.group({
@@ -101,7 +100,7 @@ export class TransactionFormComponent implements OnInit {
     });
 
     // get open stock trades if it is stock
-    if (this.editData.type === 'stock' && this.editData.openSide === 'sell') {
+    if (this.editData.type === 'stock' && this.editData.openSide === 'sell' && this.editData.closeDate === null) {
       this.dataService.getOpenStockTransactions(this.editData.ticker, 'buy').subscribe((res) => {
         const openDateCloseTrade = this.editData.openDate;
         const filteredTransactions = res.filter(transaction => transaction.closeDate === null && transaction.openDate <= openDateCloseTrade);
@@ -172,7 +171,17 @@ export class TransactionFormComponent implements OnInit {
 
   saveTransaction() {
     var updatedTrades: Transaction[] = [this.transactionForm.value];
+    let transaction = this.stockOpenTrades.find(t => t.closeDate !== null);
 
+    if (transaction) {
+      //TODO updatedAt and createdAt appears if push transaction from grid
+      // reset premium
+      transaction.openAmount = transaction.premium;
+      transaction.premium = 0;
+
+      updatedTrades.push(transaction);
+      console.log(updatedTrades);
+    }
     this.ref.close(updatedTrades);
   }
 

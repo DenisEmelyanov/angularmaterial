@@ -1,7 +1,7 @@
 export interface Transaction {
     id?: number;
     portfolio?: string;
-    ticker: string;
+    ticker?: string;
     type: string;
     strike?: number;
     expiration?: string;

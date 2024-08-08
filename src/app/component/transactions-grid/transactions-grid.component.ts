@@ -52,7 +52,7 @@ export class TransactionsGridComponent {
     this.dataService.deleteTransaction(transaction).subscribe((res: any) => {
       console.warn(res);
       this.refreshTable();
-    });   
+    });
   }
 
   editTransaction(transaction: Transaction) {
@@ -85,24 +85,27 @@ export class TransactionsGridComponent {
       }
     });
 
-    _transactionFormRef.afterClosed().subscribe(transaction => {
+    _transactionFormRef.afterClosed().subscribe(transactions => {
 
-      if (transaction !== null) {
-        console.log('form submitted')
-        console.log(transaction)
-        if (transaction.id !== -1) {
-          this.dataService.updateTransaction(transaction).subscribe((res: any) => {
-            console.warn(res);
-            this.refreshTable();
-          });
+      if (transactions !== null) {
+        console.log('form submitted');
+        console.log(transactions);
+        transactions.forEach((t: Transaction) => {
+          if (t.id !== -1) {
+            this.dataService.updateTransaction(t).subscribe((res: any) => {
+              console.warn(res);
+              this.refreshTable();
+            });
 
-        }
-        else {
-          this.dataService.addTransaction(transaction).subscribe((res: any) => {
-            console.warn(res);
-            this.refreshTable();
-          });         
-        }
+          }
+          else {
+            this.dataService.addTransaction(t).subscribe((res: any) => {
+              console.warn(res);
+              this.refreshTable();
+            });
+          }
+        });
+
       }
       else {
         console.log('form cancelled')
