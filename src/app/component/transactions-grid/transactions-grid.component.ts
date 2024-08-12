@@ -91,16 +91,27 @@ export class TransactionsGridComponent {
         console.log('form submitted');
         console.log(transactions);
         transactions.forEach((t: Transaction) => {
+          // transform dates
+          t.expiration = this.formatDateToString(t.expiration);
+          t.openDate = this.formatDateToString(t.openDate)!;
+          t.closeDate = this.formatDateToString(t.closeDate);
+          // convert strings to numbers
+          t.premium = Number(t.premium);
+          t.openAmount = Number(t.openAmount);
+          t.closeAmount = Number(t.closeAmount);
+
+          console.warn(t);
+
           if (t.id !== -1) {
             this.dataService.updateTransaction(t).subscribe((res: any) => {
-              //console.warn(res);
+              console.warn(res);
               this.refreshTable();
             });
 
           }
           else {
             this.dataService.addTransaction(t).subscribe((res: any) => {
-              //console.warn(res);
+              console.warn(res);
               this.refreshTable();
             });
           }
@@ -112,6 +123,19 @@ export class TransactionsGridComponent {
       }
 
     })
+  }
+
+  formatDateToString(dateStr: string | null | undefined): string | null {
+    if (dateStr) {
+      const date = new Date(dateStr); 
+      const year = date.getFullYear().toString().padStart(4, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;   
+  
+    } else {
+      return null;
+    }
   }
 
   public getColor(value: number): string {

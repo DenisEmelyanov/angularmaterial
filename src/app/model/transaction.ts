@@ -4,7 +4,7 @@ export interface Transaction {
     ticker?: string;
     type: string;
     strike?: number;
-    expiration?: string;
+    expiration?: string | null;
     openSide?: string;
     closeSide?: string;
     quantity?: number;

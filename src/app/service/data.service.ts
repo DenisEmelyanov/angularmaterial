@@ -149,6 +149,7 @@ export class DataService {
         if (transaction.type === 'stock') {
             delete transaction.strike;
             delete transaction.expiration;
+            
         }
 
         if (transaction.type === 'dividend') {
@@ -190,7 +191,7 @@ export class DataService {
         }
 
         //console.warn('add transaction: ' + id);
-        //console.warn(JSON.stringify(transaction));
+        console.warn(JSON.stringify(transaction));
         // create transaction
         return this.http.post<Transaction>(this.transactionsServiceUrl, transaction).pipe<Transaction>(map((response: any) => response.data));
     }
