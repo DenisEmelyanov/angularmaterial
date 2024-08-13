@@ -39,4 +39,8 @@ export class TradesDetailsDialogComponent implements OnInit {
     else
       return value > 0 ? "green" : "red";
   }
+
+  getAbs(value: number) {
+    return Math.abs(value);
+  }
 }

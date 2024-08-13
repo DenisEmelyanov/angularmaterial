@@ -11,6 +11,8 @@
                 {{element.expiration | date:'MMM dd, yyyy'}}
                 {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
                 {{element.type | customType}}
+                <span *ngIf="element.type ==='stock' && element.openSide === 'buy'">@ {{getAbs(element.openAmount / element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
+                <span *ngIf="element.type ==='stock' && element.openSide === 'sell'">@ {{getAbs(element.closeAmount / element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
             </td>
         </ng-container>
 
