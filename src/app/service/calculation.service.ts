@@ -42,7 +42,8 @@ export class CalculationService {
         const optionsOnly = transactions.filter(t => t.type === 'put' || t.type === 'call');
         // get open contracts, if no, then get transactions with latest close date
         const openContracts = optionsOnly.filter(t => t.closeDate === undefined || t.closeDate === null);
-        var riskContracts = openContracts;
+        // use put only to calculate risk
+        var riskContracts = openContracts.filter(t => t.type === 'put');
         if (openContracts.length === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
@@ -50,7 +51,7 @@ export class CalculationService {
         //console.warn(riskContracts);
 
         var risk = 0;
-        if (openContracts.length === 0 && sharesQty > 0) {
+        if (riskContracts.length === 0 && sharesQty > 0) {
             // no open contracts, only shares
             risk = pricePerShare * sharesQty;
         }
@@ -73,9 +74,9 @@ export class CalculationService {
 
         const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
 
-        var expirationDate = this.latestExpirationDate(riskContracts)?.expiration!;
+        var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
         if (openContracts.length === 0) {
-            expirationDate = this.latestCloseDate(riskContracts)?.closeDate!
+            expirationDate = this.latestCloseDate(openContracts)?.closeDate!
         }
         //console.warn('open date: ' + openDate);
         //console.warn('close date: ' + expirationDate);
