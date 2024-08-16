@@ -12,7 +12,11 @@ export class CalculationService {
     constructor() {
     }
 
-    public calcSummary(transactions: Transaction[]) {
+    public calcSummary(transactions: Transaction[], stockTransactions: Transaction[], year: number) {
+        //get only open buy stock transactions from prevous years
+        stockTransactions = stockTransactions.filter(t => t.closeDate === null && t.openSide === 'buy' && t.year! < year);
+        transactions = transactions.concat(stockTransactions);
+
         const putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
         const callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
         const totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
@@ -21,7 +25,7 @@ export class CalculationService {
         const soldSharesQty = transactions.filter(t => t.type === 'stock' && t.openSide === 'sell').reduce((sum, current) => sum + current.quantity!, 0);
         let sharesQty = boughtSharesQty - soldSharesQty;
 
-        const sharesOpenTrasactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate === null).reduce((sum, current) => sum + current.premium, 0);
+        const sharesOpenTrasactionsPremium = transactions.filter(t => t.type === 'stock' && t.openSide == 'buy' && t.closeDate === null).reduce((sum, current) => sum + current.premium, 0);
         const sharesClosedTransactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate !== null).reduce((sum, current) => sum + current.premium, 0);
 
         const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;
@@ -68,15 +72,23 @@ export class CalculationService {
         else {
             riskQty = riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty;
         }
+        //console.warn('risk: ' + risk);
         //console.warn('risk qty: ' + riskQty);
 
-        const breakEven = (risk - totalNetPremium) / riskQty;
+        var breakEven = 0;
+        if (openContracts.length === 0 && sharesQty > 0) {
+            breakEven = pricePerShare - totalNetPremium / sharesQty;
+        }
+        else {
+            breakEven = (risk - totalNetPremium) / riskQty;
+        }
+        
 
-        const openDate = this.earliestOpenDate(optionsOnly)?.openDate!;
+        const openDate = this.earliestOpenDate(transactions)?.openDate!;
 
-        var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
+        var expirationDate = this.latestExpirationDate(transactions)?.expiration!;
         if (openContracts.length === 0) {
-            expirationDate = this.latestCloseDate(openContracts)?.closeDate!
+            expirationDate = this.latestCloseDate(transactions)?.closeDate!
         }
         //console.warn('open date: ' + openDate);
         //console.warn('close date: ' + expirationDate);

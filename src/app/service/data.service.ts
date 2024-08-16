@@ -116,16 +116,26 @@ export class DataService {
             //this.tickersData[ticker].transactions = res;
             console.log(this.yearsData[year][ticker].transactions);
 
-            this.yearsData[year][ticker].summary = this.calcService.calcSummary(this.yearsData[year][ticker].transactions!);
+            // check if there is call options
+            this.getAllStockTransactions(ticker).subscribe((res: any) => {
+                const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
+                this.yearsData[year][ticker].summary = this.calcService.calcSummary(this.yearsData[year][ticker].transactions!, sharesTransactions, year);
 
-            this.notifyAboutTransactionsUpdate(year, ticker);
-            return this.yearsData[year][ticker].transactions;
+                this.notifyAboutTransactionsUpdate(year, ticker);
+                return this.yearsData[year][ticker].transactions;
+            });
         });
     }
 
     public getTickerTransactions(ticker: string, year: number): Observable<Transaction[]> {
         return this.http
             .get(this.transactionsServiceUrl + '?ticker=' + ticker + '&year=' + year)
+            .pipe<Transaction[]>(map((response: any) => response.data));
+    }
+
+    public getAllStockTransactions(ticker: string) {
+        return this.http
+            .get(this.transactionsServiceUrl + '?ticker=' + ticker)
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
 
