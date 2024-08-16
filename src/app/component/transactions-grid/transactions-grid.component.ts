@@ -145,8 +145,13 @@ export class TransactionsGridComponent {
       return value > 0 ? "green" : "red";
   }
 
-  getAbs(value: number) {
-    return Math.abs(value);
+  calcStockPrice(premium: number, amount: number, qty: number) {
+    if (amount) {
+      return Math.abs(amount / qty);
+    }
+    else {
+      return Math.abs(premium / qty);
+    }
   }
 }
 
