@@ -33,7 +33,13 @@ export class DataService {
         'PYPL': 'PAYPAL HLDGS INC COM',
         'AMZN': 'AMAZON COM INC COM',
         'SQ': 'BLOCK INC CL A',
-        'F': 'FORD MTR CO DEL COM'
+        'F': 'FORD MTR CO DEL COM',
+        'HAL': 'HALLIBURTON CO COM',
+        'TROW': 'PRICE T ROWE GROUP INC COM',
+        'JNJ': 'JOHNSON & JOHNSON COM',
+        'SOUN': 'SOUNDHOUND AI INC CLASS A COM',
+        'MO' : 'ALTRIA GROUP INC COM',
+        'HL': 'HECLA MNG CO COM'
     };
 
     private portfolio: any = 'individual portfolio';

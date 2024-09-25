@@ -26,7 +26,7 @@ export class SummaryGridComponent {
 
   group: any;
 
-  displayedColumns: string[] = ["ticker", "description", "group", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["group", "ticker", "description", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -59,9 +59,9 @@ export class SummaryGridComponent {
       //skip removed transactions
       if (data[ticker].summary !== undefined && data[ticker].summary!.openDate !== undefined) {
         tableDataArr.push({
+          group: data[ticker].group,
           ticker: ticker,
           description: data[ticker].description,
-          group: data[ticker].group,
           risk: data[ticker].summary!.risk,
           sharesQty: data[ticker].summary!.sharesQty,
           totalNetPremium: data[ticker].summary!.totalNetPremium,

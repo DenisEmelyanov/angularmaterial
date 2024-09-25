@@ -20,10 +20,10 @@
             </mat-select>
         </mat-form-field>
         <mat-form-field style="margin-left: 1%;">
-            <mat-label>Group</mat-label>
+            <mat-label>Ticker</mat-label>
             <mat-select multiple>
                 <mat-option [value]="group">META</mat-option>
-                <mat-option [value]="group">BIG 2022</mat-option>
+                <mat-option [value]="group">BIG</mat-option>
             </mat-select>
         </mat-form-field>
         <button style="margin-left: 55%;" mat-raised-button color="primary">
@@ -39,6 +39,11 @@
 
     <mat-card-content>
         <table matSort mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="group">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef> Group</th>
+                <td mat-cell *matCellDef="let element">{{element.group}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="ticker">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
                 <td mat-cell *matCellDef="let element">{{element.ticker}}</td>
@@ -47,11 +52,6 @@
             <ng-container matColumnDef="description">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Description</th>
                 <td mat-cell *matCellDef="let element">{{element.description}}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="group">
-                <th mat-sort-header mat-header-cell *matHeaderCellDef> Group</th>
-                <td mat-cell *matCellDef="let element">{{element.group}}</td>
             </ng-container>
 
             <ng-container matColumnDef="chips">
