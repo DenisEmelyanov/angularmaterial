@@ -19,7 +19,7 @@
         </mat-tab>
         <mat-tab *ngIf="tab !== summaryTab && tab!==statisticTab">
             <ng-template mat-tab-label>
-                <b>{{tab.ticker}} {{tab.year}}</b>
+                <b>{{tab.group}}</b>
                 <mat-icon aria-hidden="false" (click)="removeTab(tab)" fontIcon="close"></mat-icon>
             </ng-template>
             <div class="grid-container">

@@ -1,11 +1,11 @@
 <mat-card class="dashboard-card">
   <mat-card-header>
-    <mat-card-title>{{dataTicker.ticker}} - TRADES {{dataTicker.year}}</mat-card-title>
-    <mat-card-subtitle>{{dataTicker.description}}</mat-card-subtitle>
+    <mat-card-title>{{dataTicker.group}} - TRADES {{dataTicker.year}}</mat-card-title>
+    <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-actions>
     <button style="margin-left: 85%;" (click)="addTransaction()" mat-raised-button color="primary">
-      Add 
+      Add
       <mat-icon aria-hidden="false" fontIcon="add_circle_outline"></mat-icon>
     </button>
   </mat-card-actions>
@@ -20,9 +20,11 @@
           {{element.expiration | date:'MMM dd, yyyy'}}
           {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
           {{element.type | customType}}
-          <span *ngIf="element.type ==='stock' && element.openSide === 'buy'">&#64; {{calcStockPrice(element.premium, element.openAmount, element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
-          <span *ngIf="element.type ==='stock' && element.openSide === 'sell'">&#64; {{calcStockPrice(element.premium, element.closeAmount, element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
-  </td>
+          <span *ngIf="element.type ==='stock' && element.openSide === 'buy'">&#64; {{calcStockPrice(element.premium,
+            element.openAmount, element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
+          <span *ngIf="element.type ==='stock' && element.openSide === 'sell'">&#64; {{calcStockPrice(element.premium,
+            element.closeAmount, element.quantity) | currency: 'USD' : 'symbol' : '1.0-2'}}</span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="chips">
@@ -34,7 +36,7 @@
           </mat-chip-set>
         </td>
       </ng-container>
-
+<!--
       <ng-container matColumnDef="side">
         <th mat-sort-header mat-header-cell *matHeaderCellDef> Side</th>
         <td mat-cell *matCellDef="let element">{{element.openSide | customSide}}</td>
@@ -63,6 +65,11 @@
       <ng-container matColumnDef="type">
         <th mat-sort-header mat-header-cell *matHeaderCellDef> Call / Put</th>
         <td mat-cell *matCellDef="let element">{{element.type | customType}}</td>
+      </ng-container>-->
+
+      <ng-container matColumnDef="year">
+        <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
+        <td mat-cell *matCellDef="let element">{{element.year}}</td>
       </ng-container>
 
       <ng-container matColumnDef="openDate">

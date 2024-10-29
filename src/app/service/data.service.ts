@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from "rxjs/internal/Observable";
 import { CalculationService } from "./calculation.service";
+import { group, transition } from "@angular/animations";
 
 @Injectable({
     providedIn: 'root'
@@ -39,7 +40,9 @@ export class DataService {
         'JNJ': 'JOHNSON & JOHNSON COM',
         'SOUN': 'SOUNDHOUND AI INC CLASS A COM',
         'MO' : 'ALTRIA GROUP INC COM',
-        'HL': 'HECLA MNG CO COM'
+        'HL': 'HECLA MNG CO COM',
+        'ABNB': 'AIRBNB INC COM CL A',
+        'T': 'AT&T INC COM'
     };
 
     private portfolio: any = 'individual portfolio';
@@ -62,22 +65,23 @@ export class DataService {
     private refreshYearData(year: number) {
 
         var tickersData: Record<string, TickerData> = {};
-        this.getAllTransactionsTickers(year).subscribe((res: any) => {
-            var tickers = Array.from(res);
-            console.log('get the following tickers: ' + tickers);
-            tickers.forEach((ticker: any) => {
-                tickersData[ticker] = {
-                    ticker: ticker,
-                    description: this.tickersDescription[ticker],
+        this.getAllTransactionsGroups(year).subscribe((res: any) => {
+            var groups = Array.from(res);
+            console.log('get the following groups: ' + groups);
+            groups.forEach((group: any) => {
+                tickersData[group] = {
+                    group: group,
+                    tickers: [],
+                    description: '',// TODO this.tickersDescription[group],
                     year: year
                 };
             });
 
-            Object.keys(tickersData).forEach(ticker => {
+            Object.keys(tickersData).forEach(group => {
                 //console.warn('update data for: ' + ticker + ' ' + year);
 
 
-                this.updateTickerData(ticker, year);
+                this.updateTickerData(group, year);
             });
             //console.warn(tickersData);
         });
@@ -85,10 +89,10 @@ export class DataService {
         this.yearsData[year] = tickersData;
     }
 
-    public notifyAboutTransactionsUpdate(year: number, ticker: any = undefined) {
+    public notifyAboutTransactionsUpdate(year: number, group: any = undefined) {
         //console.warn('notify about transactions update data service is called: ' + ticker + ' ' + year);
         const data: object = {
-            ticker: ticker,
+            group: group,
             year: year
         };
         this.dataUpdated.next(data);
@@ -98,7 +102,7 @@ export class DataService {
         return this.yearsData;
     }
 
-    public getTickersDataByYear(year: any) {
+    public getGroupsDataByYear(year: any) {
         return this.yearsData[year];
     }
 
@@ -108,34 +112,62 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
+    public getAllTransactionsGroups(year: number) {
+        return this.http
+            .get(this.transactionsServiceUrl + 'groups?year=' + year)
+            .pipe(map((response: any) => response.data));
+    }
+
     public getAllTransactionsYears() {
         return this.http
             .get(this.transactionsServiceUrl + 'years')
             .pipe(map((response: any) => response.data));
     }
 
-    public updateTickerData(ticker: string, year: number) {
-        this.getTickerTransactions(ticker, year).subscribe((res: any) => {
+    public updateTickerData(group: string, year: number) {
+        this.getAllGroupTransactions(group).subscribe((res: any) => {
+        //this.getGroupTransactions(group, year).subscribe((res: any) => {
             //console.warn('update ticker data is called: ' + ticker);
 
-            this.yearsData[year][ticker].transactions = res;
-            //this.tickersData[ticker].transactions = res;
-            console.log(this.yearsData[year][ticker].transactions);
+            // get tickers list for group
+            const uniqueTickers = new Set(res.map((t: Transaction) => t.ticker));
+            const uniqueTickersArray: string[] = Array.from(uniqueTickers) as string[];
 
-            // check if there is call options
-            this.getAllStockTransactions(ticker).subscribe((res: any) => {
-                const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
-                this.yearsData[year][ticker].summary = this.calcService.calcSummary(this.yearsData[year][ticker].transactions!, sharesTransactions, year);
-
-                this.notifyAboutTransactionsUpdate(year, ticker);
-                return this.yearsData[year][ticker].transactions;
-            });
+            // filter group if there are transactions with year more than current
+            if (res.filter((t: Transaction) => t.year! > year).length === 0) {
+                this.yearsData[year][group].transactions = res;
+                this.yearsData[year][group].tickers = uniqueTickersArray;
+                //this.tickersData[ticker].transactions = res;
+                console.log(this.yearsData[year][group].transactions);
+                console.log(this.yearsData[year][group].tickers);
+    
+                // check if there is call options
+                this.getAllGroupTransactions(group).subscribe((res: any) => {
+                    const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
+                    this.yearsData[year][group].summary = this.calcService.calcSummary(this.yearsData[year][group].transactions!, sharesTransactions, year);
+    
+                    this.notifyAboutTransactionsUpdate(year, group);
+                    return this.yearsData[year][group].transactions;
+                });
+            }
         });
+    }
+
+    public getGroupTransactions(group: string, year: number): Observable<Transaction[]> {
+        return this.http
+            .get(this.transactionsServiceUrl + '?group=' + group + '&year=' + year)
+            .pipe<Transaction[]>(map((response: any) => response.data));
     }
 
     public getTickerTransactions(ticker: string, year: number): Observable<Transaction[]> {
         return this.http
             .get(this.transactionsServiceUrl + '?ticker=' + ticker + '&year=' + year)
+            .pipe<Transaction[]>(map((response: any) => response.data));
+    }
+
+    public getAllGroupTransactions(group: string) {
+        return this.http
+            .get(this.transactionsServiceUrl + '?group=' + group)
             .pipe<Transaction[]>(map((response: any) => response.data));
     }
 

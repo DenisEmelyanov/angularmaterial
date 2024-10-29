@@ -26,7 +26,7 @@ export class SummaryGridComponent {
 
   group: any;
 
-  displayedColumns: string[] = ["group", "ticker", "description", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
+  displayedColumns: string[] = ["group", "tickers", "chips", "totalNetPremium", "openDate", "closeDate", "risk", "breakEven", "annualizedReturn", "action"];//"closeDate", "total net premium", "annualized return", 
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -53,23 +53,23 @@ export class SummaryGridComponent {
   }
 
   populateTable() {
-    const data = this.dataService.getTickersDataByYear(this.calendarYear);
+    const data = this.dataService.getGroupsDataByYear(this.calendarYear);
     var tableDataArr: any[] = [];
-    Object.keys(data).forEach(ticker => {
+    Object.keys(data).forEach(group => {
       //skip removed transactions
-      if (data[ticker].summary !== undefined && data[ticker].summary!.openDate !== undefined) {
+      if (data[group].summary !== undefined && data[group].summary!.openDate !== undefined) {
         tableDataArr.push({
-          group: data[ticker].group,
-          ticker: ticker,
-          description: data[ticker].description,
-          risk: data[ticker].summary!.risk,
-          sharesQty: data[ticker].summary!.sharesQty,
-          totalNetPremium: data[ticker].summary!.totalNetPremium,
-          openDate: data[ticker].summary!.openDate,
-          closeDate: data[ticker].summary!.closeDate,
-          breakEven: data[ticker].summary!.breakEven,
-          annualizedReturn: data[ticker].summary!.annualizedReturn,
-          warningFlag: data[ticker].summary!.warningFlag
+          group: data[group].group,
+          tickers: data[group].tickers?.join(", "),
+          description: data[group].description,
+          risk: data[group].summary!.risk,
+          sharesQty: data[group].summary!.sharesQty,
+          totalNetPremium: data[group].summary!.totalNetPremium,
+          openDate: data[group].summary!.openDate,
+          closeDate: data[group].summary!.closeDate,
+          breakEven: data[group].summary!.breakEven,
+          annualizedReturn: data[group].summary!.annualizedReturn,
+          warningFlag: data[group].summary!.warningFlag
         });
       }
     })

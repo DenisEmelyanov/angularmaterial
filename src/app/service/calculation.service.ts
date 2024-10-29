@@ -48,7 +48,8 @@ export class CalculationService {
         const openContracts = optionsOnly.filter(t => t.closeDate === undefined || t.closeDate === null);
         // use put only to calculate risk
         var riskContracts = openContracts.filter(t => t.type === 'put');
-        if (openContracts.length === 0) {
+        // for closed positions: no open contracts and open shares
+        if (openContracts.length === 0 && sharesQty === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
         //console.warn('risk contracts: ' + riskContracts.length);

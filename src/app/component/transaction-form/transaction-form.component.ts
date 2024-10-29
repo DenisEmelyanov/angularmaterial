@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { Transaction } from 'src/app/model/transaction';
-import { group } from '@angular/animations';
 import { DataService } from 'src/app/service/data.service';
 
 @Component({
@@ -28,7 +27,7 @@ export class TransactionFormComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private ref: MatDialogRef<PopupComponent>, private formBuilder: FormBuilder, private dataService: DataService) {
     this.transactionForm = this.formBuilder.group({
       id: this.formBuilder.control(this.data.transaction.id),
-      ticker: this.formBuilder.control(this.data.ticker),
+      ticker: this.formBuilder.control(this.data.transaction.ticker),
       openSide: this.formBuilder.control(''),
       closeSide: this.formBuilder.control(''),
       quantity: this.formBuilder.control(1),
@@ -41,7 +40,7 @@ export class TransactionFormComponent implements OnInit {
       openDate: this.formBuilder.control(null),
       closeDate: this.formBuilder.control(null),
       year: this.formBuilder.control(new Date().getFullYear()),
-      group: this.formBuilder.control(this.data.ticker + ' ' +new Date().getFullYear()),
+      group: this.formBuilder.control(this.data.transaction.ticker + ' ' + new Date().getFullYear()),
       assigned: this.formBuilder.control(false)
     });
   }
@@ -78,13 +77,13 @@ export class TransactionFormComponent implements OnInit {
     console.log(this.editData);
 
     this.transactionForm.patchValue({
-      //ticker: this.editData.ticker, 
+      ticker: this.editData.ticker,
       openSide: this.editData.openSide,
       closeSide: this.editData.closeSide,
       quantity: this.editData.quantity,
       type: this.editData.type,
       strike: this.editData.strike,
-      expiration: this.editData.expiration,
+      expiration: this.getDateFromStr(this.editData.expiration),
       premium: this.editData.premium,
       // {
       //   value: this.editData.premium,
@@ -92,8 +91,8 @@ export class TransactionFormComponent implements OnInit {
       // },
       openAmount: this.editData.openAmount,
       closeAmount: this.editData.closeAmount,
-      openDate: this.editData.openDate,
-      closeDate: this.editData.closeDate,
+      openDate: this.getDateFromStr(this.editData.openDate),
+      closeDate: this.getDateFromStr(this.editData.closeDate),
       year: this.editData.year,
       group: this.editData.group,
       assigned: this.editData.assigned
@@ -109,6 +108,23 @@ export class TransactionFormComponent implements OnInit {
         this.tableDataSource = this.stockOpenTrades;
       });
     }
+  }
+
+  getDateFromStr(dateString: string) {
+
+    if (dateString) {
+      const match = dateString.match(/(\d{4})-(\d{2})-(\d{2})/);
+
+      if (match) {
+        const year = parseInt(match[1]);
+        const month = parseInt(match[2]) - 1;
+        const day = parseInt(match[3]);
+  
+        return new Date(year, month, day);
+      }
+    }
+
+    return null;
   }
 
   premiumUpdate(event: number) {

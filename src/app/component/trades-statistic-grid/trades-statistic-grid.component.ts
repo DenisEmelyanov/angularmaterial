@@ -171,7 +171,7 @@ export class TradesStatisticGridComponent {
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
 
-    const data = this.dataService.getTickersDataByYear(year);
+    const data = this.dataService.getGroupsDataByYear(year);
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
@@ -179,7 +179,7 @@ export class TradesStatisticGridComponent {
     for (const ticker in data) {
       const tickerData = data[ticker];
       if (tickerData.transactions) {
-        for (const transaction of tickerData.transactions) {
+        for (const transaction of tickerData.transactions.filter(t => t.year === year)) {
           // calculate total premium from non-stock trades
           if (transaction.type !== 'stock') {
             const transactionDate = new Date(transaction.openDate);
@@ -236,7 +236,7 @@ export class TradesStatisticGridComponent {
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
 
-    const data = this.dataService.getTickersDataByYear(year);
+    const data = this.dataService.getGroupsDataByYear(year);
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
@@ -245,7 +245,7 @@ export class TradesStatisticGridComponent {
     for (const ticker in data) {
       const tickerData = data[ticker];
       if (tickerData.transactions) {
-        for (const transaction of tickerData.transactions) {
+        for (const transaction of tickerData.transactions.filter(t => t.year === year)) {
           // calculate total premium from non-stock trades
           if (transaction.type === 'call' || transaction.type === 'put') {
             const openTransaction: Transaction = {

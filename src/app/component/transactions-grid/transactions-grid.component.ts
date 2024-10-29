@@ -22,7 +22,7 @@ export class TransactionsGridComponent {
 
   dataSource: any;
 
-  displayedColumns: string[] = ["transaction", "chips", "openDate", "closeDate", "premium", "action"];
+  displayedColumns: string[] = ["transaction", "chips", "year", "openDate", "closeDate", "premium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -35,13 +35,22 @@ export class TransactionsGridComponent {
   }
 
   refreshTable() {
-    this.dataService.getTickerTransactions(this.dataTicker.ticker, this.dataTicker.year!).subscribe((res: any) => {
+    this.dataService.getAllGroupTransactions(this.dataTicker.group).subscribe((res: any) => {
       //console.warn(res);
       this.dataSource = this.sortByOpenDate(res);
 
-      this.dataService.updateTickerData(this.dataTicker.ticker, this.dataTicker.year!);
+      this.dataService.updateTickerData(this.dataTicker.group, this.dataTicker.year!);
     });
-    //this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
+
+    //this.dataService.getTickerTransactions(this.dataTicker.group, this.dataTicker.year!).subscribe((res: any) => {
+      //console.warn(res);
+    //  this.dataSource = this.sortByOpenDate(res);
+
+    //  this.dataService.updateTickerData(this.dataTicker.group, this.dataTicker.year!);
+    //});
+
+
+    ////this.dataSource = new MatTableDataSource<Transaction>(this.dataService.getTickerData(this.dataTicker).transactions);
   }
 
   sortByOpenDate(data: Transaction[]): Transaction[] {
@@ -60,10 +69,13 @@ export class TransactionsGridComponent {
   }
 
   addTransaction() {
+    // get ticker from the latest transaction
+    const tickerData = this.dataSource[0];
+
     this.openTransactionForm(
       {
         id: -1,
-        ticker: this.dataTicker.ticker,
+        ticker: tickerData.ticker,
         openSide: '',
         type: '',
         strike: 0,
