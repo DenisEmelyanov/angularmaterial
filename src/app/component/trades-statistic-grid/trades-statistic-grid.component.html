@@ -128,6 +128,16 @@
                                         {{element.month}}</td>
                                 </ng-container>
 
+                                <ng-container matColumnDef="chips">
+                                    <th mat-header-cell *matHeaderCellDef></th>
+                                    <td mat-cell *matCellDef="let element"
+                                    [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
+                                        <mat-chip-set aria-label="chips">
+                                            <mat-chip class="open-chip" *ngIf="element.isOpen === true">open</mat-chip>
+                                        </mat-chip-set>
+                                    </td>
+                                </ng-container>
+
                                 <ng-container matColumnDef="totalNetPremium">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Total Net Premium</th>
                                     <td mat-cell *matCellDef="let element"

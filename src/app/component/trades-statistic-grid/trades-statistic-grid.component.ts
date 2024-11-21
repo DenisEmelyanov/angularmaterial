@@ -26,7 +26,7 @@ export class TradesStatisticGridComponent {
 
   displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsTradesByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
-  displayedColumnsTradesByMonths: string[] = ["month", "totalNetPremium", "action"];
+  displayedColumnsTradesByMonths: string[] = ["month", "chips", "totalNetPremium", "action"];
   displayedTransactionsColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
@@ -181,7 +181,7 @@ export class TradesStatisticGridComponent {
       if (tickerData.transactions) {
         for (const transaction of tickerData.transactions.filter(t => t.year === year)) {
           // calculate total premium from non-stock trades
-          if (transaction.type !== 'stock') {
+          if (transaction.type !== 'stock' && transaction.type !== 'dividend') {
             const transactionDate = new Date(transaction.openDate);
             const month = transactionDate.getMonth() + 1; // Months are zero-indexed
 
@@ -204,9 +204,11 @@ export class TradesStatisticGridComponent {
 
       //save month transactions for details
       this.monthTrades[monthStr] = monthTransactions[month];
+      const isOpen = monthTransactions[month].some(t => t.closeDate === null || t.closeDate === undefined);
 
       tableDataArr.push({
         month: monthStr,
+        isOpen: isOpen,
         totalNetPremium: monthTotals[month]
       });
     }

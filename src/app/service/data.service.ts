@@ -42,13 +42,16 @@ export class DataService {
         'MO' : 'ALTRIA GROUP INC COM',
         'HL': 'HECLA MNG CO COM',
         'ABNB': 'AIRBNB INC COM CL A',
-        'T': 'AT&T INC COM'
+        'T': 'AT&T INC COM',
+        'ENPH' : 'ENPHASE ENERGY INC COM',
+        'SCHD' : 'SCHWAB US DIVIDEND EQUITY ETF'
     };
 
     private portfolio: any = 'individual portfolio';
 
     //private tickersData: Record<string, TickerData> = {};
-    private yearsData: Record<number, Record<string, TickerData>> = {};
+    private yearsGroupData: Record<number, Record<string, TickerData>> = {};
+    private yearsTickerData: Record<number, Record<string, TickerData>> = {};
     private dataLoad: boolean = false;
 
     constructor(private http: HttpClient, private calcService: CalculationService) {
@@ -64,12 +67,12 @@ export class DataService {
 
     private refreshYearData(year: number) {
 
-        var tickersData: Record<string, TickerData> = {};
+        var groupsData: Record<string, TickerData> = {};
         this.getAllTransactionsGroups(year).subscribe((res: any) => {
             var groups = Array.from(res);
             console.log('get the following groups: ' + groups);
             groups.forEach((group: any) => {
-                tickersData[group] = {
+                groupsData[group] = {
                     group: group,
                     tickers: [],
                     description: '',// TODO this.tickersDescription[group],
@@ -77,16 +80,41 @@ export class DataService {
                 };
             });
 
-            Object.keys(tickersData).forEach(group => {
+            Object.keys(groupsData).forEach(group => {
                 //console.warn('update data for: ' + ticker + ' ' + year);
 
 
-                this.updateTickerData(group, year);
+                this.updateGroupData(group, year);
             });
             //console.warn(tickersData);
         });
 
-        this.yearsData[year] = tickersData;
+        this.yearsGroupData[year] = groupsData;
+
+        var tickersData: Record<string, TickerData> = {};
+        this.getAllTransactionsTickers(year).subscribe((res: any) => {
+            var tickers = Array.from(res);
+            console.log('get the following tickers: ' + tickers);
+            tickers.forEach((ticker: any) => {
+                tickersData[ticker] = {
+                    group: '',
+                    ticker: ticker,
+                    tickers: [],
+                    description: this.tickersDescription[ticker],
+                    year: year
+                };
+            });
+
+            Object.keys(tickersData).forEach(ticker => {
+                //console.warn('update data for: ' + ticker + ' ' + year);
+
+
+                this.updateTickerData(ticker, year);
+            });
+            //console.warn(tickersData);
+        });
+
+        this.yearsTickerData[year] = tickersData;
     }
 
     public notifyAboutTransactionsUpdate(year: number, group: any = undefined) {
@@ -99,11 +127,13 @@ export class DataService {
     }
 
     public getAllYearsTickersData() {
-        return this.yearsData;
+        console.log('getAllYearsTickersData called');
+        //return this.yearsGroupData;
+        return this.yearsTickerData;
     }
 
     public getGroupsDataByYear(year: any) {
-        return this.yearsData[year];
+        return this.yearsGroupData[year];
     }
 
     public getAllTransactionsTickers(year: number) {
@@ -124,7 +154,7 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
-    public updateTickerData(group: string, year: number) {
+    public updateGroupData(group: string, year: number) {
         this.getAllGroupTransactions(group).subscribe((res: any) => {
         //this.getGroupTransactions(group, year).subscribe((res: any) => {
             //console.warn('update ticker data is called: ' + ticker);
@@ -135,21 +165,53 @@ export class DataService {
 
             // filter group if there are transactions with year more than current
             if (res.filter((t: Transaction) => t.year! > year).length === 0) {
-                this.yearsData[year][group].transactions = res;
-                this.yearsData[year][group].tickers = uniqueTickersArray;
+                this.yearsGroupData[year][group].transactions = res;
+                this.yearsGroupData[year][group].tickers = uniqueTickersArray;
                 //this.tickersData[ticker].transactions = res;
-                console.log(this.yearsData[year][group].transactions);
-                console.log(this.yearsData[year][group].tickers);
+                console.log(this.yearsGroupData[year][group].transactions);
+                console.log(this.yearsGroupData[year][group].tickers);
     
                 // check if there is call options
                 this.getAllGroupTransactions(group).subscribe((res: any) => {
-                    const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
-                    this.yearsData[year][group].summary = this.calcService.calcSummary(this.yearsData[year][group].transactions!, sharesTransactions, year);
+                    //const sharesTransactions = res.filter((t: Transaction) => t.type === 'stock');//t.year! < year + 1);
+                    this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!, year);//sharesTransactions, 
     
                     this.notifyAboutTransactionsUpdate(year, group);
-                    return this.yearsData[year][group].transactions;
+                    return this.yearsGroupData[year][group].transactions;
                 });
             }
+        });
+    }
+
+    public updateTickerData(ticker: string, year: number) {
+        this.getTickerTransactions(ticker, year).subscribe((res: any) => {
+            this.yearsTickerData[year][ticker].transactions = res;
+            this.yearsTickerData[year][ticker].summary = this.calcService.calcTotalNetPremium(res);
+        //this.getGroupTransactions(group, year).subscribe((res: any) => {
+            //console.warn('update ticker data is called: ' + ticker);
+
+            // // get tickers list for group
+            // const uniqueTickers = new Set(res.map((t: Transaction) => t.ticker));
+            // const uniqueTickersArray: string[] = Array.from(uniqueTickers) as string[];
+
+            // // filter group if there are transactions with year more than current
+            // if (res.filter((t: Transaction) => t.year! > year).length === 0) {
+            //     this.yearsGroupData[year][ticker].transactions = res;
+            //     this.yearsGroupData[year][ticker].tickers = uniqueTickersArray;
+            //     //this.tickersData[ticker].transactions = res;
+            //     console.log(this.yearsGroupData[year][ticker].transactions);
+            //     console.log(this.yearsGroupData[year][ticker].tickers);
+    
+            //     // check if there is call options
+            //     this.getAllGroupTransactions(group).subscribe((res: any) => {
+            //         const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
+            //         this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!, sharesTransactions, year);
+    
+            //         this.notifyAboutTransactionsUpdate(year, group);
+            //         return this.yearsGroupData[year][group].transactions;
+            //     });
+            // }
+            
         });
     }
 

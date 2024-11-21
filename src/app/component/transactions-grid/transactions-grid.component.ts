@@ -39,7 +39,7 @@ export class TransactionsGridComponent {
       //console.warn(res);
       this.dataSource = this.sortByOpenDate(res);
 
-      this.dataService.updateTickerData(this.dataTicker.group, this.dataTicker.year!);
+      this.dataService.updateGroupData(this.dataTicker.group, this.dataTicker.year!);
     });
 
     //this.dataService.getTickerTransactions(this.dataTicker.group, this.dataTicker.year!).subscribe((res: any) => {

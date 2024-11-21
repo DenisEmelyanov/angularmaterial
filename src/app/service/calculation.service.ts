@@ -12,10 +12,35 @@ export class CalculationService {
     constructor() {
     }
 
-    public calcSummary(transactions: Transaction[], stockTransactions: Transaction[], year: number) {
+    public calcTotalNetPremium(transactions: Transaction[]) {
+        const putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
+        const callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
+        const totalDividend = transactions.filter(t => t.type === 'dividend').reduce((sum, current) => sum + current.premium, 0);
+
+        const sharesClosedTransactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate !== null).reduce((sum, current) => sum + current.premium, 0);
+
+        const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;   
+        
+        return {
+            putNetPremium: putNetPremium,
+            callNetPremium: callNetPremium,
+            totalNetPremium: totalNetPremium,
+            sharesTotalNetPremium: sharesClosedTransactionsPremium,
+            pricePerShare: 0,
+            risk: 0,
+            breakEven: 0,
+            openDate: '',
+            closeDate: '',
+            days: 0,
+            annualizedReturn: 0,
+            warningFlag: undefined
+        }
+    }
+
+    public calcSummary(transactions: Transaction[], year: number) {//, stockTransactions: Transaction[]
         //get only open buy stock transactions from prevous years
-        stockTransactions = stockTransactions.filter(t => t.closeDate === null && t.openSide === 'buy' && t.year! < year);
-        transactions = transactions.concat(stockTransactions);
+        //stockTransactions = stockTransactions.filter(t => t.closeDate === null && t.openSide === 'buy' && t.year! < year);
+        //transactions = transactions.concat(stockTransactions);
 
         const putNetPremium = transactions.filter(t => t.type === 'put').reduce((sum, current) => sum + current.premium, 0);
         const callNetPremium = transactions.filter(t => t.type === 'call').reduce((sum, current) => sum + current.premium, 0);
@@ -52,8 +77,8 @@ export class CalculationService {
         if (openContracts.length === 0 && sharesQty === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
-        //console.warn('risk contracts: ' + riskContracts.length);
-        //console.warn(riskContracts);
+        console.warn(year + ' risk contracts: ' + riskContracts.length);
+        console.warn(year + ' ' + riskContracts);
 
         var risk = 0;
         if (riskContracts.length === 0 && sharesQty > 0) {
@@ -73,8 +98,8 @@ export class CalculationService {
         else {
             riskQty = riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty;
         }
-        //console.warn('risk: ' + risk);
-        //console.warn('risk qty: ' + riskQty);
+        console.warn(year + ' risk: ' + risk);
+        console.warn(year + ' risk qty: ' + riskQty);
 
         var breakEven = 0;
         if (openContracts.length === 0 && sharesQty > 0) {
