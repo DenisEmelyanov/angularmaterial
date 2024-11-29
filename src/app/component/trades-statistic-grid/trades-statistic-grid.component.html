@@ -186,8 +186,12 @@
                         <mat-card-subtitle>individual portfolio</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-actions>
+
                     </mat-card-actions>
                     <mat-card-content class="total-by-months">
+                        <div class="chart-container">
+                            <canvas  id="MyChart" >{{ chart }}</canvas>
+                      </div>
                         <div class="card-content-container">
                             <p></p>
                             <table matSort mat-table [dataSource]="dataSourceTransactionsByMonths"

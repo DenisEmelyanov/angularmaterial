@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DataService } from 'src/app/service/data.service';
 import { TradesDetailsDialogComponent } from '../trades-details-dialog/trades-details-dialog.component';
 import { Transaction } from 'src/app/model/transaction';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-trades-statistic-grid',
@@ -25,6 +26,7 @@ export class TradesStatisticGridComponent {
   yearOptionsTrades: Transaction[] = [];
   yearClosedStockTrades: Transaction[] = [];
   monthTransactions: Record<string, Transaction[]> = {};
+  public chart: any;
 
   displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsTradesByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
@@ -44,6 +46,38 @@ export class TradesStatisticGridComponent {
       this.populateTradesTotalByYearTable();
       this.populateTradesTotalByMonthTable(this.selectedYear);
       this.populateTransactionsTotalByMonthTable(this.selectedYear);
+
+      this.createChart();
+    });
+  }
+
+  createChart(){
+
+    this.chart = new Chart("MyChart", {
+      type: 'bar', //this denotes tha type of chart
+
+      data: {// values on X-Axis
+        labels: ['2022-05-10', '2022-05-11', '2022-05-12','2022-05-13',
+                                 '2022-05-14', '2022-05-15', '2022-05-16','2022-05-17', ], 
+           datasets: [
+          {
+            label: "Sales",
+            data: ['467','576', '572', '79', '92',
+                                 '574', '573', '576'],
+            backgroundColor: 'blue'
+          },
+          {
+            label: "Profit",
+            data: ['542', '542', '536', '327', '17',
+                                     '0.00', '538', '541'],
+            backgroundColor: 'limegreen'
+          }  
+        ]
+      },
+      options: {
+        aspectRatio:2.5
+      }
+
     });
   }
 

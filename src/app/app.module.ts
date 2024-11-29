@@ -30,6 +30,7 @@ import { FileSelectDialogComponent } from './component/file-select-dialog/file-s
 import { SummaryGridComponent } from './component/summary-grid/summary-grid.component';
 import { TradesStatisticGridComponent } from './component/trades-statistic-grid/trades-statistic-grid.component';
 import { TradesDetailsDialogComponent } from './component/trades-details-dialog/trades-details-dialog.component';
+import { Chart } from 'chart.js/auto';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,7 @@ import { TradesDetailsDialogComponent } from './component/trades-details-dialog/
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    MatGridListModule
+    MatGridListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
