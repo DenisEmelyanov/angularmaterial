@@ -22,6 +22,8 @@ export class TradesStatisticGridComponent {
   yearOptions: number[] = [];
   selectedYear: any;
   monthTrades: Record<string, Transaction[]> = {};
+  yearOptionsTrades: Transaction[] = [];
+  yearClosedStockTrades: Transaction[] = [];
   monthTransactions: Record<string, Transaction[]> = {};
 
   displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
@@ -53,6 +55,14 @@ export class TradesStatisticGridComponent {
 
   onTradesMonthDetails(month: any) {
     this.openDetails('TRADES DETAILS ' + month + ' ' + this.selectedYear, ["transaction", "chips", "openDate", "openAmount", "closeDate", "closeAmount", "premium"], this.monthTrades[month], TradesDetailsDialogComponent);
+  }
+
+  onOptionsTradesYearTotalDetails() {
+    this.openDetails('OPTION TRADES DETAILS ' + this.selectedYear, ["transaction", "chips", "openDate", "openAmount", "closeDate", "closeAmount", "premium"], this.yearOptionsTrades, TradesDetailsDialogComponent);
+  }
+
+  onStockClosedTradesYearTotalDetails() {
+    this.openDetails('STOCK TRADES DETAILS ' + this.selectedYear, ["transaction", "chips", "openDate", "openAmount", "closeDate", "closeAmount", "premium"], this.yearClosedStockTrades, TradesDetailsDialogComponent);
   }
 
   onTransactionsMonthDetails(month: any) {
@@ -175,6 +185,8 @@ export class TradesStatisticGridComponent {
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
+    const yearOptionsTrades: Transaction[] = [];
+    const yearStocksClosedTrades: Transaction[] = [];
 
     for (const ticker in data) {
       const tickerData = data[ticker];
@@ -190,10 +202,15 @@ export class TradesStatisticGridComponent {
 
             monthTransactions[month] = monthTransactions[month] || [];
             monthTransactions[month].push(transaction);
+            yearOptionsTrades.push(transaction);
           }
           // calculate premium from closed stock trades
           else if (transaction.closeDate !== null) {
             totalStocksNetPremium += transaction.premium;
+            yearStocksClosedTrades.push(transaction);
+          }
+          else {
+            yearStocksClosedTrades.push(transaction);
           }
         }
       }
@@ -205,6 +222,9 @@ export class TradesStatisticGridComponent {
       //save month transactions for details
       this.monthTrades[monthStr] = monthTransactions[month];
       const isOpen = monthTransactions[month].some(t => t.closeDate === null || t.closeDate === undefined);
+      //save closed stock trades for year details
+      this.yearClosedStockTrades = yearStocksClosedTrades;
+      this.yearOptionsTrades = yearOptionsTrades;
 
       tableDataArr.push({
         month: monthStr,

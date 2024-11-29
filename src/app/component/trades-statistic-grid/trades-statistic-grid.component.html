@@ -131,7 +131,7 @@
                                 <ng-container matColumnDef="chips">
                                     <th mat-header-cell *matHeaderCellDef></th>
                                     <td mat-cell *matCellDef="let element"
-                                    [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
+                                        [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
                                         <mat-chip-set aria-label="chips">
                                             <mat-chip class="open-chip" *ngIf="element.isOpen === true">open</mat-chip>
                                         </mat-chip-set>
@@ -149,8 +149,16 @@
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
                                     <td mat-cell *matCellDef="let element"
                                         [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
-                                        <button mat-raised-button color="primary" (click)="onTradesMonthDetails(element.month)"
-                                            *ngIf="element.month !== 'TOTAL'">Details</button>
+                                        <button mat-raised-button color="primary"
+                                            (click)="onTradesMonthDetails(element.month)" *ngIf="element.month !== 'TOTAL' && 
+                                            element.month !== 'TOTAL STOCKS' && 
+                                            element.month !== 'TOTAL OPTIONS'">Details</button>
+                                        <button mat-raised-button color="primary"
+                                        (click)="onOptionsTradesYearTotalDetails()"
+                                        *ngIf="element.month === 'TOTAL OPTIONS'">Details</button>
+                                        <button mat-raised-button color="primary"
+                                            (click)="onStockClosedTradesYearTotalDetails()"
+                                            *ngIf="element.month === 'TOTAL STOCKS'">Details</button>
                                     </td>
                                 </ng-container>
 
@@ -182,7 +190,8 @@
                     <mat-card-content class="total-by-months">
                         <div class="card-content-container">
                             <p></p>
-                            <table matSort mat-table [dataSource]="dataSourceTransactionsByMonths" class="mat-elevation-z8">
+                            <table matSort mat-table [dataSource]="dataSourceTransactionsByMonths"
+                                class="mat-elevation-z8">
 
                                 <ng-container matColumnDef="month">
                                     <th mat-sort-header mat-header-cell *matHeaderCellDef> Month</th>
@@ -202,8 +211,9 @@
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
                                     <td mat-cell *matCellDef="let element"
                                         [ngStyle]="{'background-color': getBackgroundColor(element.month)}">
-                                        <button mat-raised-button color="primary" (click)="onTransactionsMonthDetails(element.month)"
-                                            *ngIf="element.month !== 'TOTAL'">Details</button>
+                                        <button mat-raised-button color="primary"
+                                            (click)="onTransactionsMonthDetails(element.month)"
+                                            *ngIf="element.month !== 'TOTAL' && element.month !== 'TOTAL OPTIONS' && element.month !== 'TOTAL STOCKS'">Details</button>
                                     </td>
                                 </ng-container>
 
