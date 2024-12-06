@@ -112,7 +112,7 @@ export class CalculationService {
 
         const openDate = this.earliestOpenDate(transactions)?.openDate!;
 
-        var expirationDate = this.latestExpirationDate(transactions)?.expiration!;
+        var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
         if (openContracts.length === 0) {
             expirationDate = this.latestCloseDate(transactions)?.closeDate!
         }

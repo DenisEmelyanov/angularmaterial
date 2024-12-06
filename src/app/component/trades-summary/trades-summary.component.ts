@@ -21,6 +21,7 @@ export class TradesSummaryComponent implements OnInit {
   risk!: number;
   breakEven!: number;
   days!: number;
+  closeDate!: string;
   annualizedReturn!: number;
 
   constructor(private dataService: DataService, private ref: ChangeDetectorRef) {
@@ -39,6 +40,7 @@ export class TradesSummaryComponent implements OnInit {
         this.risk = summaryData?.risk!;
         this.breakEven = summaryData?.breakEven!;
         this.days = summaryData?.days!;
+        this.closeDate = summaryData?.closeDate!;
         this.annualizedReturn = summaryData?.annualizedReturn!;
 
         this.ref.detectChanges();

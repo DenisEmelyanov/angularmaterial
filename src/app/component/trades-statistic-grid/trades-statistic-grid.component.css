@@ -1,3 +1,7 @@
+div.grid-container {
+    max-width: 2800px;
+}
+
 mat-card-title {
     text-align: left;
     margin-left: 0%;
@@ -10,7 +14,7 @@ mat-card-subtitle {
 
 mat-card-content.total-by-tickers {
     overflow-y: auto;
-    height: 1000px;
+    height: 900px;
     /* Adjust height as needed */
 }
 
@@ -26,6 +30,12 @@ mat-card-content.total-by-months {
     /* Adjust height as needed */
 }
 
+mat-card-content.chart {
+    overflow-y: auto;
+    height: auto;
+    /* Adjust height as needed */
+}
+
 div.mat-grid-tile-content {
-    width: 100%; display: flex; align-items: flex-start; margin: 10px;
+    display: flex; align-items: flex-start; margin: 10px;
 }

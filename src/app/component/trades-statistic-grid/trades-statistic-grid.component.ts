@@ -26,13 +26,16 @@ export class TradesStatisticGridComponent {
   yearOptionsTrades: Transaction[] = [];
   yearClosedStockTrades: Transaction[] = [];
   monthTransactions: Record<string, Transaction[]> = {};
-  public chart: any;
+  
+  tradesChart: any;
+  transactionsChart: any;
 
   displayedColumnsTradesByTickers: string[] = ["ticker", "description", "year", "totalNetPremium"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsTradesByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsTradesByMonths: string[] = ["month", "chips", "totalNetPremium", "action"];
   displayedTransactionsColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
-  @ViewChild(MatPaginator) paginatior !: MatPaginator;
+  
+  //@ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
   constructor(private dataService: DataService, private tradesDetailsDialog: MatDialog) {
@@ -47,44 +50,91 @@ export class TradesStatisticGridComponent {
       this.populateTradesTotalByMonthTable(this.selectedYear);
       this.populateTransactionsTotalByMonthTable(this.selectedYear);
 
-      this.createChart();
+      this.tradesChart = this.createChart(this.dataSourceTradesByMonths, "trades-total-net-chart");
+      this.transactionsChart = this.createChart(this.dataSourceTransactionsByMonths, "transactions-total-net-chart");
     });
   }
 
-  createChart(){
+  createChart(dataSource: MatTableDataSource<any>, canvasId: string) {
+    const chartData = this.getChartData(dataSource);
 
-    this.chart = new Chart("MyChart", {
+    const chart = new Chart(canvasId, {
       type: 'bar', //this denotes tha type of chart
 
       data: {// values on X-Axis
-        labels: ['2022-05-10', '2022-05-11', '2022-05-12','2022-05-13',
-                                 '2022-05-14', '2022-05-15', '2022-05-16','2022-05-17', ], 
+        labels: chartData.labels, 
            datasets: [
           {
-            label: "Sales",
-            data: ['467','576', '572', '79', '92',
-                                 '574', '573', '576'],
-            backgroundColor: 'blue'
-          },
-          {
-            label: "Profit",
-            data: ['542', '542', '536', '327', '17',
-                                     '0.00', '538', '541'],
-            backgroundColor: 'limegreen'
-          }  
+            label: "Premium",
+            data: chartData.dataset,
+            backgroundColor: chartData.backgroundColors,
+            borderColor: chartData.borderColors
+          }
         ]
       },
       options: {
-        aspectRatio:2.5
+        responsive: true,
+        aspectRatio: 1.3
       }
-
     });
+
+    return chart;
+  }
+
+  updateChart(chart: Chart, dataSource: MatTableDataSource<any>) {
+    const chartData = this.getChartData(dataSource);
+
+    chart.data.labels = chartData.labels;
+    chart.data.datasets.forEach(ds => {
+        ds.data = chartData.dataset;
+        ds.backgroundColor = chartData.backgroundColors;
+        ds.borderColor = chartData.borderColors;
+    });
+
+    chart.update();
+  }
+
+  getChartData(dataSource: MatTableDataSource<any>) {
+    const labels: any[] = [];
+    const dataset: any[] = [];
+    const backgroundColors: any[] = [];
+    const borderColors: any[] = [];
+
+    dataSource.filteredData
+    .filter((row: any) => row.month.includes("TOTAL") === false)
+    .forEach((row: any) => {
+      labels.push(row.month);
+      dataset.push(row.totalNetPremium);
+      if (row.totalNetPremium >= 0) {
+        backgroundColors.push('rgba(54, 162, 235, 0.2)');
+        borderColors.push('rgb(54, 162, 235)');
+      }
+      else {
+        backgroundColors.push('rgba(255, 99, 132, 0.2)');
+        borderColors.push('rgb(255, 99, 132)');       
+      }
+    });
+
+    labels.reverse();
+    dataset.reverse();
+    backgroundColors.reverse();
+    borderColors.reverse();
+
+    return {
+      labels: labels,
+      dataset: dataset,
+      backgroundColors: backgroundColors,
+      borderColors: borderColors
+    }
   }
 
   onYearDetails(year: any) {
     this.selectedYear = year;
     this.populateTradesTotalByMonthTable(this.selectedYear);
     this.populateTransactionsTotalByMonthTable(this.selectedYear);
+
+    this.updateChart(this.tradesChart, this.dataSourceTradesByMonths);
+    this.updateChart(this.transactionsChart, this.dataSourceTransactionsByMonths);
   }
 
   onTradesMonthDetails(month: any) {
