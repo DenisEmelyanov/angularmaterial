@@ -22,20 +22,24 @@
                 <b>{{tab.group}}</b>
                 <mat-icon aria-hidden="false" (click)="removeTab(tab)" fontIcon="close"></mat-icon>
             </ng-template>
-            <div class="grid-container">
-                <mat-grid-list cols="6" rowHeight="1200px">
+            <app-group-details-tab [dataTicker]="tab"></app-group-details-tab>
+            
+<!--        <div class="grid-container">         
+            <mat-grid-list cols="6" rowHeight="1200px">
                     <mat-grid-tile [colspan]="2" [rowspan]="1">
                         <div class="mat-grid-tile-content">
                             <app-trades-summary [dataTicker]="tab"></app-trades-summary>
                         </div>
                     </mat-grid-tile>
+
                     <mat-grid-tile [colspan]="3" [rowspan]="2">
                         <div class="mat-grid-tile-content">
                             <app-transactions-grid [dataTicker]="tab"></app-transactions-grid>
                         </div>
                     </mat-grid-tile>
-                </mat-grid-list>
-            </div>
+                </mat-grid-list> 
+                
+            </div>-->
         </mat-tab>
     </div>
 </mat-tab-group>

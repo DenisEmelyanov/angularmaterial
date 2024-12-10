@@ -6,7 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DataService } from 'src/app/service/data.service';
 import { TradesDetailsDialogComponent } from '../trades-details-dialog/trades-details-dialog.component';
 import { Transaction } from 'src/app/model/transaction';
-import Chart from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
+import { ChartData } from 'chart.js';
+import { CalculationService } from 'src/app/service/calculation.service';
 
 @Component({
   selector: 'app-trades-statistic-grid',
@@ -26,7 +28,7 @@ export class TradesStatisticGridComponent {
   yearOptionsTrades: Transaction[] = [];
   yearClosedStockTrades: Transaction[] = [];
   monthTransactions: Record<string, Transaction[]> = {};
-  
+
   tradesChart: any;
   transactionsChart: any;
 
@@ -34,15 +36,16 @@ export class TradesStatisticGridComponent {
   displayedColumnsTradesByYears: string[] = ["year", "totalNetPremium", "action"];//"closeDate", "total net premium", "annualized return", 
   displayedColumnsTradesByMonths: string[] = ["month", "chips", "totalNetPremium", "action"];
   displayedTransactionsColumnsByMonths: string[] = ["month", "totalNetPremium", "action"];
-  
+
   //@ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private dataService: DataService, private tradesDetailsDialog: MatDialog) {
+  constructor(private dataService: DataService, private tradesDetailsDialog: MatDialog, private calcService: CalculationService) {
 
   }
 
   ngOnInit() {
+    
     this.dataService.currentData.subscribe((data) => {
       // get all years array
       this.populateTradesTickersTable();
@@ -53,28 +56,42 @@ export class TradesStatisticGridComponent {
       this.tradesChart = this.createChart(this.dataSourceTradesByMonths, "trades-total-net-chart");
       this.transactionsChart = this.createChart(this.dataSourceTransactionsByMonths, "transactions-total-net-chart");
     });
+
   }
 
   createChart(dataSource: MatTableDataSource<any>, canvasId: string) {
     const chartData = this.getChartData(dataSource);
+    //const median = this.createArrayWithSameNumbers(this.calcService.calculateMedian(chartData.dataset), chartData.dataset.length);
 
     const chart = new Chart(canvasId, {
       type: 'bar', //this denotes tha type of chart
 
       data: {// values on X-Axis
-        labels: chartData.labels, 
-           datasets: [
+        labels: chartData.labels,
+        datasets: [
           {
             label: "Premium",
             data: chartData.dataset,
             backgroundColor: chartData.backgroundColors,
-            borderColor: chartData.borderColors
-          }
+            borderColor: chartData.borderColors,
+            borderWidth: 1
+          }/* ,
+          {
+            label: 'Median',
+            data: [median],
+            type: 'line',
+          } */
         ]
       },
       options: {
         responsive: true,
-        aspectRatio: 1.3
+        aspectRatio: 1.3,
+        scales: {
+          y: {
+            max: 4000,
+            //min: -1 * median * 3
+          }
+        }
       }
     });
 
@@ -86,9 +103,9 @@ export class TradesStatisticGridComponent {
 
     chart.data.labels = chartData.labels;
     chart.data.datasets.forEach(ds => {
-        ds.data = chartData.dataset;
-        ds.backgroundColor = chartData.backgroundColors;
-        ds.borderColor = chartData.borderColors;
+      ds.data = chartData.dataset;
+      ds.backgroundColor = chartData.backgroundColors;
+      ds.borderColor = chartData.borderColors;
     });
 
     chart.update();
@@ -101,19 +118,19 @@ export class TradesStatisticGridComponent {
     const borderColors: any[] = [];
 
     dataSource.filteredData
-    .filter((row: any) => row.month.includes("TOTAL") === false)
-    .forEach((row: any) => {
-      labels.push(row.month);
-      dataset.push(row.totalNetPremium);
-      if (row.totalNetPremium >= 0) {
-        backgroundColors.push('rgba(54, 162, 235, 0.2)');
-        borderColors.push('rgb(54, 162, 235)');
-      }
-      else {
-        backgroundColors.push('rgba(255, 99, 132, 0.2)');
-        borderColors.push('rgb(255, 99, 132)');       
-      }
-    });
+      .filter((row: any) => row.month.includes("TOTAL") === false)
+      .forEach((row: any) => {
+        labels.push(row.month);
+        dataset.push(row.totalNetPremium);
+        if (row.totalNetPremium >= 0) {
+          backgroundColors.push('rgba(54, 162, 235, 0.2)');
+          borderColors.push('rgb(54, 162, 235)');
+        }
+        else {
+          backgroundColors.push('rgba(255, 99, 132, 0.2)');
+          borderColors.push('rgb(255, 99, 132)');
+        }
+      });
 
     labels.reverse();
     dataset.reverse();
@@ -126,6 +143,10 @@ export class TradesStatisticGridComponent {
       backgroundColors: backgroundColors,
       borderColors: borderColors
     }
+  }
+
+  createArrayWithSameNumbers(number: number, count: number): number[] {
+    return Array.from({ length: count }, () => number);
   }
 
   onYearDetails(year: any) {

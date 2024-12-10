@@ -1,0 +1,219 @@
+<div class="grid-container">
+    <mat-grid-list cols="4" rowHeight="1200px">
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <div class="mat-grid-tile-content">
+                <!-- <app-trades-summary [dataTicker]="tab"></app-trades-summary> -->
+                <mat-card class="summary-card">
+                    <mat-card-header>
+                        <mat-card-title>{{dataTicker.group}}</mat-card-title>
+                        <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list>
+                            <mat-list-item>
+                                <mat-label>SHORT PUT NET PREMIUM: </mat-label>
+                                <span [ngStyle]="{'color': getColor(putNetPremium)}">{{putNetPremium | currency: 'USD' |
+                                    customCurrency}}</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>SHORT CALL NET PREMIUM: </mat-label>
+                                <span [ngStyle]="{'color': getColor(callNetPremium)}">{{callNetPremium | currency: 'USD'
+                                    | customCurrency}}</span>
+                            </mat-list-item>
+                            <mat-divider *ngIf="sharesTotalNetPremium !== 0"></mat-divider>
+                            <mat-list-item *ngIf="sharesTotalNetPremium !== 0">
+                                <mat-label>SOLD SHARES PREMIUM: </mat-label>
+                                <span [ngStyle]="{'color': getColor(sharesTotalNetPremium)}">{{sharesTotalNetPremium |
+                                    currency: 'USD' | customCurrency}}</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>TOTAL NET PREMIUM: </mat-label>
+                                <span [ngStyle]="{'color': getColor(totalNetPremium)}">{{totalNetPremium | currency:
+                                    'USD' | customCurrency}}</span>
+                            </mat-list-item>
+                            <mat-divider *ngIf="sharesQty !== 0"></mat-divider>
+                            <mat-list-item *ngIf="sharesQty !== 0">
+                                <mat-label>OPEN SHARES QUANTITY: </mat-label>
+                                <span>{{sharesQty}}</span>
+                            </mat-list-item>
+                            <mat-divider *ngIf="sharesQty !== 0"></mat-divider>
+                            <mat-list-item *ngIf="sharesQty !== 0">
+                                <mat-label>PRICE PER SHARE: </mat-label>
+                                <span>{{pricePerShare | currency: 'USD'}}</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>RISK: </mat-label>
+                                <span>{{risk | currency: 'USD'}}</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>BREAK EVEN: </mat-label>
+                                <span>{{breakEven| currency: 'USD'}}</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>DAYS: </mat-label>
+                                <span>{{days}} ({{closeDate | date:'MMM dd, yyyy'}})</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                            <mat-list-item>
+                                <mat-label>ANNUALIZED RETURN: </mat-label>
+                                <span>{{annualizedReturn | percent}}</span>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button><mat-icon>thumb_up</mat-icon> Like</button>
+                        <button mat-button><mat-icon>share</mat-icon> Share</button>
+                    </mat-card-actions>
+                    <mat-card-footer></mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <div class="mat-grid-tile-content">
+                <mat-card class="timeline-chart-card">
+                    <mat-card-header>
+                        <mat-card-title>{{dataTicker.group}} TIMELINE</mat-card-title>
+                        <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <!-- <mat-card-actions /> -->
+                    <mat-card-content class="chart">
+                        <div class="chart-container">
+                            <canvas id="timeline-chart">{{ timelineChart }}</canvas>
+                        </div>
+                    </mat-card-content>
+                    <!-- <mat-card-footer /> -->
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="2" [rowspan]="2">
+            <div class="mat-grid-tile-content">
+                <!-- <app-transactions-grid [dataTicker]="tab"></app-transactions-grid> -->
+                <mat-card class="trades-grid-card">
+                    <mat-card-header>
+                        <mat-card-title>{{dataTicker.group}} - TRADES {{dataTicker.year}}</mat-card-title>
+                        <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-actions>
+                        <button style="margin-left: 85%;" (click)="addTransaction()" mat-raised-button color="primary">
+                            Add
+                            <mat-icon aria-hidden="false" fontIcon="add_circle_outline"></mat-icon>
+                        </button>
+                    </mat-card-actions>
+                    <mat-card-content>
+                        <table matSort mat-table [dataSource]="tradesData" class="mat-elevation-z8">
+                            <ng-container matColumnDef="transaction">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef> Transaction</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{element.openSide | customSide}}
+                                    {{element.quantity}}
+                                    {{element.ticker}}
+                                    {{element.expiration | date:'MMM dd, yyyy'}}
+                                    {{element.strike | currency: 'USD' : 'symbol' : '1.0-2' }}
+                                    {{element.type | customType}}
+                                    <span *ngIf="element.type ==='stock' && element.openSide === 'buy'">&#64;
+                                        {{calcStockPrice(element.premium,
+                                        element.openAmount, element.quantity) | currency: 'USD' : 'symbol' :
+                                        '1.0-2'}}</span>
+                                    <span *ngIf="element.type ==='stock' && element.openSide === 'sell'">&#64;
+                                        {{calcStockPrice(element.premium,
+                                        element.closeAmount, element.quantity) | currency: 'USD' : 'symbol' :
+                                        '1.0-2'}}</span>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="chips">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef></th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-chip-set aria-label="chips">
+                                        <mat-chip class="assigned-chip" *ngIf="element.assigned">assigned</mat-chip>
+                                        <mat-chip class="open-chip" *ngIf="element.closeDate === null">open</mat-chip>
+                                    </mat-chip-set>
+                                </td>
+                            </ng-container>
+                            <!--
+                        <ng-container matColumnDef="side">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Side</th>
+                          <td mat-cell *matCellDef="let element">{{element.openSide | customSide}}</td>
+                        </ng-container>
+                  
+                        <ng-container matColumnDef="quantity">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Quantity</th>
+                          <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
+                        </ng-container>
+                  
+                        <ng-container matColumnDef="ticker">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
+                          <td mat-cell *matCellDef="let element">{{element.ticker}}</td>
+                        </ng-container>
+                  
+                        <ng-container matColumnDef="expiration">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Expiration</th>
+                          <td mat-cell *matCellDef="let element">{{element.expiration | date:'MMM dd, yyyy'}}</td>
+                        </ng-container>
+                  
+                        <ng-container matColumnDef="strike">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Strike</th>
+                          <td mat-cell *matCellDef="let element">{{element.strike | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+                        </ng-container>
+                  
+                        <ng-container matColumnDef="type">
+                          <th mat-sort-header mat-header-cell *matHeaderCellDef> Call / Put</th>
+                          <td mat-cell *matCellDef="let element">{{element.type | customType}}</td>
+                        </ng-container>-->
+
+                            <ng-container matColumnDef="year">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef> Year</th>
+                                <td mat-cell *matCellDef="let element">{{element.year}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="openDate">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef> Open Date</th>
+                                <td mat-cell *matCellDef="let element">{{element.openDate | date:'MMM dd, yyyy'}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="closeDate">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef> Close Date</th>
+                                <td mat-cell *matCellDef="let element">{{element.closeDate | date:'MMM dd, yyyy'}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="premium">
+                                <th mat-sort-header mat-header-cell *matHeaderCellDef> Premium</th>
+                                <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.premium)}">
+                                    {{element.premium |
+                                    currency: 'USD' | customCurrency}}</td>
+                            </ng-container>
+
+
+                            <ng-container matColumnDef="action">
+                                <th mat-header-cell *matHeaderCellDef> Action</th>
+                                <td mat-cell *matCellDef="let element">
+                                    <mat-icon aria-hidden="false" (click)="editTransaction(element)"
+                                        fontIcon="edit"></mat-icon>
+                                    <mat-icon aria-hidden="false" (click)="deleteTransaction(element)"
+                                        fontIcon="delete"></mat-icon>
+                                    <!--<button mat-raised-button color="primary" (click)="editTransaction(element)">Edit</button>
+                            <button mat-raised-button color="warn" (click)="deleteTransaction(element)">Delete</button>-->
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row;columns:displayedColumns"></tr>
+
+                        </table>
+                    </mat-card-content>
+                    <br>
+                    <mat-card-footer>
+                        <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

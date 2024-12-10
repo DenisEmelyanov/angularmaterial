@@ -146,7 +146,19 @@ export class CalculationService {
         }
     }
 
-    private earliestOpenDate(transactions: Transaction[]) {
+    public calculateMedian(numbers: number[]): number {
+        const sortedNumbers = numbers.sort((a, b) => a - b);
+        const middleIndex = Math.floor(sortedNumbers.length / 2);
+      
+        if (sortedNumbers.length % 2 === 0) {
+          // Even number of elements, average the middle two
+          return (sortedNumbers[middleIndex - 1] + sortedNumbers[middleIndex]) / 2;
+        } else {
+          // Odd number of elements, return the middle element
+          return sortedNumbers[middleIndex];
+        }
+      }
+    public earliestOpenDate(transactions: Transaction[]) {
         return transactions.reduce((earliest, current) => {
             return earliest ? (new Date(earliest.openDate).getTime() < new Date(current.openDate).getTime() ? earliest : current) : current;
         }, null as Transaction | null);
@@ -160,19 +172,19 @@ export class CalculationService {
         return transactions.filter(t => new Date(t.closeDate!).getTime() === latestTimestamp);
     }
 
-    private latestCloseDate(transactions: Transaction[]) {
+    public latestCloseDate(transactions: Transaction[]) {
         return transactions.reduce((latest, current) => {
             return latest ? (new Date(latest.closeDate!).getTime() > new Date(current.closeDate!).getTime() ? latest : current) : current;
         }, null as Transaction | null);
     }
 
-    private latestExpirationDate(transactions: Transaction[]) {
+    public latestExpirationDate(transactions: Transaction[]) {
         return transactions.reduce((earliest, current) => {
             return earliest ? (new Date(earliest.expiration!).getTime() > new Date(current.expiration!).getTime() ? earliest : current) : current;
         }, null as Transaction | null);
     }
 
-    private daysDifference(date1: string, date2: string): number {
+    public daysDifference(date1: string, date2: string): number {
         // Create Date objects from the strings
         const dateObject1 = new Date(date1);
         const dateObject2 = new Date(date2);

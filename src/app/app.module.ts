@@ -31,6 +31,7 @@ import { SummaryGridComponent } from './component/summary-grid/summary-grid.comp
 import { TradesStatisticGridComponent } from './component/trades-statistic-grid/trades-statistic-grid.component';
 import { TradesDetailsDialogComponent } from './component/trades-details-dialog/trades-details-dialog.component';
 import { Chart } from 'chart.js/auto';
+import { GroupDetailsTabComponent } from './component/group-details-tab/group-details-tab.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { Chart } from 'chart.js/auto';
     SummaryGridComponent,
     TradesStatisticGridComponent,
     TradesDetailsDialogComponent,
+    GroupDetailsTabComponent
   ],
   imports: [
     BrowserModule,
