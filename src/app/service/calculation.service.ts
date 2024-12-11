@@ -77,8 +77,8 @@ export class CalculationService {
         if (openContracts.length === 0 && sharesQty === 0) {
             var riskContracts = this.getTransactionsWithLatestCloseDate(optionsOnly);
         }
-        console.warn(year + ' risk contracts: ' + riskContracts.length);
-        console.warn(year + ' ' + riskContracts);
+        //console.warn(year + ' risk contracts: ' + riskContracts.length);
+        //console.warn(year + ' ' + riskContracts);
 
         var risk = 0;
         if (riskContracts.length === 0 && sharesQty > 0) {
@@ -98,8 +98,8 @@ export class CalculationService {
         else {
             riskQty = riskContracts.reduce((sum, current) => sum + current.quantity! * 100, 0) + sharesQty;
         }
-        console.warn(year + ' risk: ' + risk);
-        console.warn(year + ' risk qty: ' + riskQty);
+        //console.warn(year + ' risk: ' + risk);
+        //console.warn(year + ' risk qty: ' + riskQty);
 
         var breakEven = 0;
         if (openContracts.length === 0 && sharesQty > 0) {

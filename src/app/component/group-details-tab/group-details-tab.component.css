@@ -1,14 +1,16 @@
 div.grid-container {
     max-width: 3000px;
+    min-width: fit-content;
     overflow-x: auto;
 }
 
 mat-card.summary-card {
-    width: 500px;
+    width: 450px;
 }
 
 mat-card.timeline-chart-card {
     width: 800px;
+    min-height: 400px;
 }
 
 mat-card.trades-grid-card {
@@ -47,7 +49,7 @@ mat-chip.open-chip {
 
 mat-card-content.chart {
     overflow-y: auto;
-    height: auto;
+    height: fit-content;
     /* Adjust height as needed */
 }
 

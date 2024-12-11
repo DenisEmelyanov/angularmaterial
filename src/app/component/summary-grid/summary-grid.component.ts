@@ -54,28 +54,30 @@ export class SummaryGridComponent {
 
   populateTable() {
     const data = this.dataService.getGroupsDataByYear(this.calendarYear);
-    var tableDataArr: any[] = [];
-    Object.keys(data).forEach(group => {
-      //skip removed transactions
-      if (data[group].summary !== undefined && data[group].summary!.openDate !== undefined) {
-        tableDataArr.push({
-          group: data[group].group,
-          tickers: data[group].tickers?.join(", "),
-          description: data[group].description,
-          risk: data[group].summary!.risk,
-          sharesQty: data[group].summary!.sharesQty,
-          totalNetPremium: data[group].summary!.totalNetPremium,
-          openDate: data[group].summary!.openDate,
-          closeDate: data[group].summary!.closeDate,
-          breakEven: data[group].summary!.breakEven,
-          annualizedReturn: data[group].summary!.annualizedReturn,
-          warningFlag: data[group].summary!.warningFlag
-        });
-      }
-    })
-
-    //this.dataSource = tableDataArr;
-    this.dataSource = new MatTableDataSource<any>(this.sortByOpenDate(tableDataArr));
+    if (data !== undefined) {
+      var tableDataArr: any[] = [];
+      Object.keys(data).forEach(group => {
+        //skip removed transactions
+        if (data[group].summary !== undefined && data[group].summary!.openDate !== undefined) {
+          tableDataArr.push({
+            group: data[group].group,
+            tickers: data[group].tickers?.join(", "),
+            description: data[group].description,
+            risk: data[group].summary!.risk,
+            sharesQty: data[group].summary!.sharesQty,
+            totalNetPremium: data[group].summary!.totalNetPremium,
+            openDate: data[group].summary!.openDate,
+            closeDate: data[group].summary!.closeDate,
+            breakEven: data[group].summary!.breakEven,
+            annualizedReturn: data[group].summary!.annualizedReturn,
+            warningFlag: data[group].summary!.warningFlag
+          });
+        }
+      })
+  
+      //this.dataSource = tableDataArr;
+      this.dataSource = new MatTableDataSource<any>(this.sortByOpenDate(tableDataArr));
+    }
   }
 
   sortByOpenDate(data: Transaction[]): Transaction[] {

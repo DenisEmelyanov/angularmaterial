@@ -70,7 +70,7 @@ export class DataService {
         var groupsData: Record<string, TickerData> = {};
         this.getAllTransactionsGroups(year).subscribe((res: any) => {
             var groups = Array.from(res);
-            console.log('get the following groups: ' + groups);
+            //console.log('get the following groups: ' + groups);
             groups.forEach((group: any) => {
                 groupsData[group] = {
                     group: group,
@@ -94,7 +94,7 @@ export class DataService {
         var tickersData: Record<string, TickerData> = {};
         this.getAllTransactionsTickers(year).subscribe((res: any) => {
             var tickers = Array.from(res);
-            console.log('get the following tickers: ' + tickers);
+            //console.log('get the following tickers: ' + tickers);
             tickers.forEach((ticker: any) => {
                 tickersData[ticker] = {
                     group: '',
@@ -121,13 +121,14 @@ export class DataService {
         //console.warn('notify about transactions update data service is called: ' + ticker + ' ' + year);
         const data: object = {
             group: group,
-            year: year
+            year: year,
+            dataLoad: this.dataLoad
         };
         this.dataUpdated.next(data);
     }
 
     public getAllYearsTickersData() {
-        console.log('getAllYearsTickersData called');
+        //console.log('getAllYearsTickersData called');
         //return this.yearsGroupData;
         return this.yearsTickerData;
     }
@@ -168,8 +169,8 @@ export class DataService {
                 this.yearsGroupData[year][group].transactions = res;
                 this.yearsGroupData[year][group].tickers = uniqueTickersArray;
                 //this.tickersData[ticker].transactions = res;
-                console.log(this.yearsGroupData[year][group].transactions);
-                console.log(this.yearsGroupData[year][group].tickers);
+                //console.log(this.yearsGroupData[year][group].transactions);
+                //console.log(this.yearsGroupData[year][group].tickers);
     
                 // check if there is call options
                 this.getAllGroupTransactions(group).subscribe((res: any) => {

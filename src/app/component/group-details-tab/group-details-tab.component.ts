@@ -111,7 +111,7 @@ export class GroupDetailsTabComponent {
           }
         }
       });
-    }  
+    }
   }
 
   getChartData(dataSource: Transaction[]) {
@@ -131,39 +131,39 @@ export class GroupDetailsTabComponent {
     }
 
     dataSource.forEach((trade: any) => {
-        if (trade.type === 'put' || trade.type === 'call') {
-          const label = trade.quantity + ' ' + this.formatDate(trade.expiration) + ' $' + trade.strike + ' ' + trade.type;
-        
-          const blankNumber = this.calcService.daysDifference(earliestOpenDate, trade.openDate);
+      if (trade.type === 'put' || trade.type === 'call') {
+        const label = trade.quantity + ' ' + this.formatDate(trade.expiration) + ' $' + trade.strike + ' ' + trade.type;
 
-          var closeDate = trade.expiration;
-          if (trade.closeDate !== undefined && trade.closeDate !== null) {
-            closeDate = trade.closeDate;
-          }
-          const daysNumber = this.calcService.daysDifference(trade.openDate, closeDate);
-  
-          labels.push(label.toUpperCase());
-          datasetBlanks.push(blankNumber);
-          datasetDays.push(daysNumber);
+        const blankNumber = this.calcService.daysDifference(earliestOpenDate, trade.openDate);
+
+        var closeDate = trade.expiration;
+        if (trade.closeDate !== undefined && trade.closeDate !== null) {
+          closeDate = trade.closeDate;
         }
-        else if (trade.type === 'stock' && trade.openSide === 'buy') {
-          const label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + this.calcStockPrice(trade.premium, trade.openAmount, trade.quantity);
+        const daysNumber = this.calcService.daysDifference(trade.openDate, closeDate);
 
-          const blankNumber = this.calcService.daysDifference(earliestOpenDate, trade.openDate);
+        labels.push(label.toUpperCase());
+        datasetBlanks.push(blankNumber);
+        datasetDays.push(daysNumber);
+      }
+      else if (trade.type === 'stock' && trade.openSide === 'buy') {
+        const label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + this.calcStockPrice(trade.premium, trade.openAmount, trade.quantity);
 
-          if (trade.closeDate !== undefined && trade.closeDate !== null) {
-            closeDate = trade.closeDate;
-          }
-          else {
-            closeDate = latestCloseDate;
-          }
-          const daysNumber = this.calcService.daysDifference(trade.openDate, closeDate);
+        const blankNumber = this.calcService.daysDifference(earliestOpenDate, trade.openDate);
 
-          labels.push(label.toUpperCase());
-          datasetBlanks.push(blankNumber);
-          datasetDays.push(daysNumber);
+        if (trade.closeDate !== undefined && trade.closeDate !== null) {
+          closeDate = trade.closeDate;
         }
-      });
+        else {
+          closeDate = latestCloseDate;
+        }
+        const daysNumber = this.calcService.daysDifference(trade.openDate, closeDate);
+
+        labels.push(label.toUpperCase());
+        datasetBlanks.push(blankNumber);
+        datasetDays.push(daysNumber);
+      }
+    });
 
     return {
       labels: labels,
@@ -174,13 +174,13 @@ export class GroupDetailsTabComponent {
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-  
+
     const options: Intl.DateTimeFormatOptions = {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     };
-  
+
     return date.toLocaleDateString('en-US', options);
   }
 
@@ -192,7 +192,9 @@ export class GroupDetailsTabComponent {
       this.dataService.updateGroupData(this.dataTicker.group, this.dataTicker.year!);
 
       // create chart
-      this.timelineChart = this.createTimelineChart(this.tradesData, "timeline-chart");
+      if (!Chart.getChart("timeline-chart")) {
+        this.timelineChart = this.createTimelineChart(this.tradesData, "timeline-chart");
+      }
     });
 
     //this.dataService.getTickerTransactions(this.dataTicker.group, this.dataTicker.year!).subscribe((res: any) => {

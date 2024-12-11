@@ -1,5 +1,6 @@
 div.grid-container {
     max-width: 3000px;
+    min-width: fit-content;
     overflow-x: auto;
 }
 

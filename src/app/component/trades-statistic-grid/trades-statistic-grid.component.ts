@@ -45,16 +45,29 @@ export class TradesStatisticGridComponent {
   }
 
   ngOnInit() {
-    
-    this.dataService.currentData.subscribe((data) => {
-      // get all years array
-      this.populateTradesTickersTable();
-      this.populateTradesTotalByYearTable();
-      this.populateTradesTotalByMonthTable(this.selectedYear);
-      this.populateTransactionsTotalByMonthTable(this.selectedYear);
 
-      this.tradesChart = this.createChart(this.dataSourceTradesByMonths, "trades-total-net-chart");
-      this.transactionsChart = this.createChart(this.dataSourceTransactionsByMonths, "transactions-total-net-chart");
+    this.dataService.currentData.subscribe((data) => {
+      if (data.dataLoad === false) {
+        // get all years array
+        this.populateTradesTickersTable();
+        this.populateTradesTotalByYearTable();
+        this.populateTradesTotalByMonthTable(this.selectedYear);
+        this.populateTransactionsTotalByMonthTable(this.selectedYear);
+
+        // create chart if it does not exist or update it
+        if (!Chart.getChart("trades-total-net-chart")) {
+          this.tradesChart = this.createChart(this.dataSourceTradesByMonths, "trades-total-net-chart");
+        }
+        else {
+          this.updateChart(this.tradesChart, this.dataSourceTradesByMonths);
+        }
+        if (!Chart.getChart("transactions-total-net-chart")) {
+          this.transactionsChart = this.createChart(this.dataSourceTransactionsByMonths, "transactions-total-net-chart");
+        }
+        else {
+          this.updateChart(this.transactionsChart, this.dataSourceTransactionsByMonths);
+        }
+      }
     });
 
   }
