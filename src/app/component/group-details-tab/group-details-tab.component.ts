@@ -127,7 +127,7 @@ export class GroupDetailsTabComponent {
 
     var latestCloseDate = this.calcService.latestExpirationDate(dataSource)?.expiration;
     if (openContracts.length === 0) {
-      latestCloseDate = this.calcService.latestCloseDate(dataSource)?.closeDate;
+      latestCloseDate = new Date().toISOString().split('T')[0];
     }
 
     dataSource.forEach((trade: any) => {
@@ -161,7 +161,12 @@ export class GroupDetailsTabComponent {
 
         labels.push(label.toUpperCase());
         datasetBlanks.push(blankNumber);
-        datasetDays.push(daysNumber);
+        if (daysNumber > 0) {
+          datasetDays.push(daysNumber);
+        }
+        else {
+          datasetDays.push(1);
+        }
       }
     });
 

@@ -49,6 +49,19 @@ export class DataService {
 
     private portfolio: any = 'individual portfolio';
 
+    private blackList = ['META', 'BIG'];
+    private notInBlackList(str: string)
+    {
+        var notInBlackList = true;
+        this.blackList.forEach(blItem => {
+            if (str.includes(blItem) === true) {
+                notInBlackList = false;
+            }
+        });
+
+        return notInBlackList;
+    };
+
     //private tickersData: Record<string, TickerData> = {};
     private yearsGroupData: Record<number, Record<string, TickerData>> = {};
     private yearsTickerData: Record<number, Record<string, TickerData>> = {};
@@ -72,12 +85,14 @@ export class DataService {
             var groups = Array.from(res);
             //console.log('get the following groups: ' + groups);
             groups.forEach((group: any) => {
-                groupsData[group] = {
-                    group: group,
-                    tickers: [],
-                    description: '',// TODO this.tickersDescription[group],
-                    year: year
-                };
+                if (this.notInBlackList(group)) {
+                    groupsData[group] = {
+                        group: group,
+                        tickers: [],
+                        description: '',// TODO this.tickersDescription[group],
+                        year: year
+                    };
+                }
             });
 
             Object.keys(groupsData).forEach(group => {
@@ -96,13 +111,15 @@ export class DataService {
             var tickers = Array.from(res);
             //console.log('get the following tickers: ' + tickers);
             tickers.forEach((ticker: any) => {
-                tickersData[ticker] = {
-                    group: '',
-                    ticker: ticker,
-                    tickers: [],
-                    description: this.tickersDescription[ticker],
-                    year: year
-                };
+                if (this.notInBlackList(ticker)) {
+                    tickersData[ticker] = {
+                        group: '',
+                        ticker: ticker,
+                        tickers: [],
+                        description: this.tickersDescription[ticker],
+                        year: year
+                    };
+                }
             });
 
             Object.keys(tickersData).forEach(ticker => {
@@ -131,6 +148,12 @@ export class DataService {
         //console.log('getAllYearsTickersData called');
         //return this.yearsGroupData;
         return this.yearsTickerData;
+    }
+
+    public getAllYearsGroupsData() {
+        //console.log('getAllYearsTickersData called');
+        //return this.yearsGroupData;
+        return this.yearsGroupData;
     }
 
     public getGroupsDataByYear(year: any) {

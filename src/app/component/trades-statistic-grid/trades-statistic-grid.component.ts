@@ -101,8 +101,8 @@ export class TradesStatisticGridComponent {
         aspectRatio: 1.3,
         scales: {
           y: {
-            max: 4000,
-            //min: -1 * median * 3
+            max: chartData.maxY,
+            min: chartData.minY
           }
         }
       }
@@ -114,47 +114,106 @@ export class TradesStatisticGridComponent {
   updateChart(chart: Chart, dataSource: MatTableDataSource<any>) {
     const chartData = this.getChartData(dataSource);
 
-    chart.data.labels = chartData.labels;
-    chart.data.datasets.forEach(ds => {
-      ds.data = chartData.dataset;
-      ds.backgroundColor = chartData.backgroundColors;
-      ds.borderColor = chartData.borderColors;
-    });
-
-    chart.update();
+    if (chart.data) {
+      chart.data.labels = chartData.labels;
+      chart.data.datasets.forEach(ds => {
+        ds.data = chartData.dataset;
+        ds.backgroundColor = chartData.backgroundColors;
+        ds.borderColor = chartData.borderColors;
+      });
+      chart.options.scales = {
+        y: {
+          max: chartData.maxY,
+          min: chartData.minY
+        }
+      };
+  
+      chart.update();
+    }
   }
 
   getChartData(dataSource: MatTableDataSource<any>) {
+    const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const labels: any[] = [];
     const dataset: any[] = [];
     const backgroundColors: any[] = [];
     const borderColors: any[] = [];
+    var maxY = 0;
+    var minY = -500;
+
+    // Create a map to store data by month index (0-11)
+    const monthlyDataMap = new Map<number, number>();
 
     dataSource.filteredData
-      .filter((row: any) => row.month.includes("TOTAL") === false)
+      .filter((row: any) => row.month && !row.month.includes("TOTAL")) // Ensure row.month exists and doesn't include "TOTAL"
       .forEach((row: any) => {
-        labels.push(row.month);
-        dataset.push(row.totalNetPremium);
-        if (row.totalNetPremium >= 0) {
-          backgroundColors.push('rgba(54, 162, 235, 0.2)');
-          borderColors.push('rgb(54, 162, 235)');
-        }
-        else {
-          backgroundColors.push('rgba(255, 99, 132, 0.2)');
-          borderColors.push('rgb(255, 99, 132)');
+        // Try to parse the month. If it's a number use it as index. If it's a string, try to find the index in monthLabels
+        const monthIndex = monthLabels.findIndex(month => row.month.toLowerCase().includes(month.toLowerCase()));
+
+        if (monthIndex !== undefined && monthIndex >= 0 && monthIndex < 12) {
+          monthlyDataMap.set(monthIndex, row.totalNetPremium);
+        } else {
+          console.warn(`Invalid month value: ${row.month}. Skipping this row.`);
         }
       });
 
-    labels.reverse();
+    // Iterate through all months and create labels and data
+    monthLabels.forEach((month, index) => {
+      labels.push(month);
+      const premium = monthlyDataMap.get(index) ?? 0; // Use 0 if no data for the month
+      dataset.push(premium);
+
+      if (premium >= 0) {
+        backgroundColors.push('rgba(54, 162, 235, 0.2)');
+        borderColors.push('rgb(54, 162, 235)');
+      } else {
+        backgroundColors.push('rgba(255, 99, 132, 0.2)');
+        borderColors.push('rgb(255, 99, 132)');
+      }
+
+      if (premium > maxY) {
+        maxY = premium;
+      }
+
+      if (premium < minY) {
+        minY = premium;
+      }
+    });
+
+    /*     dataSource.filteredData
+          .filter((row: any) => row.month.includes("TOTAL") === false)
+          .forEach((row: any) => {
+            labels.push(row.month);
+            dataset.push(row.totalNetPremium);
+            if (row.totalNetPremium >= 0) {
+              backgroundColors.push('rgba(54, 162, 235, 0.2)');
+              borderColors.push('rgb(54, 162, 235)');
+            }
+            else {
+              backgroundColors.push('rgba(255, 99, 132, 0.2)');
+              borderColors.push('rgb(255, 99, 132)');
+            }
+            if (row.totalNetPremium > maxY) {
+              maxY = row.totalNetPremium;
+            }
+    
+            if (row.totalNetPremium < minY) {
+              minY = row.totalNetPremium;
+            }
+          }); */
+
+/*     labels.reverse();
     dataset.reverse();
     backgroundColors.reverse();
     borderColors.reverse();
-
+ */
     return {
       labels: labels,
       dataset: dataset,
       backgroundColors: backgroundColors,
-      borderColors: borderColors
+      borderColors: borderColors,
+      maxY: Math.round(maxY / 500) * 500 + 500,
+      minY: Math.round(minY / 500) * 500 - 500
     }
   }
 
