@@ -114,7 +114,12 @@ export class CalculationService {
 
         var expirationDate = this.latestExpirationDate(openContracts)?.expiration!;
         if (openContracts.length === 0) {
-            expirationDate = this.latestCloseDate(transactions)?.closeDate!
+            if (sharesQty > 0) {
+                expirationDate = new Date().toISOString().split('T')[0];
+            }
+            else {
+                expirationDate = this.latestCloseDate(transactions)?.closeDate!
+            } 
         }
         //console.warn('open date: ' + openDate);
         //console.warn('close date: ' + expirationDate);

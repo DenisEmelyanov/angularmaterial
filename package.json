@@ -20,14 +20,13 @@
     "@angular/platform-browser": "^16.1.2",
     "@angular/platform-browser-dynamic": "^16.1.2",
     "@angular/router": "^16.1.2",
+    "@cubejs-client/core": "^0.31.0",
     "chart.js": "^4.4.6",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.1",
-    "@cubejs-client/core": "^0.31.0"
+    "zone.js": "~0.13.1"
   },
   "devDependencies": {
-    "parcel": "^2.6.2",
     "@angular-devkit/build-angular": "^16.1.0",
     "@angular/cli": "^17.3.11",
     "@angular/compiler-cli": "^16.1.2",
@@ -38,6 +37,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "parcel": "^2.6.2",
     "typescript": "5.1"
   }
 }

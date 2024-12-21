@@ -28,6 +28,8 @@ export class GroupDetailsTabComponent {
   sharesTotalNetPremium!: number;
   sharesQty!: number;
   pricePerShare!: number;
+  marketPrice: number = 0;
+  marketPriceDate: string = '';
   risk!: number;
   breakEven!: number;
   days!: number;
@@ -48,7 +50,8 @@ export class GroupDetailsTabComponent {
   ngOnInit() {
     this.dataService.currentData.subscribe((data: any) => {
       if (data.ticker === this.dataTicker.ticker && data.year === this.dataTicker.year) {
-        const summaryData = this.dataService.getGroupsDataByYear(this.dataTicker.year)[this.dataTicker.group].summary;
+        const tickerData = this.dataService.getGroupsDataByYear(this.dataTicker.year)[this.dataTicker.group];
+        const summaryData = tickerData.summary;
         this.putNetPremium = summaryData?.putNetPremium!;
         this.callNetPremium = summaryData?.callNetPremium!;
         this.totalNetPremium = summaryData?.totalNetPremium!;
@@ -60,6 +63,11 @@ export class GroupDetailsTabComponent {
         this.days = summaryData?.days!;
         this.closeDate = summaryData?.closeDate!;
         this.annualizedReturn = summaryData?.annualizedReturn!;
+
+        if (tickerData?.quotes) {
+          this.marketPrice = tickerData?.quotes[0].close!;
+          this.marketPriceDate = tickerData?.quotes[0].date!;
+        }
 
         // update summary
         this.ref.detectChanges();

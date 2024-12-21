@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -40,7 +40,7 @@ export class TradesStatisticGridComponent {
   //@ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
-  constructor(private dataService: DataService, private tradesDetailsDialog: MatDialog, private calcService: CalculationService) {
+  constructor(private dataService: DataService, private tradesDetailsDialog: MatDialog, private calcService: CalculationService, private elementRef: ElementRef) {
 
   }
 
@@ -75,8 +75,8 @@ export class TradesStatisticGridComponent {
   createChart(dataSource: MatTableDataSource<any>, canvasId: string) {
     const chartData = this.getChartData(dataSource);
     //const median = this.createArrayWithSameNumbers(this.calcService.calculateMedian(chartData.dataset), chartData.dataset.length);
-
-    const chart = new Chart(canvasId, {
+    let htmlRef = this.elementRef.nativeElement.querySelector('#' + canvasId);
+    const chart = new Chart(htmlRef, {
       type: 'bar', //this denotes tha type of chart
 
       data: {// values on X-Axis
@@ -114,7 +114,7 @@ export class TradesStatisticGridComponent {
   updateChart(chart: Chart, dataSource: MatTableDataSource<any>) {
     const chartData = this.getChartData(dataSource);
 
-    if (chart.data) {
+    if (chart && chart.data) {
       chart.data.labels = chartData.labels;
       chart.data.datasets.forEach(ds => {
         ds.data = chartData.dataset;

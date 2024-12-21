@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from "rxjs/internal/Observable";
 import { CalculationService } from "./calculation.service";
-import { group, transition } from "@angular/animations";
+import { Quote } from "../model/quote";
 
 @Injectable({
     providedIn: 'root'
@@ -14,6 +14,7 @@ import { group, transition } from "@angular/animations";
 export class DataService {
 
     private transactionsServiceUrl = 'http://localhost:3000/transaction/';
+    private quoteServiceUrl = 'http://localhost:3001/quote/';
 
     private dataUpdated = new BehaviorSubject<any>([]);
     public currentData = this.dataUpdated.asObservable();
@@ -39,19 +40,18 @@ export class DataService {
         'TROW': 'PRICE T ROWE GROUP INC COM',
         'JNJ': 'JOHNSON & JOHNSON COM',
         'SOUN': 'SOUNDHOUND AI INC CLASS A COM',
-        'MO' : 'ALTRIA GROUP INC COM',
+        'MO': 'ALTRIA GROUP INC COM',
         'HL': 'HECLA MNG CO COM',
         'ABNB': 'AIRBNB INC COM CL A',
         'T': 'AT&T INC COM',
-        'ENPH' : 'ENPHASE ENERGY INC COM',
-        'SCHD' : 'SCHWAB US DIVIDEND EQUITY ETF'
+        'ENPH': 'ENPHASE ENERGY INC COM',
+        'SCHD': 'SCHWAB US DIVIDEND EQUITY ETF'
     };
 
     private portfolio: any = 'individual portfolio';
 
     private blackList = ['META', 'BIG'];
-    private notInBlackList(str: string)
-    {
+    private notInBlackList(str: string) {
         var notInBlackList = true;
         this.blackList.forEach(blItem => {
             if (str.includes(blItem) === true) {
@@ -74,8 +74,9 @@ export class DataService {
             years.forEach((year: number) => {
                 this.refreshYearData(year);
             });
-            this.dataLoad = false;
+
         });
+        this.dataLoad = false;
     }
 
     private refreshYearData(year: number) {
@@ -178,9 +179,15 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
+    public getQuote(ticker: string, date: string) {
+        return this.http
+            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&date=' + date)
+            .pipe(map((response: any) => response.data));
+    }
+
     public updateGroupData(group: string, year: number) {
         this.getAllGroupTransactions(group).subscribe((res: any) => {
-        //this.getGroupTransactions(group, year).subscribe((res: any) => {
+            //this.getGroupTransactions(group, year).subscribe((res: any) => {
             //console.warn('update ticker data is called: ' + ticker);
 
             // get tickers list for group
@@ -194,12 +201,35 @@ export class DataService {
                 //this.tickersData[ticker].transactions = res;
                 //console.log(this.yearsGroupData[year][group].transactions);
                 //console.log(this.yearsGroupData[year][group].tickers);
-    
+
                 // check if there is call options
                 this.getAllGroupTransactions(group).subscribe((res: any) => {
                     //const sharesTransactions = res.filter((t: Transaction) => t.type === 'stock');//t.year! < year + 1);
                     this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!, year);//sharesTransactions, 
-    
+
+                    // if (this.yearsGroupData[year][group].summary!.sharesQty) {
+                    //     // TODO do it for each ticker
+                    //     const ticker = this.yearsGroupData[year][group].tickers[0];
+                    //     const today = new Date();
+                    //     const yesterday = new Date(today); // Create a copy of today's date
+                    //     yesterday.setDate(today.getDate() - 1);
+                    //     const yesterdayStr = yesterday.toISOString().split('T')[0];
+                    //     const quotes: Quote[] | undefined = [];
+                    //     this.getQuote(ticker, yesterdayStr).subscribe((res: any) => {
+                    //         if (res.data && res.data.length > 0) {
+                    //             const quote: Quote = {
+                    //                 date: res[0].date,
+                    //                 open: res[0].open,
+                    //                 close: res[0].close,
+                    //                 high: res[0].high,
+                    //                 low: res[0].low,
+                    //                 volume: res[0].volume
+                    //             };
+                    //             quotes.push(quote);
+                    //         }
+                    //     });
+                    //     this.yearsGroupData[year][group].quotes = quotes;
+                    // }
                     this.notifyAboutTransactionsUpdate(year, group);
                     return this.yearsGroupData[year][group].transactions;
                 });
@@ -211,7 +241,7 @@ export class DataService {
         this.getTickerTransactions(ticker, year).subscribe((res: any) => {
             this.yearsTickerData[year][ticker].transactions = res;
             this.yearsTickerData[year][ticker].summary = this.calcService.calcTotalNetPremium(res);
-        //this.getGroupTransactions(group, year).subscribe((res: any) => {
+            //this.getGroupTransactions(group, year).subscribe((res: any) => {
             //console.warn('update ticker data is called: ' + ticker);
 
             // // get tickers list for group
@@ -225,17 +255,17 @@ export class DataService {
             //     //this.tickersData[ticker].transactions = res;
             //     console.log(this.yearsGroupData[year][ticker].transactions);
             //     console.log(this.yearsGroupData[year][ticker].tickers);
-    
+
             //     // check if there is call options
             //     this.getAllGroupTransactions(group).subscribe((res: any) => {
             //         const sharesTransactions = res.filter((t: Transaction) => t.year! < year + 1);
             //         this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!, sharesTransactions, year);
-    
+
             //         this.notifyAboutTransactionsUpdate(year, group);
             //         return this.yearsGroupData[year][group].transactions;
             //     });
             // }
-            
+
         });
     }
 
@@ -283,7 +313,7 @@ export class DataService {
         if (transaction.type === 'stock') {
             delete transaction.strike;
             delete transaction.expiration;
-            
+
         }
 
         if (transaction.type === 'dividend') {

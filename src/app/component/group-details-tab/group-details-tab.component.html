@@ -44,6 +44,11 @@
                                 <span>{{pricePerShare | currency: 'USD'}}</span>
                             </mat-list-item>
                             <mat-divider></mat-divider>
+                            <mat-list-item *ngIf="marketPrice > 0">
+                                <mat-label>MARKET PRICE: </mat-label>
+                                <span>{{marketPrice | currency: 'USD'}} ({{marketPriceDate | date:'MMM dd, yyyy'}})</span>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
                             <mat-list-item>
                                 <mat-label>RISK: </mat-label>
                                 <span>{{risk | currency: 'USD'}}</span>

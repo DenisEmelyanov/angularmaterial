@@ -30,7 +30,6 @@ import { FileSelectDialogComponent } from './component/file-select-dialog/file-s
 import { SummaryGridComponent } from './component/summary-grid/summary-grid.component';
 import { TradesStatisticGridComponent } from './component/trades-statistic-grid/trades-statistic-grid.component';
 import { TradesDetailsDialogComponent } from './component/trades-details-dialog/trades-details-dialog.component';
-import { Chart } from 'chart.js/auto';
 import { GroupDetailsTabComponent } from './component/group-details-tab/group-details-tab.component';
 
 @NgModule({
