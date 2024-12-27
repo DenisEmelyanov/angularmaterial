@@ -185,6 +185,12 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
+    public getQuoteRange(ticker: string, startDate: string, endDate: string) {
+        return this.http
+            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&startDate=' + startDate + '&endDate=' + endDate)
+            .pipe(map((response: any) => response.data));
+    }
+
     public updateGroupData(group: string, year: number) {
         this.getAllGroupTransactions(group).subscribe((res: any) => {
             //this.getGroupTransactions(group, year).subscribe((res: any) => {

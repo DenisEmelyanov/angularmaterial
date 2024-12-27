@@ -1,5 +1,6 @@
 export interface Quote {
-    date?: string;
+    ticker: string;
+    date: string;
     open?: number;
     close?: number;
     high?: number;

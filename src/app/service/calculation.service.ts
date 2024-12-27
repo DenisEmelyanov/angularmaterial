@@ -19,8 +19,8 @@ export class CalculationService {
 
         const sharesClosedTransactionsPremium = transactions.filter(t => t.type === 'stock' && t.closeDate !== null).reduce((sum, current) => sum + current.premium, 0);
 
-        const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;   
-        
+        const totalNetPremium = putNetPremium + callNetPremium + totalDividend + sharesClosedTransactionsPremium;
+
         return {
             putNetPremium: putNetPremium,
             callNetPremium: callNetPremium,
@@ -108,7 +108,7 @@ export class CalculationService {
         else {
             breakEven = (risk - totalNetPremium) / riskQty;
         }
-        
+
 
         const openDate = this.earliestOpenDate(transactions)?.openDate!;
 
@@ -119,7 +119,7 @@ export class CalculationService {
             }
             else {
                 expirationDate = this.latestCloseDate(transactions)?.closeDate!
-            } 
+            }
         }
         //console.warn('open date: ' + openDate);
         //console.warn('close date: ' + expirationDate);
@@ -154,15 +154,16 @@ export class CalculationService {
     public calculateMedian(numbers: number[]): number {
         const sortedNumbers = numbers.sort((a, b) => a - b);
         const middleIndex = Math.floor(sortedNumbers.length / 2);
-      
+
         if (sortedNumbers.length % 2 === 0) {
-          // Even number of elements, average the middle two
-          return (sortedNumbers[middleIndex - 1] + sortedNumbers[middleIndex]) / 2;
+            // Even number of elements, average the middle two
+            return (sortedNumbers[middleIndex - 1] + sortedNumbers[middleIndex]) / 2;
         } else {
-          // Odd number of elements, return the middle element
-          return sortedNumbers[middleIndex];
+            // Odd number of elements, return the middle element
+            return sortedNumbers[middleIndex];
         }
-      }
+    }
+    
     public earliestOpenDate(transactions: Transaction[]) {
         return transactions.reduce((earliest, current) => {
             return earliest ? (new Date(earliest.openDate).getTime() < new Date(current.openDate).getTime() ? earliest : current) : current;

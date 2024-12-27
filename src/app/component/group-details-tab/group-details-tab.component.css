@@ -13,8 +13,15 @@ mat-card.timeline-chart-card {
     min-height: 400px;
 }
 
+mat-card.price-chart-card {
+    width: 1000px;
+    min-height: 400px;
+}
+
 mat-card.trades-grid-card {
     width: 1800px;
+    min-height: auto;
+    overflow-y: auto;
 }
 
 mat-list-item {
