@@ -106,10 +106,10 @@ export class GroupDetailsTabComponent {
           label: tradeData.label,
           data: tradeData.tradeData,
           fill: false,
-          borderColor: 'rgb(120, 75, 192)',
-          backgroundColor: 'rgb(120, 75, 192, 0.5)',
+          borderColor: 'rgb(' + tradeData.color + ')',
+          backgroundColor: 'rgb(' + tradeData.color + ', 0.5)',
           tension: 0.4,
-          pointBackgroundColor: 'rgb(120, 75, 192, 0.9)',
+          pointBackgroundColor: 'rgb(' + tradeData.color + ', 0.9)',
           pointRadius: tradeData.tradeData.map((value: any, index: number) => {
             if (index === tradeData.index1 || index === tradeData.index2) {
               return 5; // Radius for first and last points
@@ -160,12 +160,17 @@ export class GroupDetailsTabComponent {
         }
         let price = 0;
         let label = '';
+        let color = '120, 75, 192';
         if (trade.type === 'put' || trade.type === 'call') {
           price = trade.strike!;
           label = trade.quantity + ' ' + this.formatDate(trade.expiration!) + ' $' + trade.strike + ' ' + trade.type;
+          if (trade.type === 'call') {
+            color = '255, 99, 132';
+          }
         } else if (trade.type === 'stock') {
           price = this.calcStockPrice(trade.premium, trade.openAmount!, trade.quantity!);
           label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + price;
+          color = '255, 205, 86';
         }
 
         originalLabels.forEach((label: any) => {
@@ -193,7 +198,8 @@ export class GroupDetailsTabComponent {
           label: label.toUpperCase(),
           index1: firstNonUndefinedIndex,
           index2: lastNonUndefinedIndex,
-          tradeData: tradeData
+          tradeData: tradeData,
+          color: color
         });
       });
 
