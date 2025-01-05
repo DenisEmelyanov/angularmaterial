@@ -127,7 +127,7 @@ export class TradesStatisticGridComponent {
           min: chartData.minY
         }
       };
-  
+
       chart.update();
     }
   }
@@ -202,11 +202,11 @@ export class TradesStatisticGridComponent {
             }
           }); */
 
-/*     labels.reverse();
-    dataset.reverse();
-    backgroundColors.reverse();
-    borderColors.reverse();
- */
+    /*     labels.reverse();
+        dataset.reverse();
+        backgroundColors.reverse();
+        borderColors.reverse();
+     */
     return {
       labels: labels,
       dataset: dataset,
@@ -358,7 +358,7 @@ export class TradesStatisticGridComponent {
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
 
-    const data = this.dataService.getGroupsDataByYear(year);
+    const data = this.dataService.getTickerDataByYear(year);
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};
@@ -370,25 +370,36 @@ export class TradesStatisticGridComponent {
       if (tickerData.transactions) {
         for (const transaction of tickerData.transactions.filter(t => t.year === year)) {
           // calculate total premium from non-stock trades
-          if (transaction.type !== 'stock' && transaction.type !== 'dividend') {
-            const transactionDate = new Date(transaction.openDate);
-            const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+          //if (transaction.type !== 'stock' && transaction.type !== 'dividend') {
 
-            monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
-            totalOptionsNetPremium += transaction.premium;
 
-            monthTransactions[month] = monthTransactions[month] || [];
-            monthTransactions[month].push(transaction);
-            yearOptionsTrades.push(transaction);
-          }
-          // calculate premium from closed stock trades
-          else if (transaction.closeDate !== null) {
-            totalStocksNetPremium += transaction.premium;
-            yearStocksClosedTrades.push(transaction);
+
+          if (transaction.type === 'stock' && transaction.closeDate === null) {
+            // do nothing with open stock trades
           }
           else {
-            yearStocksClosedTrades.push(transaction);
+            const transactionDate = new Date(transaction.openDate);
+            const month = transactionDate.getMonth() + 1; // Months are zero-indexed
+  
+            monthTotals[month] = (monthTotals[month] || 0) + transaction.premium;
+  
+            monthTransactions[month] = monthTransactions[month] || [];
+            monthTransactions[month].push(transaction);
+
+            if (transaction.type === 'call' || transaction.type === 'put') {
+              totalOptionsNetPremium += transaction.premium;
+              yearOptionsTrades.push(transaction);
+            }
+            // calculate premium from closed stock trades
+            else if (transaction.closeDate !== null) {
+              totalStocksNetPremium += transaction.premium;
+              yearStocksClosedTrades.push(transaction);
+            }
           }
+          
+          // else {
+          //   yearStocksClosedTrades.push(transaction);
+          // }
         }
       }
     }
@@ -435,7 +446,7 @@ export class TradesStatisticGridComponent {
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
 
-    const data = this.dataService.getGroupsDataByYear(year);
+    const data = this.dataService.getTickerDataByYear(year);
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};

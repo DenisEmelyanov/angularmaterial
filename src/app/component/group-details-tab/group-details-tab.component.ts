@@ -66,10 +66,10 @@ export class GroupDetailsTabComponent {
         this.closeDate = summaryData?.closeDate!;
         this.annualizedReturn = summaryData?.annualizedReturn!;
 
-        if (tickerData?.quotes) {
-          this.marketPrice = tickerData?.quotes[0].close!;
-          this.marketPriceDate = tickerData?.quotes[0].date!;
-        }
+        // if (tickerData?.quotes) {
+        //   this.marketPrice = tickerData?.quotes[0].close!;
+        //   this.marketPriceDate = tickerData?.quotes[0].date!;
+        // }
 
         // update summary
         this.ref.detectChanges();
@@ -392,23 +392,23 @@ export class GroupDetailsTabComponent {
       const openPositions = res.filter((t: Transaction) => t.closeDate === null || t.closeDate === undefined);
       const stockPositions = openPositions.filter((t: Transaction) => t.type === 'stock');
 
-      stockPositions.forEach((t: Transaction) => {
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
-        //const lastWorkingDayStr = this.getLastWorkingDay(today)?.toISOString().split('T')[0];
-
-        this.dataService.getQuote(t.ticker!, todayStr!).subscribe((res: any) => {
-          //console.warn(res);
-          this.marketPrice = res[0].close;
-          this.marketPriceDate = res[0].date;
-        });
-      });
+      /*       stockPositions.forEach((t: Transaction) => {
+              const today = new Date();
+              const todayStr = today.toISOString().split('T')[0];
+              //const lastWorkingDayStr = this.getLastWorkingDay(today)?.toISOString().split('T')[0];
+      
+              this.dataService.getQuote(t.ticker!, todayStr!).subscribe((res: any) => {
+                //console.warn(res);
+                this.marketPrice = res[0].close;
+                this.marketPriceDate = res[0].date;
+              });
+            }); */
 
       // get open date for group
       console.warn(this.dataTicker);
       const tickerData: TickerData = this.dataTicker;
       console.warn(tickerData);
-      const ticker: string = "" + tickerData.tickers; // TODO get it for all tickers
+      const ticker: string = ("" + tickerData.tickers).split(',')[0].trim(); // TODO get it for all tickers
       const openDate = this.calcService.earliestOpenDate(this.tradesData)?.openDate;
       const openDateWeekAgo = this.subDays(new Date(openDate!), -7).toISOString().split('T')[0];
 
@@ -431,6 +431,13 @@ export class GroupDetailsTabComponent {
           console.warn(res);
           if (!Chart.getChart("price-chart")) {
             this.priceChart = this.createPriceChart(res, this.tradesData, 'price-chart');
+          }
+
+          if (res.length > 0) {
+            this.marketPrice = res[res.length - 1].close!;
+            this.marketPriceDate = res[res.length - 1].date;
+            // update summary
+            this.ref.detectChanges();
           }
         }
       });

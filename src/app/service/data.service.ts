@@ -151,6 +151,10 @@ export class DataService {
         return this.yearsTickerData;
     }
 
+    public getTickerDataByYear(year: any) {
+        return this.yearsTickerData[year];
+    }
+
     public getAllYearsGroupsData() {
         //console.log('getAllYearsTickersData called');
         //return this.yearsGroupData;
