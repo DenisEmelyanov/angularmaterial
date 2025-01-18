@@ -163,7 +163,7 @@ export class CalculationService {
             return sortedNumbers[middleIndex];
         }
     }
-    
+
     public earliestOpenDate(transactions: Transaction[]) {
         return transactions.reduce((earliest, current) => {
             return earliest ? (new Date(earliest.openDate).getTime() < new Date(current.openDate).getTime() ? earliest : current) : current;
@@ -207,5 +207,14 @@ export class CalculationService {
         const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
         return daysDiff;
+    }
+
+    calcStockPrice(premium: number, amount: number, qty: number) {
+        if (amount) {
+            return Math.abs(amount / qty);
+        }
+        else {
+            return Math.abs(premium / qty);
+        }
     }
 }

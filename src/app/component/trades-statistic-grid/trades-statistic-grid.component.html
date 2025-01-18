@@ -268,5 +268,71 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="2" [rowspan]="1">
+            <div class="mat-grid-tile-content">
+                <mat-card class="dashboard-card">
+                    <mat-card-header>
+                        <mat-card-title>STOCK OPEN POSITIONS</mat-card-title>
+                        <mat-card-subtitle>individual portfolio</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-actions/>
+                    <mat-card-content class="open-stock-positions">
+                        <div class="card-content-container">
+                            <p></p>
+                            <table matSort mat-table [dataSource]="dataSourceOpenStockPositions" class="mat-elevation-z8">
+
+                                <ng-container matColumnDef="ticker">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Ticker</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.ticker}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="qty">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Quantity</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.qty}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="price">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Price</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.price | currency: 'USD' | customCurrency}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="lastMarketPrice">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Last Price</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{element.lastMarketPrice | currency: 'USD' | customCurrency}} ({{element.lastMarketDate | date:'MMM dd, yyyy'}})
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="profitLoss">
+                                    <th mat-sort-header mat-header-cell *matHeaderCellDef> Total P&L</th>
+                                    <td mat-cell *matCellDef="let element"
+                                        [ngStyle]="{'color': getColor(element.profitLoss)}">
+                                        {{element.profitLoss | currency: 'USD' | customCurrency}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef> Action</th>
+                                    <td mat-cell *matCellDef="let element">
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="openStockPositionsColumns"></tr>
+                                <tr mat-row *matRowDef="let row;columns:openStockPositionsColumns"></tr>
+
+                            </table>
+                            <p></p>
+                        </div>
+                    </mat-card-content>
+                    <br>
+                    <mat-card-footer>
+                        <!--<mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>-->
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
     </mat-grid-list>
 </div>

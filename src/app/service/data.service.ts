@@ -51,7 +51,7 @@ export class DataService {
     private portfolio: any = 'individual portfolio';
 
     private blackList = ['META', 'BIG'];
-    private notInBlackList(str: string) {
+    public notInBlackList(str: string) {
         var notInBlackList = true;
         this.blackList.forEach(blItem => {
             if (str.includes(blItem) === true) {
@@ -189,6 +189,12 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
+    public getLatestQuote(ticker: string) {
+        return this.http
+            .get(this.quoteServiceUrl + 'latest?ticker=' + ticker)
+            .pipe(map((response: any) => response.data));
+    }
+
     public getQuoteRange(ticker: string, startDate: string, endDate: string) {
         return this.http
             .get(this.quoteServiceUrl + '?ticker=' + ticker + '&startDate=' + startDate + '&endDate=' + endDate)
@@ -304,9 +310,16 @@ export class DataService {
     }
 
     public getOpenStockTransactions(ticker: string, openSide: string) {
-        return this.http
+        if (ticker === '') {
+            return this.http
+            .get(this.transactionsServiceUrl + '?type=stock&openSide=' + openSide)
+            .pipe<Transaction[]>(map((response: any) => response.data));
+        }
+        else {
+            return this.http
             .get(this.transactionsServiceUrl + '?ticker=' + ticker + '&type=stock&openSide=' + openSide)
             .pipe<Transaction[]>(map((response: any) => response.data));
+        }
     }
 
     public updateTransaction(transaction: Transaction): Observable<Transaction> {
