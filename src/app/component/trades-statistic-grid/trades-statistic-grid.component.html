@@ -89,6 +89,8 @@
                                     <th mat-header-cell *matHeaderCellDef> Action</th>
                                     <td mat-cell *matCellDef="let element"
                                         [ngStyle]="{'background-color': getBackgroundColor(element.year)}">
+                                        <!-- <mat-icon aria-hidden="false" (click)="onYearDetails(element.year)"
+                                        fontIcon="info_outline" *ngIf="element.year !== 'TOTAL'"/> -->
                                         <button mat-raised-button color="primary" (click)="onYearDetails(element.year)"
                                             *ngIf="element.year !== 'TOTAL'">Details</button>
                                     </td>

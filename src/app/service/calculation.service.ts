@@ -37,7 +37,7 @@ export class CalculationService {
         }
     }
 
-    public calcSummary(transactions: Transaction[], year: number) {//, stockTransactions: Transaction[]
+    public calcSummary(transactions: Transaction[]) {//, stockTransactions: Transaction[]
         //get only open buy stock transactions from prevous years
         //stockTransactions = stockTransactions.filter(t => t.closeDate === null && t.openSide === 'buy' && t.year! < year);
         //transactions = transactions.concat(stockTransactions);

@@ -183,6 +183,12 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
+    public getAllTransactionsForYear(year: number) {
+        return this.http
+            .get(this.transactionsServiceUrl + 'month?year=' + year)
+            .pipe(map((response: any) => response.data));
+    }
+
     public getQuote(ticker: string, date: string) {
         return this.http
             .get(this.quoteServiceUrl + '?ticker=' + ticker + '&date=' + date)
@@ -221,7 +227,7 @@ export class DataService {
                 // check if there is call options
                 this.getAllGroupTransactions(group).subscribe((res: any) => {
                     //const sharesTransactions = res.filter((t: Transaction) => t.type === 'stock');//t.year! < year + 1);
-                    this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!, year);//sharesTransactions, 
+                    this.yearsGroupData[year][group].summary = this.calcService.calcSummary(this.yearsGroupData[year][group].transactions!);//sharesTransactions, 
 
                     // if (this.yearsGroupData[year][group].summary!.sharesQty) {
                     //     // TODO do it for each ticker

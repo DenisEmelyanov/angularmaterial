@@ -204,7 +204,16 @@
                         <mat-card-title>{{dataTicker.group}} PRICE</mat-card-title>
                         <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
                     </mat-card-header>
-                    <!-- <mat-card-actions /> -->
+                    <mat-card-actions>
+                            <mat-form-field style="margin-left: 1%;" appearance="fill">
+                                <mat-label>Ticker</mat-label>
+                                <mat-select [(ngModel)]="selectedTicker" (selectionChange)="applyTicker($event)">
+                                    <mat-option *ngFor="let option of tickerOptions" [value]="option">
+                                        {{ option }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-card-actions>  
                     <mat-card-content class="chart">
                         <div class="chart-container">
                             <canvas id="price-chart" height="300px">{{ priceChart }}</canvas>
