@@ -9,9 +9,12 @@ import { TransactionFormComponent } from '../transaction-form/transaction-form.c
 import { Chart } from 'chart.js';
 import { CalculationService } from 'src/app/service/calculation.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { isNullOrUndef } from 'chart.js/dist/helpers/helpers.core';
+import { callback, isNullOrUndef } from 'chart.js/dist/helpers/helpers.core';
 import { DatePipe } from '@angular/common';
 import { Quote } from 'src/app/model/quote';
+import { addDays, differenceInDays, format, parseISO } from 'date-fns';
+import { Point } from 'chart.js/dist/core/core.controller';
+import { animation } from '@angular/animations';
 
 @Component({
   selector: 'app-group-details-tab',
@@ -46,6 +49,7 @@ export class GroupDetailsTabComponent {
 
   timelineChart: any;
   priceChart: any;
+  premiumChart: any;
 
   selectedTicker: any;
   tickerOptions: any;
@@ -54,11 +58,11 @@ export class GroupDetailsTabComponent {
   }
 
   ngOnInit() {
-/*     this.dataService.currentData.subscribe((data: any) => {
-      if (data.group === this.dataTicker.group && data.year === this.dataTicker.year) {
-        
-      }
-    }); */
+    /*     this.dataService.currentData.subscribe((data: any) => {
+          if (data.group === this.dataTicker.group && data.year === this.dataTicker.year) {
+            
+          }
+        }); */
 
     // update trades grid
     this.updatePageData();
@@ -133,6 +137,124 @@ export class GroupDetailsTabComponent {
     }
 
     return null;
+  }
+
+  createPremiumChart(dataSource: Transaction[], canvasId: string) {
+    if (dataSource !== undefined) {
+      if (Chart.getChart(canvasId)) {
+        Chart.getChart(canvasId)!.destroy();
+      }
+
+      const chartData = this.getPremiumChartData(dataSource);
+
+      const maxYValue = Math.max(...chartData.data);
+      // find the latest value
+      const lastValue = chartData.data[chartData.data.length - 1];
+
+      return new Chart(canvasId, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+        label: 'premium (total: $' + lastValue.toFixed(2) + ')',
+        data: chartData.data,
+        fill: true,
+        borderColor: 'rgb(153, 102, 255)',
+        backgroundColor: 'rgb(153, 102, 255, 0.2)',
+        tension: 0.0,
+        pointBackgroundColor: 'rgb(153, 102, 255, 0.5)',
+        pointBorderWidth: 3,
+        pointHitRadius: 6,
+        pointHoverRadius: 6,
+        pointHoverBorderWidth: 3,
+        pointHoverBackgroundColor: 'rgb(153, 102, 255, 0.5)',
+        pointRadius: (context: any) => {
+          if (context.dataIndex !== 0) {
+            const previousValue = context.dataset.data[context.dataIndex - 1];
+            const currentData = context.dataset.data[context.dataIndex];
+            const isValueChanged = currentData !== previousValue;
+            return isValueChanged ? 6 : 0; // Larger radius for changed values
+          } else {
+            return 0;
+          }
+        }
+          }]
+        },
+        options: {
+          scales: {
+        y: {
+          ticks: {
+            // Add dollar sign prefix to y-axis labels
+            callback: (tickValue: string | number) => `$${Math.round(Number(tickValue))}`, // Round to nearest integer
+          },
+          max: Math.ceil((maxYValue + maxYValue * 0.1)/50) * 50,
+        }
+          }
+        },
+      });
+    }
+
+    return null;
+  }
+
+  getPremiumChartData(dataSource: Transaction[]) {
+    const earliestOpenDate = this.calcService.earliestOpenDate(dataSource)?.openDate!;
+    let latestCloseDate = this.calcService.latestCloseDate(dataSource)?.closeDate!;
+
+    const optionsOnly = dataSource.filter(t => t.type === 'put' || t.type === 'call');
+    // get open contracts, if no, then get transactions with latest close date
+    const openContracts = optionsOnly.filter(t => t.closeDate === undefined || t.closeDate === null);
+    const openStocks = dataSource.filter(t => t.type === 'stock' && t.openSide === 'buy' && (t.closeDate === undefined || t.closeDate === null));
+
+    if (openContracts.length === 0 && openStocks.length !== 0) {
+      latestCloseDate = new Date().toISOString().split('T')[0];
+    } else if (openContracts.length !== 0) {
+      latestCloseDate = this.calcService.latestExpirationDate(dataSource)?.expiration!;
+    }
+
+    // remove transactions with type =  stock and closeDate is null
+    const filteredTransactions = dataSource.filter(t => !(t.type === 'stock' && t.openSide === 'buy'));
+
+    const diffInDays = differenceInDays(latestCloseDate!, earliestOpenDate) + 5;
+    const labels: string[] = [''];
+    let premiumData: number[] = [0];
+    let totalPremium = 0;
+
+    for (let i = 0; i <= diffInDays; i++) {
+      const currentDate = addDays(earliestOpenDate, i);
+      // find transaction where open date equals to currentDate
+      const openedTransactions = filteredTransactions.filter(t => t.openDate === format(currentDate, 'yyyy-MM-dd'));
+      const closedTransactions = filteredTransactions.filter(t => t.closeDate === format(currentDate, 'yyyy-MM-dd'));
+
+      if (openedTransactions.length !== 0) {
+        // add up all premiums
+        openedTransactions.forEach((t: Transaction) => {
+          totalPremium += t.openAmount!;
+        });
+      }
+
+      if (closedTransactions.length !== 0) {
+        // add up all premiums
+        closedTransactions.forEach((t: Transaction) => {
+          if (t.type !== 'dividend') {
+            totalPremium += t.closeAmount!;
+          }
+          else {
+            // use premium for dividend transactions
+            totalPremium += t.premium!;
+          }
+
+        });
+      }
+
+      premiumData.push(totalPremium);
+      labels.push(format(currentDate, 'MMM d').toUpperCase());
+    }
+
+    return {
+      labels: labels,
+      data: premiumData
+    }
   }
 
   getPriceChartData(dataSource: Quote[], trades: Transaction[]) {
@@ -434,6 +556,10 @@ export class GroupDetailsTabComponent {
         this.timelineChart = this.createTimelineChart(this.tradesData, "timeline-chart");
       }
 
+      if (!Chart.getChart("premium-chart")) {
+        this.premiumChart = this.createPremiumChart(this.tradesData, "premium-chart");
+      }
+
       // update summary
       this.ref.detectChanges();
     });
@@ -446,7 +572,7 @@ export class GroupDetailsTabComponent {
 
       const openDate = this.calcService.earliestOpenDate(this.tradesData)?.openDate;
       const openDateWeekAgo = this.subDays(new Date(openDate!), -7).toISOString().split('T')[0];
-  
+
       let closeDate = new Date().toISOString().split('T')[0];
       if (this.openPositions.length === 0) {
         closeDate = this.calcService.latestCloseDate(this.tradesData)?.closeDate!;
@@ -458,7 +584,7 @@ export class GroupDetailsTabComponent {
           closeDate = closeDatePlusWeek.toISOString().split('T')[0];
         }
       }
-  
+
       //const closeDate = tickerData.summary!.closeDate;
       console.warn(ticker + ' open date:' + openDate + '->' + openDateWeekAgo + ' close date: ' + closeDate);
       this.dataService.getQuoteRange(ticker, openDateWeekAgo!, closeDate).subscribe((quotes: Quote[]) => {
@@ -466,7 +592,7 @@ export class GroupDetailsTabComponent {
           console.warn(quotes);
 
           this.priceChart = this.createPriceChart(quotes, this.tradesData, 'price-chart');
-  
+
           if (quotes.length > 0) {
             this.marketPrice = quotes[quotes.length - 1].close!;
             this.marketPriceDate = quotes[quotes.length - 1].date;
@@ -482,6 +608,14 @@ export class GroupDetailsTabComponent {
     console.log("selected ticker:" + event.value);
     this.selectedTicker = event.value;
     this.applyTickerForPriceChart();
+  }
+
+  refreshMarketPrice() {
+    this.dataService.getQuote(this.selectedTicker, this.marketPriceDate, true).subscribe((quote: Quote) => {
+      if (quote) {
+        this.applyTickerForPriceChart();
+      }
+    });
   }
 
   sortByOpenDate(data: Transaction[]): Transaction[] {

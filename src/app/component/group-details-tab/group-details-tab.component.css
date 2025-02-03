@@ -5,7 +5,17 @@ div.grid-container {
 }
 
 mat-card.summary-card {
-    width: 450px;
+    width: 600px;
+    min-height: 400px;
+    overflow-y: auto;
+    text-align: left;
+    align-content: flex-start;
+}
+
+mat-card.premium-chart-card {
+    width: 800px;
+    min-height: 850px;
+    height: 850px;
 }
 
 mat-card.timeline-chart-card {
@@ -15,7 +25,8 @@ mat-card.timeline-chart-card {
 
 mat-card.price-chart-card {
     width: 1000px;
-    min-height: 400px;
+    min-height: 850px;
+    height: 850px;
 }
 
 mat-card.trades-grid-card {
@@ -36,6 +47,10 @@ mat-card-title {
 mat-card-subtitle {
     text-align: left; margin-left: 0%;
 }
+
+/* mat-grid-tile {
+    overflow-y: auto;
+} */
 
 mat-chip.assigned-chip {
     font-size: xx-small;

@@ -11,29 +11,33 @@
                 <mat-button-toggle value="2024">2024</mat-button-toggle>
             </mat-button-toggle-group>
         </div> -->
-        <mat-form-field style="margin-left: 1%;" appearance="fill">
+        <div style="display: flex; align-items: center; gap: 15px; margin-left: 10px;">
+            <mat-form-field appearance="fill">
             <mat-label>Year</mat-label>
             <mat-select [(ngModel)]="calendarYear" (selectionChange)="filterByYear($event)">
                 <mat-option *ngFor="let option of yearOptions" [value]="option">
-                    {{ option }}
+                {{ option }}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
-        <mat-form-field style="margin-left: 1%;">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
             <mat-label>Tickers</mat-label>
             <mat-select multiple>
                 <mat-option [value]="group">META</mat-option>
                 <mat-option [value]="group">BIG</mat-option>
             </mat-select>
-        </mat-form-field>
-        <button style="margin-left: 55%;" mat-raised-button color="primary">
+            </mat-form-field>
+        </div>
+        <div style="margin-left: auto; display: flex; gap: 15px; margin-right: 10px;">
+            <button mat-raised-button color="primary">
             Add
             <mat-icon aria-hidden="false" fontIcon="add_circle_outline"></mat-icon>
-        </button>
-        <button style="margin-left: 1%;" (click)="openImportDialog()" mat-raised-button color="tertiary">
+            </button>
+            <button (click)="openImportDialog()" mat-raised-button color="tertiary">
             Import
             <mat-icon aria-hidden="false" fontIcon="upload_file"></mat-icon>
-        </button>
+            </button>
+        </div>
     </mat-card-actions>
 
 

@@ -189,9 +189,9 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
-    public getQuote(ticker: string, date: string) {
+    public getQuote(ticker: string, date: string, forceUpdate: boolean = false) {
         return this.http
-            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&date=' + date)
+            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&date=' + date + '&forceUpdate=' + forceUpdate)
             .pipe(map((response: any) => response.data));
     }
 

@@ -1,6 +1,6 @@
 <div class="grid-container">
-    <mat-grid-list cols="4" ><!--rowHeight="1200px"-->
-        <mat-grid-tile [colspan]="1" [rowspan]="2">
+    <mat-grid-list cols="4"><!--rowHeight="1200px"-->
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div class="mat-grid-tile-content">
                 <!-- <app-trades-summary [dataTicker]="tab"></app-trades-summary> -->
                 <mat-card class="summary-card">
@@ -45,8 +45,10 @@
                             </mat-list-item>
                             <mat-divider></mat-divider>
                             <mat-list-item *ngIf="marketPrice > 0">
-                                <mat-label>MARKET PRICE: </mat-label>
-                                <span>{{marketPrice | currency: 'USD'}} ({{marketPriceDate | date:'MMM dd, yyyy'}})</span>
+                                <mat-label>{{selectedTicker}} MARKET PRICE AS OF {{(marketPriceDate | date:'MMM dd, yyyy')!.toUpperCase()}}:
+                                </mat-label>
+                                <span>{{marketPrice | currency: 'USD'}} <mat-icon style="font-size: 16px; vertical-align: middle; cursor: pointer;" aria-hidden="false" (click)="refreshMarketPrice()" fontIcon="refresh"></mat-icon>
+                                </span>
                             </mat-list-item>
                             <mat-divider></mat-divider>
                             <mat-list-item>
@@ -70,13 +72,13 @@
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>
- <!--                    <mat-card-actions>
+                    <!--                    <mat-card-actions>
                         <button mat-button><mat-icon>thumb_up</mat-icon> Like</button>
                         <button mat-button><mat-icon>share</mat-icon> Share</button>
                     </mat-card-actions> 
                     <mat-card-footer></mat-card-footer>
                     -->
-                    
+
                 </mat-card>
             </div>
         </mat-grid-tile>
@@ -108,7 +110,7 @@
                         <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-actions>
-                        <button style="margin-left: 85%;" (click)="addTransaction()" mat-raised-button color="primary">
+                        <button style="margin-left: auto; margin-right: 10px" (click)="addTransaction()" mat-raised-button color="primary">
                             Add
                             <mat-icon aria-hidden="false" fontIcon="add_circle_outline"></mat-icon>
                         </button>
@@ -162,7 +164,8 @@
 
                             <ng-container matColumnDef="openAmount">
                                 <th mat-sort-header mat-header-cell *matHeaderCellDef> Open Amount</th>
-                                <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element.openAmount)}">
+                                <td mat-cell *matCellDef="let element"
+                                    [ngStyle]="{'color': getColor(element.openAmount)}">
                                     {{element.openAmount |
                                     currency: 'USD' | customCurrency}}</td>
                             </ng-container>
@@ -199,28 +202,44 @@
 
         <mat-grid-tile [colspan]="1" [rowspan]="2">
             <div class="mat-grid-tile-content">
-                <mat-card class="price-chart-card">
+                <mat-card class="premium-chart-card">
                     <mat-card-header>
-                        <mat-card-title>{{dataTicker.group}} PRICE</mat-card-title>
+                        <mat-card-title>{{dataTicker.group}} PREMIUM</mat-card-title>
                         <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
                     </mat-card-header>
-                    <mat-card-actions>
-                            <mat-form-field style="margin-left: 1%;" appearance="fill">
-                                <mat-label>Ticker</mat-label>
-                                <mat-select [(ngModel)]="selectedTicker" (selectionChange)="applyTicker($event)">
-                                    <mat-option *ngFor="let option of tickerOptions" [value]="option">
-                                        {{ option }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </mat-card-actions>  
+                    <mat-card-actions />
                     <mat-card-content class="chart">
                         <div class="chart-container">
-                            <canvas id="price-chart" height="300px">{{ priceChart }}</canvas>
+                            <canvas id="premium-chart" height="300px">{{ premiumChart }}</canvas>
                         </div>
                     </mat-card-content>
                     <!-- <mat-card-footer /> -->
                 </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="2">
+            <div class="mat-grid-tile-content">
+            <mat-card class="price-chart-card">
+                <mat-card-header>
+                <mat-card-title>{{dataTicker.group}} PRICE</mat-card-title>
+                <mat-card-subtitle>{{dataTicker.tickers}}</mat-card-subtitle>
+
+                <mat-form-field style="margin-left: auto;" appearance="fill">
+                    <mat-label>Ticker</mat-label>
+                    <mat-select [(ngModel)]="selectedTicker" (selectionChange)="applyTicker($event)">
+                    <mat-option *ngFor="let option of tickerOptions" [value]="option">
+                        {{ option }}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                </mat-card-header>
+                <mat-card-content class="chart">
+                <div class="chart-container">
+                    <canvas id="price-chart" height="300px">{{ priceChart }}</canvas>
+                </div>
+                </mat-card-content>
+                <!-- <mat-card-footer /> -->
+            </mat-card>
             </div>
         </mat-grid-tile>
     </mat-grid-list>
