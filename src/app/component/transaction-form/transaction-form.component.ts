@@ -40,7 +40,7 @@ export class TransactionFormComponent implements OnInit {
       openDate: this.formBuilder.control(null),
       closeDate: this.formBuilder.control(null),
       year: this.formBuilder.control(new Date().getFullYear()),
-      group: this.formBuilder.control(this.data.transaction.ticker + ' ' + new Date().getFullYear()),
+      group: this.formBuilder.control(this.data.group),
       assigned: this.formBuilder.control(false)
     });
   }

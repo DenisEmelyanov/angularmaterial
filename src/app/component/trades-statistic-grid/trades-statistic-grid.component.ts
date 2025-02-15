@@ -483,7 +483,7 @@ export class TradesStatisticGridComponent {
     let totalOptionsNetPremium = 0;
     let totalStocksNetPremium = 0;
 
-    const data = this.dataService.getTickerDataByYear(year);
+    //const data = this.dataService.getTickerDataByYear(year);
 
     const monthTotals: { [month: number]: number } = {};
     const monthTransactions: { [month: number]: Transaction[] } = {};

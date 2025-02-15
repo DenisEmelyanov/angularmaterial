@@ -14,7 +14,7 @@ import { DatePipe } from '@angular/common';
 import { Quote } from 'src/app/model/quote';
 import { addDays, differenceInDays, format, parseISO } from 'date-fns';
 import { Point } from 'chart.js/dist/core/core.controller';
-import { animation } from '@angular/animations';
+import { animation, group } from '@angular/animations';
 
 @Component({
   selector: 'app-group-details-tab',
@@ -40,10 +40,14 @@ export class GroupDetailsTabComponent {
   closeDate!: string;
   annualizedReturn!: number;
 
+  calculatedPremium: number = 0;
+  newPremium: number = 0;
+  displayNewPremium: boolean = false;
+
   tradesData: Transaction[] = [];
   openPositions: Transaction[] = [];
 
-  displayedColumns: string[] = ["transaction", "chips", "year", "openDate", "closeDate", "openAmount", "premium", "action"];
+  displayedColumns: string[] = ["selected", "transaction", "chips", "year", "openDate", "closeDate", "openAmount", "premium", "action"];
   @ViewChild(MatPaginator) paginatior !: MatPaginator;
   @ViewChild(MatSort) sort !: MatSort;
 
@@ -618,6 +622,36 @@ export class GroupDetailsTabComponent {
     });
   }
 
+  calcSelectedTradesPremium(element: Transaction, selected: boolean) {
+    if (selected) {
+      if (element.closeDate === undefined || element.closeDate === null) {
+        this.displayNewPremium = true;
+      }
+
+      this.calculatedPremium += element.premium;
+      if (element.closeDate !== undefined && element.closeDate !== null) {
+        this.newPremium += element.closeAmount!;
+      } else {
+        this.newPremium += element.openAmount!;
+      }
+    }
+    else {
+      if (element.closeDate === undefined || element.closeDate === null) {
+        this.displayNewPremium = false;
+      }
+      
+      this.calculatedPremium -= element.premium;
+      if (element.closeDate !== undefined && element.closeDate !== null) {
+        this.newPremium -= element.closeAmount!;
+      } else {
+        this.newPremium -= element.openAmount!;
+      }
+    }
+
+    this.newPremium = parseFloat(this.newPremium.toFixed(2));
+    this.calculatedPremium = parseFloat(this.calculatedPremium.toFixed(2));
+  }
+
   sortByOpenDate(data: Transaction[]): Transaction[] {
     return data.sort((a, b) => new Date(b.openDate).getTime() - new Date(a.openDate).getTime());
   }
@@ -658,7 +692,8 @@ export class GroupDetailsTabComponent {
       data: {
         title: title,
         transaction: transaction,
-        ticker: this.dataTicker.ticker
+        ticker: this.dataTicker.ticker,
+        group: this.dataTicker.group
       }
     });
 
