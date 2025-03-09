@@ -8,7 +8,6 @@ import { DataService } from "./data.service";
 })
 
 export class CalculationService {
-
     constructor() {
     }
 
@@ -151,6 +150,33 @@ export class CalculationService {
         }
     }
 
+    calcOpenSharesProfitLoss(openStockPositions: Transaction[], openCallOptions: Transaction[], marketPrice: number): number {
+        let totalProfitLoss = 0;
+      
+        // Calculate profit/loss for stock positions
+        if (openStockPositions && openStockPositions.length > 0) {
+          for (const position of openStockPositions) {
+            if (position.type === 'stock' && position.quantity !== undefined && position.openAmount !== undefined) {
+              const pricePerShare = this.calcStockPrice(position.premium, position.openAmount, position.quantity);
+                const profitLoss = (marketPrice - pricePerShare) * position.quantity;
+              totalProfitLoss += profitLoss;
+            }
+          }
+        }
+      
+        // Calculate profit/loss for call options
+        if (openCallOptions && openCallOptions.length > 0) {
+          for (const option of openCallOptions) {
+            if (option.type === 'call' && option.strike !== undefined && option.quantity !== undefined && option.strike < marketPrice) {
+              const profitLoss = (option.strike - marketPrice) * option.quantity * 100; // - option.openPrice
+              totalProfitLoss += profitLoss;
+            }
+          }
+        }
+      
+        return totalProfitLoss;
+      }
+
     public calculateMedian(numbers: number[]): number {
         const sortedNumbers = numbers.sort((a, b) => a - b);
         const middleIndex = Math.floor(sortedNumbers.length / 2);
@@ -209,12 +235,15 @@ export class CalculationService {
         return daysDiff;
     }
 
-    calcStockPrice(premium: number, amount: number, qty: number) {
+    calcStockPrice(premium: number, amount: number, qty: number): number {
+        let result: number;
+      
         if (amount) {
-            return Math.abs(amount / qty);
+          result = Math.abs(amount / qty);
+        } else {
+          result = Math.abs(premium / qty);
         }
-        else {
-            return Math.abs(premium / qty);
-        }
+      
+        return parseFloat(result.toFixed(2));
     }
 }

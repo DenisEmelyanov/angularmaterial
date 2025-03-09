@@ -51,6 +51,12 @@
                                 </span>
                             </mat-list-item>
                             <mat-divider></mat-divider>
+                            <mat-list-item *ngIf="openSharesProfitLoss !== undefined">
+                                <mat-label>{{selectedTicker}} OPEN SHARES PROJECTED P&L: </mat-label>
+                                <span [ngStyle]="{'color': getColor(openSharesProfitLoss)}">{{openSharesProfitLoss | currency: 'USD'
+                                    | customCurrency}}</span>
+                            </mat-list-item>
+                            <mat-divider *ngIf="openSharesProfitLoss !== undefined"></mat-divider>
                             <mat-list-item>
                                 <mat-label>RISK: </mat-label>
                                 <span>{{risk | currency: 'USD'}}</span>

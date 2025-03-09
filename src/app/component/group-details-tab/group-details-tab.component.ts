@@ -34,6 +34,7 @@ export class GroupDetailsTabComponent {
   pricePerShare!: number;
   marketPrice: number = 0;
   marketPriceDate: string = '';
+  openSharesProfitLoss!: number;
   risk!: number;
   breakEven!: number;
   days!: number;
@@ -300,7 +301,7 @@ export class GroupDetailsTabComponent {
             color = '255, 99, 132';
           }
         } else if (trade.type === 'stock') {
-          price = this.calcStockPrice(trade.premium, trade.openAmount!, trade.quantity!);
+          price = this.calcService.calcStockPrice(trade.premium, trade.openAmount!, trade.quantity!);
           label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + price;
           color = '255, 205, 86';
         }
@@ -446,7 +447,7 @@ export class GroupDetailsTabComponent {
         datasetPrice.push(5);
       }
       else if (trade.type === 'stock' && trade.openSide === 'buy') {
-        const label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + this.calcStockPrice(trade.premium, trade.openAmount, trade.quantity);
+        const label = trade.openSide + ' ' + trade.quantity + ' ' + trade.ticker + ' @ $' + this.calcService.calcStockPrice(trade.premium, trade.openAmount, trade.quantity);
 
         const blankNumber = this.calcService.daysDifference(earliestOpenDate, trade.openDate);
 
@@ -538,7 +539,6 @@ export class GroupDetailsTabComponent {
       this.ref.detectChanges();
 
       this.openPositions = res.filter((t: Transaction) => t.closeDate === null || t.closeDate === undefined);
-      const stockPositions = this.openPositions.filter((t: Transaction) => t.type === 'stock');
 
       // get open date for group
       console.warn(this.dataTicker);
@@ -600,6 +600,13 @@ export class GroupDetailsTabComponent {
           if (quotes.length > 0) {
             this.marketPrice = quotes[quotes.length - 1].close!;
             this.marketPriceDate = quotes[quotes.length - 1].date;
+
+            const openStockPositions = this.openPositions.filter((t: Transaction) => t.type === 'stock' && t.ticker === this.selectedTicker);
+            const openCallOptions = this.openPositions.filter((t: Transaction) => t.type === 'call' && t.ticker === this.selectedTicker);
+            if (openStockPositions.length > 0) {
+              this.openSharesProfitLoss = this.calcService.calcOpenSharesProfitLoss(openStockPositions, openCallOptions, this.marketPrice);
+            }
+
             // update summary
             this.ref.detectChanges();
           }
@@ -751,12 +758,7 @@ export class GroupDetailsTabComponent {
   }
 
   calcStockPrice(premium: number, amount: number, qty: number) {
-    if (amount) {
-      return Math.abs(amount / qty);
-    }
-    else {
-      return Math.abs(premium / qty);
-    }
+    return this.calcService.calcStockPrice(premium, amount, qty);
   }
 
   public getColor(value: number): string {
