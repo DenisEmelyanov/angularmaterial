@@ -137,7 +137,35 @@ export class GroupDetailsTabComponent {
           labels: labels,
           datasets: dataset
         },
+        options: {
+          scales: {
+            y: {
+              ticks: {
+                // Add dollar sign prefix to y-axis labels
+                callback: (tickValue: string | number) => `$${tickValue}`,
+              }
+            }
+          },
+        }
+        /* options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || '';
 
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.y !== null) {
+                    label += '$' + context.parsed.y.toFixed(2); // Format as currency
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        } */
       });
     }
 
@@ -161,39 +189,39 @@ export class GroupDetailsTabComponent {
         data: {
           labels: chartData.labels,
           datasets: [{
-        label: 'premium (total: $' + lastValue.toFixed(2) + ')',
-        data: chartData.data,
-        fill: true,
-        borderColor: 'rgb(153, 102, 255)',
-        backgroundColor: 'rgb(153, 102, 255, 0.2)',
-        tension: 0.0,
-        pointBackgroundColor: 'rgb(153, 102, 255, 0.5)',
-        pointBorderWidth: 3,
-        pointHitRadius: 6,
-        pointHoverRadius: 6,
-        pointHoverBorderWidth: 3,
-        pointHoverBackgroundColor: 'rgb(153, 102, 255, 0.5)',
-        pointRadius: (context: any) => {
-          if (context.dataIndex !== 0) {
-            const previousValue = context.dataset.data[context.dataIndex - 1];
-            const currentData = context.dataset.data[context.dataIndex];
-            const isValueChanged = currentData !== previousValue;
-            return isValueChanged ? 6 : 0; // Larger radius for changed values
-          } else {
-            return 0;
-          }
-        }
+            label: 'premium (total: $' + lastValue.toFixed(2) + ')',
+            data: chartData.data,
+            fill: true,
+            borderColor: 'rgb(153, 102, 255)',
+            backgroundColor: 'rgb(153, 102, 255, 0.2)',
+            tension: 0.0,
+            pointBackgroundColor: 'rgb(153, 102, 255, 0.5)',
+            pointBorderWidth: 3,
+            pointHitRadius: 6,
+            pointHoverRadius: 6,
+            pointHoverBorderWidth: 3,
+            pointHoverBackgroundColor: 'rgb(153, 102, 255, 0.5)',
+            pointRadius: (context: any) => {
+              if (context.dataIndex !== 0) {
+                const previousValue = context.dataset.data[context.dataIndex - 1];
+                const currentData = context.dataset.data[context.dataIndex];
+                const isValueChanged = currentData !== previousValue;
+                return isValueChanged ? 6 : 0; // Larger radius for changed values
+              } else {
+                return 0;
+              }
+            }
           }]
         },
         options: {
           scales: {
-        y: {
-          ticks: {
-            // Add dollar sign prefix to y-axis labels
-            callback: (tickValue: string | number) => `$${Math.round(Number(tickValue))}`, // Round to nearest integer
-          },
-          max: Math.ceil((maxYValue + maxYValue * 0.1)/50) * 50,
-        }
+            y: {
+              ticks: {
+                // Add dollar sign prefix to y-axis labels
+                callback: (tickValue: string | number) => `$${Math.round(Number(tickValue))}`, // Round to nearest integer
+              },
+              max: Math.ceil((maxYValue + maxYValue * 0.1) / 50) * 50,
+            }
           }
         },
       });
@@ -253,7 +281,7 @@ export class GroupDetailsTabComponent {
       }
 
       premiumData.push(totalPremium);
-      labels.push(format(currentDate, 'MMM d').toUpperCase());
+      labels.push(this.formatChartLabelDate(currentDate));
     }
 
     return {
@@ -262,14 +290,16 @@ export class GroupDetailsTabComponent {
     }
   }
 
+  formatChartLabelDate(date: string | Date): string {
+    return format(date, "MMM d ''yy").toUpperCase();
+  }
+
   getPriceChartData(dataSource: Quote[], trades: Transaction[]) {
     const originalLabels = dataSource.map(q => q.date);
 
     const labels = dataSource.map(q => {
-      const dateString = q.date; // Extract the date string
-      const [year, month, day] = dateString.split('-').map(Number);
-      const monthsArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${monthsArr[month - 1].toUpperCase()} ${day}`; // Reformat to "MM/DD"
+      const dateString = q.date; // Extract the date string from the data
+      return this.formatChartLabelDate(dateString);
     });
 
     const prices = dataSource.map(q => q.close);
@@ -629,6 +659,19 @@ export class GroupDetailsTabComponent {
     });
   }
 
+  downloadMarketPrice() {
+    const openDate = this.calcService.earliestOpenDate(this.tradesData)?.openDate;
+    const openDateWeekAgo = this.subDays(new Date(openDate!), -7).toISOString().split('T')[0];
+
+    const closeDate = new Date().toISOString().split('T')[0];
+    this.dataService.getQuoteRange(this.selectedTicker, openDateWeekAgo!, closeDate, true).subscribe((quote: Quote) => {
+      if (quote) {
+        this.applyTickerForPriceChart();
+      }
+    });
+
+  }
+
   calcSelectedTradesPremium(element: Transaction, selected: boolean) {
     if (selected) {
       if (element.closeDate === undefined || element.closeDate === null) {
@@ -646,7 +689,7 @@ export class GroupDetailsTabComponent {
       if (element.closeDate === undefined || element.closeDate === null) {
         this.displayNewPremium = false;
       }
-      
+
       this.calculatedPremium -= element.premium;
       if (element.closeDate !== undefined && element.closeDate !== null) {
         this.newPremium -= element.closeAmount!;

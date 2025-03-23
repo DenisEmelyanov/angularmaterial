@@ -47,7 +47,9 @@
                             <mat-list-item *ngIf="marketPrice > 0">
                                 <mat-label>{{selectedTicker}} MARKET PRICE AS OF {{(marketPriceDate | date:'MMM dd, yyyy')!.toUpperCase()}}:
                                 </mat-label>
-                                <span>{{marketPrice | currency: 'USD'}} <mat-icon style="font-size: 16px; vertical-align: middle; cursor: pointer;" aria-hidden="false" (click)="refreshMarketPrice()" fontIcon="refresh"></mat-icon>
+                                <span>{{marketPrice | currency: 'USD'}} 
+                                    <mat-icon style="font-size: 16px; vertical-align: middle; cursor: pointer;" aria-hidden="false" (click)="refreshMarketPrice()" fontIcon="refresh"></mat-icon>
+                                    <mat-icon style="font-size: 16px; vertical-align: middle; cursor: pointer;" aria-hidden="false" (click)="downloadMarketPrice()" >file_download</mat-icon>
                                 </span>
                             </mat-list-item>
                             <mat-divider></mat-divider>

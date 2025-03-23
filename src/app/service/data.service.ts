@@ -201,9 +201,9 @@ export class DataService {
             .pipe(map((response: any) => response.data));
     }
 
-    public getQuoteRange(ticker: string, startDate: string, endDate: string) {
+    public getQuoteRange(ticker: string, startDate: string, endDate: string, forceUpdate: boolean = false) {
         return this.http
-            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&startDate=' + startDate + '&endDate=' + endDate)
+            .get(this.quoteServiceUrl + '?ticker=' + ticker + '&startDate=' + startDate + '&endDate=' + endDate + '&forceUpdate=' + forceUpdate)
             .pipe(map((response: any) => response.data));
     }
 
